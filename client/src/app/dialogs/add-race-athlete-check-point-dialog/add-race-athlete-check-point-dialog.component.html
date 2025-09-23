@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>Добавить запись</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Номер участника</mat-label>
+      <input matInput formControlName="athleteBibNumber"/>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Контрольный пункт</mat-label>
+      <mat-select formControlName="checkPointId">
+        <mat-option *ngFor="let cp of checkPoints" [value]="cp.id">
+          {{ cp.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Дата</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="checkPointDate"/>
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Время</mat-label>
+      <input matInput type="time" formControlName="checkPointTime" step="1"/>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Отмена</button>
+  <button mat-raised-button color="primary" (click)="onSave()" [disabled]="form.invalid">
+    Сохранить
+  </button>
+</mat-dialog-actions>

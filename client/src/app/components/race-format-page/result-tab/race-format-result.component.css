@@ -1,0 +1,142 @@
+.protocol-table-wrapper {
+  height: 500px;
+  padding-left: 30px;
+  padding-right: 30px
+}
+
+.protocol-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.left {
+  text-align: left;
+}
+
+.protocol-table th, .protocol-table td {
+  border: 1px solid black;
+}
+
+
+.def-color {
+  background-color: #faf9fc;
+}
+
+
+.control-row {
+  background: #ffe599;
+  color: red;
+}
+
+.leader-row {
+  background: #fbe4d5;
+}
+
+.header-row {
+  background: #ffe599;
+}
+
+.params-header {
+  width: 100px;
+}
+
+.place-column {
+  width: 120px;
+}
+
+.checkpoint-column {
+  width: 150px;
+}
+
+.checkpoint-distance-row {
+  height: 10px;
+}
+
+.athlete-name-header {
+  width: 850px;
+}
+
+.athlete-name-column {
+  width: 850px;
+}
+
+.athlete-data-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.time-detail-column {
+  width: 330px;
+}
+
+.diff-time {
+  color: #1976d2;
+}
+
+.diff-time-row {
+  height: 10px;
+}
+
+.control-time {
+  color: red;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.zero-line-row {
+  height: 0;
+}
+
+.one-line-row {
+  height: 25px;
+}
+
+.two-line-row {
+  height: 50px;
+}
+
+.three-line-row {
+  height: 75px;
+}
+
+.center {
+  text-align: center;
+}
+
+.athlete-actions {
+  display: flex;
+  justify-items: stretch;
+
+}
+
+.action-button {
+  background-color: transparent;
+  :hover {
+    color: #1976d2;
+  }
+  border-width: 0;
+
+}
+
+.action-button-container {
+  position: relative;
+}
+
+.control-action-button {
+  :hover {
+    color: #1976d2;
+  }
+  border-width: 0;
+  position: absolute;
+  /* box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); */
+  background-color: transparent;
+  top: 0;
+  right: 0;
+}

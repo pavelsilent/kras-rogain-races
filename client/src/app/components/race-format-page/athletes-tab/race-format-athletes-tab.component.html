@@ -1,0 +1,55 @@
+<div class="mat-elevation-z8 table">
+  <div class="tool-panel" style="width: 100%;">
+    <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 16px; min-width: 200px">
+      <button mat-flat-button color="primary" (click)="onAdd()">Добавить атлета</button>
+    </div>
+    <mat-form-field appearance="outline" style="width: 100%;">
+      <mat-label>Поиск</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Введите название или город">
+    </mat-form-field>
+  </div>
+  <table mat-table [dataSource]="dataSource" matSort class="full-width-table">
+
+    <ng-container matColumnDef="bib">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Стартовый номер</th>
+      <td mat-cell *matCellDef="let item"> {{ item.bibNumber }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="fio">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>ФИО</th>
+      <td mat-cell *matCellDef="let item">
+        <a [routerLink]="['/athletes', item.athlete.id]">{{ item.athlete.getFIO() }}</a>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="birthDate">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Дата рождения</th>
+      <td mat-cell *matCellDef="let item"> {{ item.athlete.birthDate | toRusDate }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="sex">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Пол</th>
+      <td mat-cell *matCellDef="let item"> {{ item.athlete.sex | toEnumName }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="city">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Город</th>
+      <td mat-cell *matCellDef="let item"> {{ item.athlete.city }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="club">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Клуб</th>
+      <td mat-cell *matCellDef="let item"> {{ item.athlete.club }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="state">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Состояние</th>
+      <td mat-cell *matCellDef="let item"> {{ item.state | toEnumName }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <mat-paginator [pageSizeOptions]="[10, 100]" showFirstLastButtons></mat-paginator>
+</div>

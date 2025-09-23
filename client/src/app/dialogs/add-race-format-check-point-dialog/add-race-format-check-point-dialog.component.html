@@ -1,0 +1,71 @@
+<h2 mat-dialog-title>Добавить контрольную точку</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Порядковый номер</mat-label>
+      <input type="number" matInput formControlName="orderNumber"/>
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Название</mat-label>
+      <input matInput formControlName="name"/>
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Описание</mat-label>
+      <input matInput formControlName="description"/>
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Расстояние от старта (км)</mat-label>
+      <input type="number" matInput formControlName="distance" step="0.01"/>
+    </mat-form-field>
+
+    <div class="date-time">
+      <mat-form-field appearance="fill" class="date-wrapper">
+        <mat-label>Контрольное время</mat-label>
+        <div class="date">
+          <input matInput [matDatepicker]="startPicker" formControlName="checkDate"/>
+          <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+          <mat-datepicker #startPicker></mat-datepicker>
+        </div>
+      </mat-form-field>
+      <mat-form-field class="time-wrapper">
+        <mat-label>(гонка)</mat-label>
+        <div class="time">
+          <input matInput type="time" formControlName="checkTime" step="1"/>
+        </div>
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="date-wrapper">
+        <mat-label>Контрольное время</mat-label>
+        <div class="date">
+          <input matInput [matDatepicker]="startPicker" formControlName="checkDate2" readonly/>
+          <mat-datepicker-toggle matSuffix [for]="startPicker" disabled></mat-datepicker-toggle>
+          <mat-datepicker #startPicker></mat-datepicker>
+        </div>
+      </mat-form-field>
+      <mat-form-field class="time-wrapper">
+        <mat-label>(косм.)</mat-label>
+        <div class="time">
+          <input matInput formControlName="checkTime2" step="1" readonly/>
+        </div>
+      </mat-form-field>
+    </div>
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Время лидера</mat-label>
+      <input matInput [matDatepicker]="finishPicker" formControlName="leaderDate"/>
+      <mat-datepicker-toggle matIconSuffix [for]="finishPicker"></mat-datepicker-toggle>
+      <mat-datepicker #finishPicker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Время</mat-label>
+      <input matInput type="time" formControlName="leaderTime" step="1"/>
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Отмена</button>
+  <button mat-raised-button color="primary" (click)="submit()" [disabled]="form.invalid">
+    Сохранить
+  </button>
+</mat-dialog-actions>

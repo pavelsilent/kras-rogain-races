@@ -1,0 +1,9 @@
+<div class="wrapper">
+  <app-athlete-list [isSelectMode]="true" [selectedIds]="data.selectedAthleteIds" (onSelectRow)="onSelect($event)"></app-athlete-list>
+</div>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Отмена</button>
+  <button mat-raised-button color="primary" (click)="submit()" [disabled]="selectedRow === undefined">
+    Выбрать
+  </button>
+</mat-dialog-actions>

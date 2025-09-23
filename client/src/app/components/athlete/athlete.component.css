@@ -1,0 +1,19 @@
+.field {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 8px;
+}
+
+label {
+  width: 150px;
+  font-weight: 500;
+}
+
+input, mat-select, span {
+  flex: 1;
+}
+
+button {
+  margin-left: 8px;
+}

@@ -1,0 +1,43 @@
+<h2>Просмотр атлета</h2>
+<div class="field" *ngFor="let field of AthleteField.store.values()">
+  <label>{{ field.name }}:</label>
+  <ng-container [ngSwitch]="editField === field">
+    <!-- Режим редактирования -->
+    <ng-container *ngSwitchCase="true">
+      <mat-form-field appearance="fill">
+        <ng-container [ngSwitch]="field">
+          <input *ngSwitchCase="AthleteField.LAST_NAME" matInput [formControl]="lastNameControl">
+          <input *ngSwitchCase="AthleteField.FIRST_NAME" matInput [formControl]="firstNameControl">
+          <input *ngSwitchCase="AthleteField.MIDDLE_NAME" matInput [formControl]="middleNameControl">
+          <input *ngSwitchCase="AthleteField.CITY" matInput [formControl]="cityControl">
+          <input *ngSwitchCase="AthleteField.CLUB" matInput [formControl]="clubControl">
+          <input *ngSwitchCase="AthleteField.BIRTH_DATE"
+                 matInput
+                 [matDatepicker]="picker"
+                 [formControl]="birthDateControl">
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-select *ngSwitchCase="AthleteField.SEX" [formControl]="sexControl">
+            <mat-option *ngFor="let s of sexes" [value]="s.code">{{ s.name }}</mat-option>
+          </mat-select>
+        </ng-container>
+      </mat-form-field>
+
+      <button mat-button color="primary" (click)="saveEdit(field)">Сохранить</button>
+      <button mat-button (click)="cancelEdit()">Отмена</button>
+    </ng-container>
+
+    <!-- Режим просмотра -->
+    <ng-container *ngSwitchDefault>
+      <ng-container [ngSwitch]="field">
+        <div *ngIf="getField(athlete$ | async, field) as value" (click)="startEdit(field)">
+          <span *ngSwitchCase="AthleteField.SEX">{{ value  | toEnumName }}</span>
+          <span *ngSwitchCase="AthleteField.BIRTH_DATE">{{ value  | toRusDate }}</span>
+          <span *ngSwitchDefault>{{ value }}</span>
+        </div>
+        <button mat-icon-button color="accent" (click)="startEdit(field)">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</div>

@@ -1,0 +1,253 @@
+<div class="protocol-table-wrapper">
+  <ng-container *ngIf="format$ | async as format">
+    <h2>{{ format?.name }}</h2>
+    <p><strong>Тип участника:</strong> {{ format.type?.name }}</p>
+  </ng-container>
+
+  <table mat-table [dataSource]="membersDataSource" matSort class="protocol-table" multiTemplateDataRows="true">
+
+    <!-- Первая строка заголовка-->
+
+    <!-- Параметры -->
+    <ng-container matColumnDef="paramsHeader">
+      <th *matHeaderCellDef mat-header-cell class="params-header center bold" colspan="2" rowspan="2">Параметры</th>
+    </ng-container>
+
+    <!-- Временные параметры, отсечки между КТ-->
+    <ng-container matColumnDef="timeDetailHeader">
+      <th *matHeaderCellDef mat-header-cell class="time-detail-column center bold" rowspan="2">
+        Временные параметры, отсечки между КТ
+      </th>
+    </ng-container>
+
+    <!-- Название контрольных точек (КТ) -->
+    <ng-container matColumnDef="checkPointsHeader">
+      <th *matHeaderCellDef mat-header-cell class="center bold" [attr.colspan]="checkPoints?.length">
+        Название контрольных точек (КТ)
+      </th>
+    </ng-container>
+
+    <!-- Место в протоколе -->
+    <ng-container matColumnDef="placesHeader">
+      <th *matHeaderCellDef mat-header-cell class="center bold" colspan="2" rowspan="2">
+        Место в протоколе абсолют / в группе
+      </th>
+    </ng-container>
+
+    <!-- Вторая строка заголовка-->
+
+    <!-- Контрольные пункты -->
+    <ng-container *ngFor="let cp of checkPoints" [matColumnDef]="'checkPointHeader' + cp.id">
+      <th *matHeaderCellDef mat-header-cell class="checkpoint-column center">
+        <span class="bold">{{ cp.name }}</span><br>{{ '(' + cp.description + ')' }}
+      </th>
+    </ng-container>
+
+    <!-- Третья строка заголовка-->
+    <!-- Расстояние -->
+    <ng-container matColumnDef="distanceHeader">
+      <th *matHeaderCellDef mat-header-cell class="bold" colspan="2">Расстояние</th>
+    </ng-container>
+
+    <ng-container matColumnDef="emptyHeader">
+      <th *matHeaderCellDef mat-header-cell></th>
+    </ng-container>
+
+    <ng-container *ngFor="let cp of checkPoints" [matColumnDef]="'checkPointDistance' + cp.id">
+      <th *matHeaderCellDef mat-header-cell class="center bold">{{ cp.totalDistance + ' км' }}</th>
+    </ng-container>
+
+    <ng-container matColumnDef="emptyHeaderRowSpan4">
+      <th *matHeaderCellDef mat-header-cell style="background-color: #faf9fc" rowspan="4"></th>
+    </ng-container>
+
+    <!-- Четвертая строка заголовка-->
+    <ng-container matColumnDef="checkTimeHeader">
+      <th *matHeaderCellDef mat-header-cell class="bold" colspan="2">
+        <span>Контрольное время</span>
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="checkTimeDetailHeader">
+      <th *matHeaderCellDef mat-header-cell class="time-detail-column action-button-container">
+        <span class="underline">Время гонки {{ '0:00:00' }}</span>
+        <button mat-icon-button color="primary" matTooltip="Редактировать" class="control-action-button">
+          <!--                (click)="editRow(row)">-->
+          <mat-icon>edit</mat-icon>
+        </button>
+        <br>
+        <span>Косм.время (старт в {{ '03:00' }})</span>
+      </th>
+    </ng-container>
+
+    <ng-container *ngFor="let cp of checkPoints" [matColumnDef]="'checkPointTime' + cp.id">
+      <th *matHeaderCellDef mat-header-cell class="center">
+        <span class="underline">{{ getControlCheckPointRaceTime(cp.id) | toRusTime }}</span>
+        <br>
+        <span>{{ getControlCheckPointTime(cp.id) | toCosmicTime }}</span>
+      </th>
+    </ng-container>
+
+    <!-- Пятая строка заголовка-->
+    <ng-container matColumnDef="leaderTimeHeader">
+      <th *matHeaderCellDef mat-header-cell class="bold" colspan="2" rowspan="2">Прогнозируемое время лидера
+        ({{ '12:30:00' }})
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="leaderTimeDetailHeader">
+      <th *matHeaderCellDef mat-header-cell class="time-detail-column">
+        <span class="underline">Чистое время лидера на КТ</span>
+        <br>
+        <span>Космическое время</span>
+      </th>
+    </ng-container>
+
+    <ng-container *ngFor="let cp of checkPoints" [matColumnDef]="'leaderCheckPointTime' + cp.id">
+      <th *matHeaderCellDef mat-header-cell class="center">
+        <span class="underline">{{ getLeaderCheckPointRaceTime(cp.id) | toRusTime }}</span>
+        <br>
+        <span>{{ getLeaderCheckPointTime(cp.id) | toCosmicTime }}</span>
+      </th>
+    </ng-container>
+
+    <!-- Шестая строка заголовка-->
+    <ng-container matColumnDef="leaderDiffTimeHeader">
+      <th *matHeaderCellDef mat-header-cell class="diff-time">Время лидера между КТ</th>
+    </ng-container>
+
+    <ng-container *ngFor="let cp of checkPoints" [matColumnDef]="'leaderCheckPointDiffTime' + cp.id">
+      <th *matHeaderCellDef mat-header-cell class="center">
+        <span class="diff-time">{{ getLeaderCheckPointDiffTime(cp.id) | toRusTime }}</span>
+      </th>
+    </ng-container>
+
+    <!-- Седьмая строка заголовка-->
+    <ng-container matColumnDef="bibHeader">
+      <th *matHeaderCellDef mat-header-cell class="center bold">№</th>
+    </ng-container>
+
+    <ng-container matColumnDef="nameHeader">
+      <th *matHeaderCellDef mat-header-cell class="athlete-name-column center bold">Ф.И.О. / клуб</th>
+    </ng-container>
+
+    <ng-container matColumnDef="athletesTimeHeader">
+      <th *matHeaderCellDef
+          mat-header-cell
+          class="athlete-name-column center bold"
+          [attr.colspan]="checkPointsCount + 1">
+        Время участников
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="absolutePlaceHeader">
+      <th *matHeaderCellDef mat-header-cell class="place-column center bold">Абсолют</th>
+    </ng-container>
+
+    <ng-container matColumnDef="groupPlaceHeader">
+      <th *matHeaderCellDef mat-header-cell class="place-column center bold">В группе</th>
+    </ng-container>
+
+    <!-- Восьмая строка заголовка-->
+
+    <!-- Номер участника -->
+    <ng-container matColumnDef="bib">
+      <th *matHeaderCellDef mat-header-cell></th>
+      <td *matCellDef="let row" class="center" mat-cell rowspan="2">
+        <ng-container>{{ row.bibNumber }}</ng-container>
+      </td>
+    </ng-container>
+
+    <!-- Name -->
+    <ng-container matColumnDef="name">
+      <th *matHeaderCellDef mat-header-cell></th>
+      <td *matCellDef="let row" mat-cell rowspan="2" class="athlete-name-column">
+        <ng-container>
+          <div class="athlete-data-container">
+            <div class="athlete-data">
+              <span>{{ row.athlete.getFIO() }}</span>
+              <br>
+              <span style="font-style: italic; font-size: 11px">{{ row.athlete.club }}</span>
+            </div>
+            <div class="athlete-actions">
+              <button mat-icon-button color="primary" matTooltip="Добавить отсечку" class="action-button"
+                      (click)="onAddCheckPoint(row)">
+                <mat-icon>add</mat-icon>
+              </button>
+              <button mat-icon-button color="primary" matTooltip="Редактировать" class="action-button">
+                <!--                (click)="editRow(row)">-->
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" matTooltip="Удалить" class="action-button">
+                <!--                (click)="deleteRow(row)">-->
+                <mat-icon>delete</mat-icon>
+              </button>
+              <button mat-icon-button color="accent" matTooltip="Подробнее" class="action-button">
+                <!--                (click)="viewRow(row)">-->
+                <mat-icon>visibility</mat-icon>
+              </button>
+            </div>
+          </div>
+
+        </ng-container>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="timeDetail">
+      <th *matHeaderCellDef mat-header-cell></th>
+      <td *matCellDef="let row" mat-cell class="time-detail-column">
+        <ng-container>
+          <div class="left member-time">Чистое время участника</div>
+        </ng-container>
+      </td>
+    </ng-container>
+
+    <!-- Dynamic checkpoints -->
+    <ng-container *ngFor="let cp of checkPoints" [matColumnDef]="'athleteCheckPoint' + cp.id">
+      <th *matHeaderCellDef mat-header-cell></th>
+      <td *matCellDef="let row" mat-cell class="checkpoint-column center">
+        <span [matTooltip]=" getCheckPointTime(row, cp.id) | toRusTime ">{{
+            getCheckPointRaceTime(row, cp.id) | toRusTime
+          }} </span>
+      </td>
+    </ng-container>
+
+    <!-- Absolute -->
+    <ng-container matColumnDef="absolutePlace">
+      <th *matHeaderCellDef mat-header-cell></th>
+      <td *matCellDef="let row" mat-cell class="place-column center" rowspan="2">{{ row.absolutePlace }}</td>
+    </ng-container>
+
+    <!-- Group -->
+    <ng-container matColumnDef="groupPlace">
+      <th *matHeaderCellDef mat-header-cell></th>
+      <td *matCellDef="let row" mat-cell class="place-column center" rowspan="2">{{ row.groupPlace }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="time-diff-detail">
+      <td *matCellDef="let row" mat-cell class="time-detail-column">
+        <div class="left diff-time">Время между КТ</div>
+      </td>
+    </ng-container>
+
+    <ng-container *ngFor="let cp of checkPoints" [matColumnDef]="'athleteCheckPointDiffTime' + cp.id">
+      <td mat-cell *matCellDef="let row" class="checkpoint-column center">
+        <span class="diff-time">{{ getCheckPointDiffTime(row, cp.id) | toRusTime }}</span>
+      </td>
+    </ng-container>
+
+    <!-- ===== Header rows ===== -->
+    <tr mat-header-row class="one-line-row center" *matHeaderRowDef="topHeaderDef"></tr>
+    <tr mat-header-row *matHeaderRowDef="checkPointsHeaderDef"></tr>
+    <tr mat-header-row class="one-line-row header-row" *matHeaderRowDef="raceDistanceHeaderDef"></tr>
+    <tr mat-header-row class="two-line-row header-row control-row" *matHeaderRowDef="raceCheckTimeHeaderDef">
+    <tr mat-header-row class="two-line-row leader-row" *matHeaderRowDef="raceLeaderHeaderDef">
+    <tr mat-header-row class="one-line-row leader-row" *matHeaderRowDef="raceLeaderDiffTimeHeaderDef">
+    <tr mat-header-row class="one-line-row header-row" *matHeaderRowDef="dataTableHeaderDef">
+    <tr mat-header-row class="zero-line-row" *matHeaderRowDef="dataTableBodyDef"></tr>
+    <tr mat-header-row class="one-line-row" *matRowDef="let row; columns: dataTableBodyDef"></tr>
+    <tr class="diff-time-row one-line-row" mat-row *matRowDef="let row; columns: dataTableDiffDef">
+  </table>
+  <mat-paginator [pageSizeOptions]="[10, 100]" showFirstLastButtons></mat-paginator>
+</div>
+

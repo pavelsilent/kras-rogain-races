@@ -1,0 +1,9 @@
+<ng-container *ngIf="raceFormat$ | async as raceFormat">
+  <p><strong>Название:</strong> {{ raceFormat?.name }}</p>
+  <p><strong>Описание:</strong> {{ raceFormat?.description }}</p>
+  <p><strong>Тип участия:</strong> {{ raceFormat?.type | toEnumName }}</p>
+  <p><strong>Состояние:</strong> {{ raceFormat?.state | toEnumName }}</p>
+  <p><strong>Дата начала:</strong> {{ raceFormat?.startDateTime | toRusDateTime }}</p>
+  <p><strong>Дата завершения:</strong> {{ raceFormat?.finishDateTime | toRusDateTime }}</p>
+  <p><strong>Группы атлетов:</strong> {{ athleteGroups$ | async | joinList }}</p>
+</ng-container>

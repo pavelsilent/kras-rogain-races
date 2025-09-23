@@ -1,0 +1,16 @@
+import { Pipe, PipeTransform } from '@angular/core';
+import { LocalDateTime } from '@js-joda/core';
+import { parseLocalDateTimeToRussianDateTime } from './utils';
+
+@Pipe({ standalone: true, name: 'toRusDateTime' })
+export class RussianDateTimePipe
+  implements PipeTransform {
+
+  transform(value: LocalDateTime | undefined): string {
+    if (value === undefined) {
+      return "";
+    }
+    return parseLocalDateTimeToRussianDateTime(value);
+  }
+
+}

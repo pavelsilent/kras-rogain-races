@@ -1,0 +1,63 @@
+<h2 mat-dialog-title>Добавить формат</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Название</mat-label>
+      <input matInput formControlName="name"/>
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Описание</mat-label>
+      <input matInput formControlName="description"/>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Тип участия</mat-label>
+      <mat-select formControlName="type">
+        <mat-option *ngFor="let type of types" [value]="type.code">{{ type.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Дата начала</mat-label>
+      <input matInput [matDatepicker]="startPicker" formControlName="startDate"/>
+      <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+      <mat-datepicker #startPicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Время начала</mat-label>
+      <input matInput type="time" formControlName="startTime" step="1"/>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Дата завершения</mat-label>
+      <input matInput [matDatepicker]="finishPicker" formControlName="finishDate"/>
+      <mat-datepicker-toggle matIconSuffix [for]="finishPicker"></mat-datepicker-toggle>
+      <mat-datepicker #finishPicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Время завершения</mat-label>
+      <input matInput type="time" formControlName="finishTime" step="1"/>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Группы атлетов</mat-label>
+      <mat-select formControlName="athleteGroups" multiple (selectionChange)="onSelectAthleteGroups($event.value)">
+        <mat-option *ngFor="let group of athleteGroups"
+                    [value]="group.id">{{ group.name }}
+        </mat-option>
+        <mat-option value="-1">
+          <em>+ Добавить группу…</em>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Отмена</button>
+  <button mat-raised-button color="primary" (click)="submit()" [disabled]="form.invalid">
+    Сохранить
+  </button>
+</mat-dialog-actions>

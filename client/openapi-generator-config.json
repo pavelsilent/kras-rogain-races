@@ -1,0 +1,16 @@
+{
+  "additionalProperties": {
+    "supportsES6": true,
+    "apiModulePrefix": "Api",
+    "apiNameSuffix": "Service",
+    "ngVersion": "20",
+    "withoutRuntimeChecks": true,
+    "stringEnums": true,
+    "serviceSuffix": "Service",
+    "providedInRoot": true,
+    "useSingleRequestParameter": false,
+    "enumPropertyNaming": "original",
+    "httpResponseType": "json",
+    "withSeparateModelsAndApi": true
+  }
+}
