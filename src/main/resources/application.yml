@@ -1,0 +1,29 @@
+server:
+  port: 7777
+
+spring:
+  application:
+    name: krsk-rogain-races
+  datasource:
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/rogain}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:12345678}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      ddl-auto: none
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: false
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.xml
+    drop-first: false
+    default-schema: public
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

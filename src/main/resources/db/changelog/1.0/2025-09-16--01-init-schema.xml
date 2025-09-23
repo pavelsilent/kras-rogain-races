@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  logicalFilePath="path-independent"
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+  <changeSet author="p.brychev" id="2025-09-16--01-init-schema.001">
+    <createTable schemaName="public" tableName="city">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" primaryKeyName="city_pkey"/>
+      </column>
+      <column name="name" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createTable schemaName="public" tableName="race_type">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" primaryKeyName="race_type_pkey"/>
+      </column>
+      <column name="name" type="VARCHAR(500)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="description" type="VARCHAR(1000)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createTable schemaName="public" tableName="race">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" primaryKeyName="race_pkey"/>
+      </column>
+      <column name="name" type="VARCHAR(500)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="race_type_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="date" type="DATE">
+        <constraints nullable="false"/>
+      </column>
+      <column name="race_city_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <addForeignKeyConstraint baseTableSchemaName="public" baseTableName="race" baseColumnNames="race_type_id"
+      referencedTableSchemaName="public" referencedTableName="race_type" referencedColumnNames="id"
+      constraintName="fk_race_race_type"
+      deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION"
+    />
+
+    <addForeignKeyConstraint baseTableSchemaName="public" baseTableName="race" baseColumnNames="race_city_id"
+      referencedTableSchemaName="public" referencedTableName="city" referencedColumnNames="id"
+      constraintName="fk_race_race_city"
+      deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION"
+    />
+
+    <createTable schemaName="public" tableName="race_format">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" primaryKeyName="race_format_pkey"/>
+      </column>
+      <column name="race_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="name" type="VARCHAR(500)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="type" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="start_time" type="TIMESTAMP WITHOUT TIME ZONE">
+        <constraints nullable="false"/>
+      </column>
+      <column name="finish_time" type="TIMESTAMP WITHOUT TIME ZONE">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <addForeignKeyConstraint baseTableSchemaName="public" baseTableName="race_format" baseColumnNames="race_id"
+      referencedTableSchemaName="public" referencedTableName="race" referencedColumnNames="id"
+      constraintName="fk_race_format_race"
+      deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE"
+    />
+
+    <createTable schemaName="public" tableName="race_format_check_point">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" primaryKeyName="race_format_check_point_pkey"/>
+      </column>
+      <column name="race_format_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="name" type="VARCHAR(500)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="description" type="VARCHAR(1000)"/>
+      <column name="order_number" type="INT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="total_distance" type="numeric(19, 2)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="check_time" type="TIMESTAMP WITHOUT TIME ZONE"/>
+      <column name="has_check_time" type="BOOLEAN">
+        <constraints nullable="false"/>
+      </column>
+      <column name="is_start" type="BOOLEAN">
+        <constraints nullable="false"/>
+      </column>
+      <column name="is_finish" type="BOOLEAN">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <addForeignKeyConstraint baseTableSchemaName="public" baseTableName="race_format_check_point"
+      baseColumnNames="race_format_id"
+      referencedTableSchemaName="public" referencedTableName="race_format" referencedColumnNames="id"
+      constraintName="fk_race_format_race_format_check_point"
+      deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE"
+    />
+
+    <createTable schemaName="public" tableName="club">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" primaryKeyName="club_pkey"/>
+      </column>
+      <column name="name" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createTable schemaName="public" tableName="athlete">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" primaryKeyName="athlete_pkey"/>
+      </column>
+      <column name="first_name" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="last_name" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="middle_name" type="VARCHAR(255)"/>
+      <column name="sex" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="birth_date" type="DATE"/>
+      <column name="city_id" type="BIGINT"/>
+      <column name="club_id" type="BIGINT"/>
+    </createTable>
+
+    <addForeignKeyConstraint baseTableSchemaName="public" baseTableName="athlete" baseColumnNames="city_id"
+      referencedTableSchemaName="public" referencedTableName="city" referencedColumnNames="id"
+      constraintName="fk_athlete_city"
+      deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION"
+    />
+
+    <addForeignKeyConstraint baseTableSchemaName="public" baseTableName="athlete" baseColumnNames="club_id"
+      referencedTableSchemaName="public" referencedTableName="club" referencedColumnNames="id"
+      constraintName="fk_club_city"
+      deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="NO ACTION"
+    />
+
+    <createTable schemaName="public" tableName="athlete_group">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" primaryKeyName="athlete_group_pkey"/>
+      </column>
+      <column name="name" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="description" type="VARCHAR(1000)"/>
+    </createTable>
+
+    <createTable schemaName="public" tableName="race_format_athlete_group">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" primaryKeyName="race_format_athlete_group_pkey"/>
+      </column>
+      <column name="race_format_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="athlete_group_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <addForeignKeyConstraint baseTableSchemaName="public" baseTableName="race_format_athlete_group"
+      baseColumnNames="race_format_id"
+      referencedTableSchemaName="public" referencedTableName="race_format" referencedColumnNames="id"
+      constraintName="fk_race_format_athlete_group_race_format"
+      deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+    />
+
+    <addForeignKeyConstraint baseTableSchemaName="public" baseTableName="race_format_athlete_group"
+      baseColumnNames="athlete_group_id"
+      referencedTableSchemaName="public" referencedTableName="athlete_group" referencedColumnNames="id"
+      constraintName="fk_race_format_athlete_group_athlete_group"
+      deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+    />
+
+    <createTable schemaName="public" tableName="race_athlete">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" primaryKeyName="race_athlete_pkey"/>
+      </column>
+      <column name="race_format_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="athlete_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="type" type="INTEGER">
+        <constraints nullable="false"/>
+      </column>
+      <column name="bib_number" type="INT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="state" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createTable schemaName="public" tableName="race_athlete_group">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" primaryKeyName="race_athlete_group_pkey"/>
+      </column>
+      <column name="race_athlete_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="athlete_group_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="place" type="INT"/>
+    </createTable>
+
+    <createTable schemaName="public" tableName="race_athlete_check_point">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" primaryKeyName="race_athlete_check_point_pkey"/>
+      </column>
+      <column name="race_athlete_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="race_format_check_point" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="time" type="TIMESTAMP WITHOUT TIME ZONE"/>
+      <column name="race_time" type="TIMESTAMP WITHOUT TIME ZONE"/>
+      <column name="previous_check_point_diff_time" type="TIMESTAMP WITHOUT TIME ZONE"/>
+      <column name="passed" type="BOOLEAN" defaultValue="false">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+  </changeSet>
+
+  <changeSet author="p.brychev" id="2025-09-16--01-init-schema.002">
+    <addColumn schemaName="public" tableName="race_athlete">
+      <column name="last_check_point_order_number" type="INT"/>
+    </addColumn>
+    <addColumn schemaName="public" tableName="race_athlete">
+      <column name="last_check_point_time" type="TIMESTAMP WITHOUT TIME ZONE"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="p.brychev" id="2025-09-16--01-init-schema.005">
+    <addColumn schemaName="public" tableName="city">
+      <column name="type" type="VARCHAR(255)" defaultValue="CITY">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+
+    <addColumn schemaName="public" tableName="race">
+      <column name="description" type="VARCHAR(1000)"/>
+      <column name="state" type="VARCHAR(255)" defaultValue="DRAFT">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+
+    <addColumn schemaName="public" tableName="race_format">
+      <column name="state" type="VARCHAR(255)" defaultValue="DRAFT">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="p.brychev" id="2025-09-16--01-init-schema.006">
+    <addColumn schemaName="public" tableName="race_format">
+      <column name="description" type="VARCHAR(1000)"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="p.brychev" id="2025-09-16--01-init-schema.007">
+    <addColumn schemaName="public" tableName="race_format_check_point">
+      <column name="leader_time" type="TIMESTAMP WITHOUT TIME ZONE"/>
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>
