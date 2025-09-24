@@ -32,10 +32,14 @@ export interface RaceAthleteCheckPointDTO {
     /**
      * Разница по времени с предыдущей контрольной точкой
      */
-    previousCheckPointDiffTime?: string;
+    prevCheckPointDiffDuration?: string;
     /**
      * Точка пройдена?
      */
     passed: boolean;
+    /**
+     * Контрольное время истекло
+     */
+    checkTimeExpired?: boolean;
 }
 

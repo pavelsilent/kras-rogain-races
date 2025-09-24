@@ -4,7 +4,6 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,10 +33,10 @@ public class RaceFormatCheckPointSetupDTO {
     @Schema(description = "Общая дистанция от старта")
     private BigDecimal totalDistance;
 
-    @Schema(description = "Контрольное время")
-    private LocalDateTime checkTime;
+    @Schema(description = "Контрольное время от старта")
+    private String checkDuration;
 
-    @Schema(description = "Время предполагаемого лидера")
-    private LocalDateTime leaderTime;
+    @Schema(description = "Длительность от старта предполагаемого лидера")
+    private String leaderDuration;
 
 }

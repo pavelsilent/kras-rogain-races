@@ -15,6 +15,9 @@ public interface RaceAthleteCheckPointRepository extends PagingAndSortingReposit
 
     List<RaceAthleteCheckPoint> findAllByRaceAthlete(RaceAthlete raceAthlete);
 
+    List<RaceAthleteCheckPoint> findAllByRaceAthleteOrderByRaceFormatCheckPointOrderNumberAsc(RaceAthlete raceAthlete);
+
+
     Optional<RaceAthleteCheckPoint> findFirstByRaceAthleteAndRaceFormatCheckPoint(
         RaceAthlete raceAthlete,
         RaceFormatCheckPoint raceFormatCheckPoint
@@ -23,6 +26,11 @@ public interface RaceAthleteCheckPointRepository extends PagingAndSortingReposit
     Optional<RaceAthleteCheckPoint> findFirstByRaceAthleteAndRaceFormatCheckPointIsStart(
         RaceAthlete raceAthlete,
         boolean isStart
+    );
+
+    Optional<RaceAthleteCheckPoint> findFirstByRaceAthleteAndRaceFormatCheckPointOrderNumberLessThanAndTimeNotNullOrderByRaceFormatCheckPointOrderNumberDesc(
+        RaceAthlete raceAthlete,
+        Integer orderNumber
     );
 
 }

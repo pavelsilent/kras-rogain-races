@@ -53,14 +53,6 @@ export interface RaceFormatResultDTO {
      */
     athletes?: Array<RaceAthleteDTO>;
     /**
-     * Контрольное время
-     */
-    checkTime?: RaceAthleteDTO;
-    /**
-     * Время лидера
-     */
-    leaderTime?: RaceAthleteDTO;
-    /**
      * Статус
      */
     state?: string;

@@ -1,13 +1,14 @@
 import { RaceAthleteGroupDTO } from '../api/index';
 import { exists } from '../utils/utils';
+import { AthleteGroupModel } from './athlete-group.model';
 
 export class RaceAthleteGroupModel {
-  id: number;
+  group: AthleteGroupModel;
   place: number;
 
   constructor(dto?: RaceAthleteGroupDTO) {
     if (exists(dto)) {
-      this.id = dto.id;
+      this.group = AthleteGroupModel.fromDTO(dto.group);
       this.place = dto.place;
     }
   }

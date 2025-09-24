@@ -18,7 +18,7 @@ import lombok.Setter;
 public class RaceAthleteGroupDTO {
 
     @Schema(description = "Идентификатор группы", requiredMode = REQUIRED)
-    private Long id;
+    private AthleteGroupDTO group;
 
     @Schema(description = "Место", requiredMode = REQUIRED)
     private Integer place;

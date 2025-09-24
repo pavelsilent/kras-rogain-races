@@ -46,11 +46,11 @@ public class RaceFormatResultDTO {
     @Schema(description = "Участники")
     private List<RaceAthleteDTO> athletes;
 
-    @Schema(description = "Контрольное время")
-    private RaceAthleteDTO checkTime;
+//    @Schema(description = "Контрольное время")
+//    private RaceAthleteDTO checkTime;
 
-    @Schema(description = "Время лидера")
-    private RaceAthleteDTO leaderTime;
+//    @Schema(description = "Время лидера")
+//    private RaceAthleteDTO leaderTime;
 
     @Schema(description = "Статус")
     private String state;

@@ -1,0 +1,8 @@
+.duration-field {
+  width: 200px;
+
+  input {
+    font-family: monospace;
+    text-align: center;
+  }
+}

@@ -34,12 +34,12 @@ export interface RaceFormatCheckPointSetupDTO {
      */
     totalDistance?: number;
     /**
-     * Контрольное время
+     * Контрольное время от старта
      */
-    checkTime?: string;
+    checkDuration?: string;
     /**
-     * Время предполагаемого лидера
+     * Длительность от старта предполагаемого лидера
      */
-    leaderTime?: string;
+    leaderDuration?: string;
 }
 

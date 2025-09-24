@@ -2,3 +2,8 @@
 
 html, body { height: 99%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/*.mdc-text-field--outlined .mat-mdc-form-field-infix,*/
+/*.mdc-text-field--no-label .mat-mdc-form-field-infix {*/
+/*  padding: 0;*/
+/*}*/

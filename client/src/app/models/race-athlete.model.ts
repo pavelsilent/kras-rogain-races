@@ -13,7 +13,8 @@ export class RaceAthleteModel {
   state: AthleteState;
   type: AthleteType;
   checkPoints: RaceAthleteCheckPointModel[];
-  places: RaceAthleteGroupModel[];
+  groupPlaces: RaceAthleteGroupModel[];
+  absolutePlace: number;
 
   constructor(dto?: RaceAthleteDTO) {
     if (exists(dto)) {
@@ -24,9 +25,10 @@ export class RaceAthleteModel {
       this.checkPoints = Option.of(dto.checkPoints)
                                .map(data => data.map(dto => RaceAthleteCheckPointModel.fromDTO(dto)))
                                .getOrElse([]);
-      this.places = Option.of(dto.places)
-                          .map(data => data.map(dto => RaceAthleteGroupModel.fromDTO(dto)))
-                          .getOrElse([]);
+      this.absolutePlace = dto.absPlace!;
+      this.groupPlaces = Option.of(dto.places)
+                               .map(data => data.map(dto => RaceAthleteGroupModel.fromDTO(dto)))
+                               .getOrElse([]);
     }
   }
 

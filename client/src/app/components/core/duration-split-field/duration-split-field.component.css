@@ -1,0 +1,25 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+
+.duration-input {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+
+  input {
+    width: 32px;
+    text-align: center;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
+  }
+
+  &.disabled input {
+    color: rgba(0, 0, 0, 0.38);
+  }
+}

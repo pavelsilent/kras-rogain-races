@@ -34,6 +34,10 @@ export interface RaceFormatCheckPointDTO {
      */
     totalDistance?: number;
     /**
+     * Контрольное время от старта
+     */
+    checkDuration?: string;
+    /**
      * Контрольное время
      */
     checkTime?: string;
@@ -42,9 +46,17 @@ export interface RaceFormatCheckPointDTO {
      */
     hasCheckTime: boolean;
     /**
+     * Время предполагаемого лидера от старта
+     */
+    leaderDuration?: string;
+    /**
      * Время предполагаемого лидера
      */
     leaderTime?: string;
+    /**
+     * Время предполагаемого лидера от предыдущей КТ
+     */
+    leaderDiffDuration?: string;
     /**
      * Это старт?
      */

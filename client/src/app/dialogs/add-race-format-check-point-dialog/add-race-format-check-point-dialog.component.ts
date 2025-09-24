@@ -24,10 +24,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInput, MatLabel } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { LocalDateTime } from '@js-joda/core';
+import { DurationFieldComponent } from '../../components/core/duration-field/duration-field.component';
+import { DurationSplitFieldComponent } from '../../components/core/duration-split-field/duration-split-field.component';
 import { RaceService } from '../../components/race/race.service';
 import { RaceCheckPointSetupModel } from '../../models/race-check-point-setup.model';
 import { RU_DATE_FORMATS } from '../../utils/mat-date-formats';
-import { localDateTimeToMoment, parseLocalDateTimeFromMoment } from '../../utils/utils';
 
 export interface AddRaceFormatCheckPointDialogConfig {
   raceId: number;
@@ -59,6 +60,8 @@ export interface AddRaceFormatCheckPointDialogConfig {
                MatSuffix,
                MatIconButton,
                MatButtonToggle,
+               DurationFieldComponent,
+               DurationSplitFieldComponent,
              ],
              providers: [
                { provide: MAT_DATE_LOCALE, useValue: 'ru-RU' },
@@ -93,12 +96,8 @@ export class AddRaceFormatCheckPointDialogComponent {
                                   undefined,
                                   [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)],
                                 ),
-                                checkDate: [localDateTimeToMoment(this.data.startDateTime)],
-                                checkTime: ['09:09:09'],
-                                checkDate2: [localDateTimeToMoment(this.data.startDateTime)],
-                                checkTime2: ['09:09:09'],
-                                leaderDate: [localDateTimeToMoment(this.data.startDateTime)],
-                                leaderTime: [''],
+                                controlDuration: [''],
+                                leaderDuration: [''],
                               });
 
     // Подписка на изменения
@@ -120,10 +119,9 @@ export class AddRaceFormatCheckPointDialogComponent {
       model.name = value.name!;
       model.description = value.description!;
       model.totalDistance = value.distance!;
-      model.checkTime = parseLocalDateTimeFromMoment(value.checkDate!, value.checkTime!);
-      model.leaderTime = parseLocalDateTimeFromMoment(value.leaderDate!, value.leaderTime!);
-
-      console.log(model);
+      model.checkDuration = value.controlDuration!;
+      model.leaderDuration = value.leaderDuration!;
+      console.log(value);
       this.service.addRaceCheckPoint(this.data.raceId, this.data.raceFormatId, model)
           .then(value => this.dialogRef.close(value));
     }
@@ -134,10 +132,10 @@ export class AddRaceFormatCheckPointDialogComponent {
   }
 
   onCheckTimeChange($event: Event) {
-      console.log($event)
+    console.log($event);
   }
 
   onCheckDateChange($event: MatDatepickerInputEvent<any, any>) {
-    console.log($event)
+    console.log($event);
   }
 }

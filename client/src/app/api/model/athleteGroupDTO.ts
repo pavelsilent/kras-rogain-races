@@ -22,6 +22,10 @@ export interface AthleteGroupDTO {
      */
     name: string;
     /**
+     * Пол
+     */
+    sex: string;
+    /**
      * Описание
      */
     description?: string;

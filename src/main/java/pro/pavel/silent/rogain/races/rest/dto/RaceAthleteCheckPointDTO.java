@@ -31,9 +31,12 @@ public class RaceAthleteCheckPointDTO {
     private LocalDateTime raceTime;
 
     @Schema(description = "Разница по времени с предыдущей контрольной точкой")
-    private LocalDateTime previousCheckPointDiffTime;
+    private String prevCheckPointDiffDuration;
 
     @Schema(description = "Точка пройдена?", requiredMode = REQUIRED)
     private Boolean passed;
+
+    @Schema(description = "Контрольное время истекло")
+    private Boolean checkTimeExpired;
 
 }

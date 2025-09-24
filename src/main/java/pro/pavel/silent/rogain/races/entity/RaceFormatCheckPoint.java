@@ -10,9 +10,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * Сущность "Контрольный пункт"
@@ -52,24 +55,34 @@ public class RaceFormatCheckPoint {
     @Schema(description = "Общая дистанция")
     private BigDecimal totalDistance;
 
-    @Column(name = "check_time")
-    @Schema(description = "Контрольное время")
-    private LocalDateTime checkTime;
+//    @Column(name = "check_time")
+//    @Schema(description = "Контрольное время")
+//    private LocalDateTime checkTime;
 
     @Column(name = "has_check_time", nullable = false)
     @Schema(description = "Есть контрольное время?")
     private boolean hasCheckTime;
 
-    @Column(name = "leader_time")
-    @Schema(description = "Время предполагаемого лидера")
-    private LocalDateTime leaderTime;
+//    @Column(name = "leader_time")
+//    @Schema(description = "Время предполагаемого лидера")
+//    private LocalDateTime leaderTime;
+
+    @Column(name = "check_duration")
+    @Schema(description = "Длительность предполагаемого лидера")
+    @JdbcTypeCode(SqlTypes.BIGINT)
+    private Duration checkDuration;
+
+    @Column(name = "leader_duration")
+    @Schema(description = "Длительность предполагаемого лидера")
+    @JdbcTypeCode(SqlTypes.BIGINT)
+    private Duration leaderDuration;
 
     @Column(name = "is_start", nullable = false)
     @Schema(description = "Стартовая точка?")
-    private boolean isStart;
+    private Boolean isStart;
 
     @Column(name = "is_finish", nullable = false)
     @Schema(description = "Финишная точка?")
-    private boolean isFinish;
+    private Boolean isFinish;
 
 }

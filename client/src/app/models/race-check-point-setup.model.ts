@@ -1,4 +1,3 @@
-import { LocalDateTime } from '@js-joda/core';
 import { RaceFormatCheckPointSetupDTO } from '../api/index';
 
 export class RaceCheckPointSetupModel {
@@ -7,8 +6,8 @@ export class RaceCheckPointSetupModel {
   name: string;
   description?: string;
   totalDistance?: number;
-  checkTime?: LocalDateTime;
-  leaderTime?: LocalDateTime;
+  checkDuration?: string;
+  leaderDuration?: string;
 
   toDTO(): RaceFormatCheckPointSetupDTO {
     return {
@@ -17,10 +16,8 @@ export class RaceCheckPointSetupModel {
       description: this.description,
       totalDistance: this.totalDistance,
       orderNumber: this.orderNumber,
-      //@ts-ignore
-      checkTime: this.checkTime,
-      //@ts-ignore
-      leaderTime: this.leaderTime,
+      checkDuration: this.checkDuration,
+      leaderDuration: this.leaderDuration,
     };
   }
 }

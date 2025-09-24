@@ -1,13 +1,6 @@
 <div class="protocol-table-wrapper">
-  <ng-container *ngIf="format$ | async as format">
-    <h2>{{ format?.name }}</h2>
-    <p><strong>Тип участника:</strong> {{ format.type?.name }}</p>
-  </ng-container>
-
   <table mat-table [dataSource]="membersDataSource" matSort class="protocol-table" multiTemplateDataRows="true">
-
     <!-- Первая строка заголовка-->
-
     <!-- Параметры -->
     <ng-container matColumnDef="paramsHeader">
       <th *matHeaderCellDef mat-header-cell class="params-header center bold" colspan="2" rowspan="2">Параметры</th>
@@ -71,27 +64,23 @@
     <ng-container matColumnDef="checkTimeDetailHeader">
       <th *matHeaderCellDef mat-header-cell class="time-detail-column action-button-container">
         <span class="underline">Время гонки {{ '0:00:00' }}</span>
-        <button mat-icon-button color="primary" matTooltip="Редактировать" class="control-action-button">
-          <!--                (click)="editRow(row)">-->
-          <mat-icon>edit</mat-icon>
-        </button>
         <br>
-        <span>Косм.время (старт в {{ '03:00' }})</span>
+        <span>Косм.время <span>{{ (startDateTime$ | async)! | toCosmicTime }}</span></span>
       </th>
     </ng-container>
 
     <ng-container *ngFor="let cp of checkPoints" [matColumnDef]="'checkPointTime' + cp.id">
       <th *matHeaderCellDef mat-header-cell class="center">
-        <span class="underline">{{ getControlCheckPointRaceTime(cp.id) | toRusTime }}</span>
+        <span class="underline">{{ cp.checkDuration }}</span>
         <br>
-        <span>{{ getControlCheckPointTime(cp.id) | toCosmicTime }}</span>
+        <span>{{ cp.checkTime | toCosmicTime }}</span>
       </th>
     </ng-container>
 
     <!-- Пятая строка заголовка-->
     <ng-container matColumnDef="leaderTimeHeader">
       <th *matHeaderCellDef mat-header-cell class="bold" colspan="2" rowspan="2">Прогнозируемое время лидера
-        ({{ '12:30:00' }})
+        ({{ leaderFinishDuration$ | async }})
       </th>
     </ng-container>
 
@@ -105,9 +94,9 @@
 
     <ng-container *ngFor="let cp of checkPoints" [matColumnDef]="'leaderCheckPointTime' + cp.id">
       <th *matHeaderCellDef mat-header-cell class="center">
-        <span class="underline">{{ getLeaderCheckPointRaceTime(cp.id) | toRusTime }}</span>
+        <span class="underline">{{ cp.leaderDuration }}</span>
         <br>
-        <span>{{ getLeaderCheckPointTime(cp.id) | toCosmicTime }}</span>
+        <span>{{ cp.leaderTime | toCosmicTime }}</span>
       </th>
     </ng-container>
 
@@ -118,7 +107,7 @@
 
     <ng-container *ngFor="let cp of checkPoints" [matColumnDef]="'leaderCheckPointDiffTime' + cp.id">
       <th *matHeaderCellDef mat-header-cell class="center">
-        <span class="diff-time">{{ getLeaderCheckPointDiffTime(cp.id) | toRusTime }}</span>
+        <span class="diff-time">{{ cp.leaderDiffDuration }}</span>
       </th>
     </ng-container>
 
@@ -141,7 +130,7 @@
     </ng-container>
 
     <ng-container matColumnDef="absolutePlaceHeader">
-      <th *matHeaderCellDef mat-header-cell class="place-column center bold">Абсолют</th>
+      <th *matHeaderCellDef mat-header-cell class="abs-place-column center bold">Абсолют</th>
     </ng-container>
 
     <ng-container matColumnDef="groupPlaceHeader">
@@ -174,18 +163,6 @@
                       (click)="onAddCheckPoint(row)">
                 <mat-icon>add</mat-icon>
               </button>
-              <button mat-icon-button color="primary" matTooltip="Редактировать" class="action-button">
-                <!--                (click)="editRow(row)">-->
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button mat-icon-button color="warn" matTooltip="Удалить" class="action-button">
-                <!--                (click)="deleteRow(row)">-->
-                <mat-icon>delete</mat-icon>
-              </button>
-              <button mat-icon-button color="accent" matTooltip="Подробнее" class="action-button">
-                <!--                (click)="viewRow(row)">-->
-                <mat-icon>visibility</mat-icon>
-              </button>
             </div>
           </div>
 
@@ -205,7 +182,8 @@
     <!-- Dynamic checkpoints -->
     <ng-container *ngFor="let cp of checkPoints" [matColumnDef]="'athleteCheckPoint' + cp.id">
       <th *matHeaderCellDef mat-header-cell></th>
-      <td *matCellDef="let row" mat-cell class="checkpoint-column center">
+      <td *matCellDef="let row" mat-cell class="checkpoint-column center"
+          [ngClass]="{'check-time-expired': getCheckPointTimeExpired(row, cp.id)}">
         <span [matTooltip]=" getCheckPointTime(row, cp.id) | toRusTime ">{{
             getCheckPointRaceTime(row, cp.id) | toRusTime
           }} </span>
@@ -215,13 +193,17 @@
     <!-- Absolute -->
     <ng-container matColumnDef="absolutePlace">
       <th *matHeaderCellDef mat-header-cell></th>
-      <td *matCellDef="let row" mat-cell class="place-column center" rowspan="2">{{ row.absolutePlace }}</td>
+      <td *matCellDef="let row" mat-cell class="abs-place-column center" rowspan="2">{{ row.absolutePlace }}</td>
     </ng-container>
 
     <!-- Group -->
     <ng-container matColumnDef="groupPlace">
       <th *matHeaderCellDef mat-header-cell></th>
-      <td *matCellDef="let row" mat-cell class="place-column center" rowspan="2">{{ row.groupPlace }}</td>
+      <td *matCellDef="let row" mat-cell class="place-column center" rowspan="2">
+        <span *ngFor="let group of row.groupPlaces" [ngStyle]="{'color': group.group.sex.color}">{{
+            group.group.name + ': ' + group.place
+          }}<br></span>
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="time-diff-detail">
@@ -232,7 +214,7 @@
 
     <ng-container *ngFor="let cp of checkPoints" [matColumnDef]="'athleteCheckPointDiffTime' + cp.id">
       <td mat-cell *matCellDef="let row" class="checkpoint-column center">
-        <span class="diff-time">{{ getCheckPointDiffTime(row, cp.id) | toRusTime }}</span>
+        <span class="diff-time">{{ getCheckPointDiffTime(row, cp.id) }}</span>
       </td>
     </ng-container>
 

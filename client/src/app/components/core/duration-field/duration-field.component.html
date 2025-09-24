@@ -1,0 +1,18 @@
+<div style="display:flex; align-items:center; gap:4px;">
+  <!-- Часы -->
+  <mat-form-field appearance="outline" style="width:60px;">
+    <input matInput type="number" [value]="hours" (input)="onHours($event)" placeholder="ЧЧ" min="0">
+  </mat-form-field>
+  <span>:</span>
+
+  <!-- Минуты -->
+  <mat-form-field appearance="outline"style="width:50px;">
+    <input matInput type="number" [value]="minutes" (input)="onMinutes($event)" placeholder="ММ" min="0" max="59">
+  </mat-form-field>
+  <span>:</span>
+
+  <!-- Секунды -->
+  <mat-form-field appearance="outline"  style="width:50px;">
+    <input matInput type="number" [value]="seconds" (input)="onSeconds($event)" placeholder="СС" min="0" max="59">
+  </mat-form-field>
+</div>

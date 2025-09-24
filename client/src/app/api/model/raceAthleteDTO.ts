@@ -37,6 +37,10 @@ export interface RaceAthleteDTO {
      */
     checkPoints?: Array<RaceAthleteCheckPointDTO>;
     /**
+     * Абсолютное место
+     */
+    absPlace?: number;
+    /**
      * Места в группах
      */
     places?: Array<RaceAthleteGroupDTO>;

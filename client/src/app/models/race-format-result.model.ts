@@ -13,8 +13,8 @@ export class RaceFormatResultModel {
   checkPoints: RaceCheckPointModel[];
   athletesGroups: AthleteGroupModel[];
   athletes: RaceAthleteModel[];
-  checkTime?: RaceAthleteModel;
-  leader?: RaceAthleteModel;
+  // checkTime?: RaceAthleteModel;
+  // leader?: RaceAthleteModel;
 
   constructor(dto?: RaceFormatResultDTO) {
     if (exists(dto)) {
@@ -30,12 +30,12 @@ export class RaceFormatResultModel {
       this.athletes = Option.of(dto.athletes)
                             .map(athletes => athletes.map(value => RaceAthleteModel.fromDTO(value)))
                             .getOrElse([]);
-      this.checkTime = Option.of(dto.checkTime)
-                             .map(data => RaceAthleteModel.fromDTO(data))
-                             .getOrElse(undefined);
-      this.leader = Option.of(dto.leaderTime)
-                          .map(data => RaceAthleteModel.fromDTO(data))
-                          .getOrElse(undefined);
+      // this.checkTime = Option.of(dto.checkTime)
+      //                        .map(data => RaceAthleteModel.fromDTO(data))
+      //                        .getOrElse(undefined);
+      // this.leader = Option.of(dto.leaderTime)
+      //                     .map(data => RaceAthleteModel.fromDTO(data))
+      //                     .getOrElse(undefined);
     }
   }
 

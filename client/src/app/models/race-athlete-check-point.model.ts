@@ -7,16 +7,18 @@ export class RaceAthleteCheckPointModel {
   athleteBibNumber: number;
   time?: LocalDateTime;
   raceTime?: LocalDateTime;
-  diffTime?: LocalDateTime;
+  prevCheckPointDiffDuration?: string;
   passed?: boolean;
+  checkTimeExpired: boolean = false;
 
   constructor(dto?: RaceAthleteCheckPointDTO) {
     if (exists(dto)) {
       this.id = dto.id;
       this.time = parseLocalDateTime(dto.time);
       this.raceTime = parseLocalDateTime(dto.raceTime);
-      this.diffTime = parseLocalDateTime(dto.previousCheckPointDiffTime);
+      this.prevCheckPointDiffDuration = dto.prevCheckPointDiffDuration;
       this.passed = dto.passed;
+      this.checkTimeExpired = dto.checkTimeExpired ?? false;
     }
   }
 
@@ -25,19 +27,14 @@ export class RaceAthleteCheckPointModel {
   }
 
   toDTO(): RaceAthleteCheckPointDTO {
-
-    // @ts-ignore
     return {
       id: this.id,
       athleteBibNumber: this.athleteBibNumber,
-
       // @ts-ignore
       time: this.time,
-
       // @ts-ignore
       raceTime: this.raceTime,
-      // @ts-ignore
-      previousCheckPointDiffTime: this.diffTime,
+      previousCheckPointDiffTime: this.prevCheckPointDiffDuration,
       // @ts-ignore
       passed: this.passed,
     };

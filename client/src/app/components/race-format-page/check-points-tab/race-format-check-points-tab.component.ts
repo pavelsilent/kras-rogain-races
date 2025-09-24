@@ -83,8 +83,8 @@ export class RaceFormatCheckPointsTabComponent
     'name',
     'description',
     'totalDistance',
-    'checkTime',
-    'leaderTime',
+    'checkDuration',
+    'leaderDuration',
   ];
   dataSource = new MatTableDataSource<RaceCheckPointModel>();
 
@@ -117,7 +117,7 @@ export class RaceFormatCheckPointsTabComponent
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  onAdd() {
+  onAddCheckPoint() {
     firstValueFrom(this.page.getRaceFormat())
       .then(raceFormat =>
               this.dialog.open(AddRaceFormatCheckPointDialogComponent, {
@@ -129,6 +129,7 @@ export class RaceFormatCheckPointsTabComponent
                 },
               }))
       .then(value => value.afterClosed())
+      .then(value => lastValueFrom(value))
       .then(value => this.refresh$.next());
   }
 }

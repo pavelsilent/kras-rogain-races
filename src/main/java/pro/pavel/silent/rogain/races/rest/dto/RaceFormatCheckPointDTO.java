@@ -34,14 +34,23 @@ public class RaceFormatCheckPointDTO {
     @Schema(description = "Общая дистанция от старта")
     private BigDecimal totalDistance;
 
+    @Schema(description = "Контрольное время от старта")
+    private String checkDuration;
+
     @Schema(description = "Контрольное время")
     private LocalDateTime checkTime;
 
     @Schema(description = "Есть ли контрольное время", requiredMode = REQUIRED)
     private Boolean hasCheckTime;
 
+    @Schema(description = "Время предполагаемого лидера от старта")
+    private String leaderDuration;
+
     @Schema(description = "Время предполагаемого лидера")
     private LocalDateTime leaderTime;
+
+    @Schema(description = "Время предполагаемого лидера от предыдущей КТ")
+    private String leaderDiffDuration;
 
     @Schema(description = "Это старт?", requiredMode = REQUIRED)
     private Boolean isStart;

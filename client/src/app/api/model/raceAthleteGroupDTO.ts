@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { AthleteGroupDTO } from './athleteGroupDTO';
 
 
 /**
@@ -16,7 +17,7 @@ export interface RaceAthleteGroupDTO {
     /**
      * Идентификатор группы
      */
-    id: number;
+    group: AthleteGroupDTO;
     /**
      * Место
      */

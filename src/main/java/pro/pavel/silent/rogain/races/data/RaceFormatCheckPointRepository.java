@@ -24,4 +24,9 @@ public interface RaceFormatCheckPointRepository extends PagingAndSortingReposito
 
     Optional<RaceFormatCheckPoint> findFirstByRaceFormatAndIsFinishTrue(RaceFormat raceFormat);
 
+    Optional<RaceFormatCheckPoint> findFirstByRaceFormatAndOrderNumberLessThanAndLeaderDurationNotNullOrderByOrderNumberDesc(
+        RaceFormat raceFormat,
+        Integer orderNumber
+    );
+
 }

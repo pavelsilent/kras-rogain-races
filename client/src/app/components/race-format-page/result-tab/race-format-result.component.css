@@ -39,13 +39,20 @@
 .params-header {
   width: 100px;
 }
+.abs-place-column {
+  width: 80px;
+}
 
 .place-column {
-  width: 120px;
+  width: 140px;
 }
 
 .checkpoint-column {
   width: 150px;
+}
+
+.check-time-expired {
+  color: red;
 }
 
 .checkpoint-distance-row {

@@ -1,10 +1,17 @@
 package pro.pavel.silent.rogain.races.rest.service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import pro.pavel.silent.lib.core.util.DurationHelper;
 import pro.pavel.silent.lib.core.util.ListHelper;
 import pro.pavel.silent.lib.core.util.OptionalHelper;
+import pro.pavel.silent.lib.core.util.ThreeMap;
 import pro.pavel.silent.rogain.races.entity.Athlete;
 import pro.pavel.silent.rogain.races.entity.AthleteGroup;
 import pro.pavel.silent.rogain.races.entity.City;
@@ -12,7 +19,6 @@ import pro.pavel.silent.rogain.races.entity.Club;
 import pro.pavel.silent.rogain.races.entity.Race;
 import pro.pavel.silent.rogain.races.entity.RaceAthlete;
 import pro.pavel.silent.rogain.races.entity.RaceAthleteCheckPoint;
-import pro.pavel.silent.rogain.races.entity.RaceAthleteGroup;
 import pro.pavel.silent.rogain.races.entity.RaceFormat;
 import pro.pavel.silent.rogain.races.entity.RaceFormatAthleteGroup;
 import pro.pavel.silent.rogain.races.entity.RaceFormatCheckPoint;
@@ -40,6 +46,18 @@ public class RestConverter {
         if (raceFormat == null) {
             return null;
         }
+
+        List<RaceAthlete> raceAthletes = raceQueryService.getRaceAthletes(raceFormat);
+        List<AthleteGroup> athleteGroups = raceQueryService.getRaceFormatAthleteGroups(raceFormat)
+                                                           .stream()
+                                                           .map(RaceFormatAthleteGroup::getAthleteGroup)
+                                                           .toList();
+
+        ThreeMap<Long, AthleteGroup, Integer> placesMap = raceQueryService.resolveAthleteGroupsPlaceMap(
+            raceAthletes,
+            athleteGroups
+        );
+
         return RaceFormatResultDTO.builder()
                                   .id(raceFormat.getId())
                                   .name(raceFormat.getName())
@@ -59,19 +77,23 @@ public class RestConverter {
                                           this::toDTO
                                       ))
                                   .athletes(
-                                      ListHelper.map(
+                                      ListHelper.mapI(
                                           raceQueryService.getRaceAthletes(raceFormat),
-                                          this::toDTO
+                                          (i, raceAthlete) -> toDTO(
+                                              raceAthlete,
+                                              i + 1,
+                                              placesMap.get(raceAthlete.getId())
+                                          )
                                       )
                                   )
-                                  .checkTime(raceQueryService.findRaceCheckTime(raceFormat)
-                                                             .map(this::toDTO)
-                                                             .orElse(null)
-                                  )
-                                  .leaderTime(raceQueryService.findRaceLeaderTime(raceFormat)
-                                                              .map(this::toDTO)
-                                                              .orElse(null)
-                                  )
+                                  //                                  .checkTime(raceQueryService.findRaceCheckTime(raceFormat)
+                                  //                                                             .map(this::toDTO)
+                                  //                                                             .orElse(null)
+                                  //                                  )
+                                  //                                  .leaderTime(raceQueryService.findRaceLeaderTime(raceFormat)
+                                  //                                                              .map(this::toDTO)
+                                  //                                                              .orElse(null)
+                                  //                                  )
                                   .build();
     }
 
@@ -83,6 +105,7 @@ public class RestConverter {
                               .id(athleteGroup.getId())
                               .name(athleteGroup.getName())
                               .description(athleteGroup.getDescription())
+                              .sex(athleteGroup.getSex().name())
                               .build();
     }
 
@@ -90,17 +113,41 @@ public class RestConverter {
         if (checkPoint == null) {
             return null;
         }
+
+        LocalDateTime startTime = checkPoint.getRaceFormat().getStartTime();
+        LocalDateTime leaderTime = Optional.ofNullable(checkPoint.getLeaderDuration())
+                                           .map(startTime::plus)
+                                           .orElse(null);
+
+        Duration prevCheckPointDiff = null;
+        Optional<RaceFormatCheckPoint> prevCheckPointOpt = raceQueryService.findPrevCheckPoint(checkPoint);
+        if (prevCheckPointOpt.isPresent()) {
+            RaceFormatCheckPoint prevCheckPoint = prevCheckPointOpt.get();
+
+            LocalDateTime prevCheckPointTime = startTime.plus(prevCheckPoint.getLeaderDuration());
+
+            if (Objects.nonNull(leaderTime)) {
+                prevCheckPointDiff = Duration.between(prevCheckPointTime, leaderTime);
+            }
+        } else {
+            prevCheckPointDiff = Duration.ofMillis(0);
+        }
+
         return RaceFormatCheckPointDTO.builder()
                                       .id(checkPoint.getId())
                                       .name(checkPoint.getName())
                                       .description(checkPoint.getDescription())
                                       .orderNumber(checkPoint.getOrderNumber())
                                       .totalDistance(checkPoint.getTotalDistance())
-                                      .checkTime(checkPoint.getCheckTime())
-                                      .hasCheckTime(checkPoint.isHasCheckTime())
-                                      .leaderTime(checkPoint.getLeaderTime())
-                                      .isStart(checkPoint.isStart())
-                                      .isFinish(checkPoint.isFinish())
+                                      .checkDuration(DurationHelper.format(checkPoint.getCheckDuration()))
+                                      .checkTime(Optional.ofNullable(checkPoint.getCheckDuration())
+                                                         .map(startTime::plus)
+                                                         .orElse(null))
+                                      .leaderDuration(DurationHelper.format(checkPoint.getLeaderDuration()))
+                                      .leaderTime(leaderTime)
+                                      .leaderDiffDuration(DurationHelper.format(prevCheckPointDiff))
+                                      .isStart(checkPoint.getIsStart())
+                                      .isFinish(checkPoint.getIsFinish())
                                       .build();
     }
 
@@ -117,8 +164,22 @@ public class RestConverter {
                                  raceQueryService.getRaceAthleteCheckPoints(raceAthlete),
                                  this::toDTO
                              ))
-                             .places(ListHelper.map(raceQueryService.getRaceAthleteGroups(raceAthlete), this::toDTO))
                              .build();
+    }
+
+    public RaceAthleteDTO toDTO(RaceAthlete raceAthlete, Integer absPlace, Map<AthleteGroup, Integer> placesMap) {
+        RaceAthleteDTO dto = toDTO(raceAthlete);
+        if (dto == null || placesMap == null) {
+            return dto;
+        }
+        List<RaceAthleteGroupDTO> places =
+            placesMap.entrySet()
+                     .stream()
+                     .map(entry -> new RaceAthleteGroupDTO(toDTO(entry.getKey()), entry.getValue()))
+                     .toList();
+        dto.setAbsPlace(absPlace);
+        dto.setPlaces(places);
+        return dto;
     }
 
     public AthleteDTO toDTO(Athlete athlete) {
@@ -141,26 +202,50 @@ public class RestConverter {
         if (checkPoint == null) {
             return null;
         }
+
+        RaceFormatCheckPoint raceFormatCheckPoint = checkPoint.getRaceFormatCheckPoint();
+
+        LocalDateTime startTime = raceFormatCheckPoint.getRaceFormat().getStartTime();
+        LocalDateTime startRaceTime = LocalDateTime.of(
+            startTime.getYear(),
+            startTime.getMonth(),
+            startTime.getDayOfMonth(),
+            0,
+            0,
+            0
+        );
+
+        boolean checkTimeIsExpired = false;
+        if (Objects.nonNull(raceFormatCheckPoint.getCheckDuration()) && Objects.nonNull(checkPoint.getTime())) {
+            LocalDateTime checkPointCheckTime = startTime.plus(checkPoint.getRaceFormatCheckPoint().getCheckDuration());
+            checkTimeIsExpired = checkPoint.getTime().isAfter(checkPointCheckTime);
+        }
+
+        Duration raceDiff = Duration.between(startRaceTime, startTime);
+
+        Duration prevCheckPointDiff = null;
+        Optional<RaceAthleteCheckPoint> prevCheckPointOpt = raceQueryService.findPrevCheckPoint(checkPoint);
+        if (prevCheckPointOpt.isPresent() && checkPoint.isPassed()) {
+            RaceAthleteCheckPoint prevCheckPoint = prevCheckPointOpt.get();
+            prevCheckPointDiff = Duration.between(prevCheckPoint.getTime(), checkPoint.getTime());
+        }
+
+        if (raceFormatCheckPoint.getIsStart()) {
+            prevCheckPointDiff = Duration.ofMillis(0);
+        }
+
         return RaceAthleteCheckPointDTO.builder()
-                                       .id(checkPoint.getRaceFormatCheckPoint().getId())
+                                       .id(raceFormatCheckPoint.getId())
                                        .athleteBibNumber(checkPoint.getRaceAthlete().getBibNumber())
                                        .time(checkPoint.getTime())
-                                       .raceTime(checkPoint.getRaceTime())
-                                       .previousCheckPointDiffTime(checkPoint.getPreviousCheckPointDiffTime())
+                                       .raceTime(Optional.ofNullable(checkPoint.getTime())
+                                                         .map(time -> time.minus(raceDiff))
+                                                         .orElse(null))
+                                       .prevCheckPointDiffDuration(DurationHelper.format(prevCheckPointDiff))
                                        .passed(checkPoint.isPassed())
+                                       .checkTimeExpired(checkTimeIsExpired)
                                        .build();
     }
-
-    public RaceAthleteGroupDTO toDTO(RaceAthleteGroup raceAthleteGroup) {
-        if (raceAthleteGroup == null) {
-            return null;
-        }
-        return RaceAthleteGroupDTO.builder()
-                                  .id(raceAthleteGroup.getId())
-                                  .place(raceAthleteGroup.getPlace())
-                                  .build();
-    }
-
 
     public RaceDTO toDTO(Race race) {
         if (race == null) {

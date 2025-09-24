@@ -1,7 +1,7 @@
 <div class="mat-elevation-z8 table">
   <div class="tool-panel" style="width: 100%;">
     <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 16px; min-width: 200px">
-      <button mat-flat-button color="primary" (click)="onAdd()">Добавить контрольную точку</button>
+      <button mat-flat-button color="primary" (click)="onAddCheckPoint()">Добавить контрольную точку</button>
     </div>
     <mat-form-field appearance="outline" style="width: 100%;">
       <mat-label>Поиск</mat-label>
@@ -39,14 +39,14 @@
       <td mat-cell *matCellDef="let item"> {{ item.totalDistance }} км</td>
     </ng-container>
 
-    <ng-container matColumnDef="checkTime">
+    <ng-container matColumnDef="checkDuration">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Контрольное время</th>
-      <td mat-cell *matCellDef="let item"> {{ item.checkTime | toRusDateTime }}</td>
+      <td mat-cell *matCellDef="let item"> {{ item.checkDuration }}</td>
     </ng-container>
 
-    <ng-container matColumnDef="leaderTime">
+    <ng-container matColumnDef="leaderDuration">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Время лидера</th>
-      <td mat-cell *matCellDef="let item"> {{ item.leaderTime | toRusDateTime }}</td>
+      <td mat-cell *matCellDef="let item"> {{ item.leaderDuration }}</td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

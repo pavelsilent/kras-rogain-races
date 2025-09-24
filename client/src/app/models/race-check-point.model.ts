@@ -8,8 +8,11 @@ export class RaceCheckPointModel {
   name: string;
   description?: string;
   totalDistance?: number;
+  checkDuration?: string;
   checkTime?: LocalDateTime;
+  leaderDuration?: string;
   leaderTime?: LocalDateTime;
+  leaderDiffDuration?: string;
   isStart: boolean;
   isFinish: boolean;
   hasCheckTime: boolean;
@@ -24,8 +27,11 @@ export class RaceCheckPointModel {
       this.isStart = dto.isStart;
       this.isFinish = dto.isFinish;
       this.hasCheckTime = dto.hasCheckTime;
+      this.checkDuration = dto.checkDuration;
       this.checkTime = parseLocalDateTime(dto.checkTime);
+      this.leaderDuration = dto.leaderDuration;
       this.leaderTime = parseLocalDateTime(dto.leaderTime);
+      this.leaderDiffDuration = dto.leaderDiffDuration;
     }
   }
 
@@ -44,9 +50,9 @@ export class RaceCheckPointModel {
       isFinish: this.isFinish,
       hasCheckTime: this.hasCheckTime,
       //@ts-ignore
-      checkTime: this.checkTime,
+      checkTime: this.checkDuration,
       //@ts-ignore
-      leaderTime: this.leaderTime,
+      leaderTime: this.leaderDuration,
     };
   }
 }
