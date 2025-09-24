@@ -5,4 +5,4 @@ spring:
   datasource:
     url: ${POSTGRES_URL:jdbc:postgresql://db.mtrrapuzfsybpbllcpkx.supabase.co:5432/postgres}
     username: ${POSTGRES_USER:postgres}
-    password: ${POSTGRES_PASSWORD:uYtHFFrSS86whpCV}
+    password: ${POSTGRES_PASSWORD:12345678}
