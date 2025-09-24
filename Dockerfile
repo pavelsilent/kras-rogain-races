@@ -14,17 +14,16 @@ COPY gradle/ gradle/
 COPY build.gradle .
 COPY settings.gradle .
 COPY src/ src/
-# Даем права на gradlew
+
+# Копируем Angular сборку в resources/static
+COPY --from=frontend-builder /app/client/dist/krsk-rogain-results-front/browser src/main/resources/static
+
 RUN chmod +x gradlew
-# Собираем JAR без тестов
 RUN ./gradlew clean build -x test
 
-# Stage 3: Final runtime image
+# Stage 3: Runtime
 FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
-# Копируем JAR
 COPY --from=backend-builder /app/build/libs/*.jar app.jar
-# Копируем Angular сборку
-COPY --from=frontend-builder /app/client/dist/krsk-rogain-results-front/browser /app/static
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","app.jar","--spring.profiles.active=prod"]
