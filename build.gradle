@@ -57,19 +57,19 @@ node {
 //tasks.register("npmInstall", com.github.gradle.node.npm.task.NpmInstallTask) {
 //  workingDir.set(file("${project.projectDir}/client"))
 //}
-
-tasks.register("npmBuild", com.github.gradle.node.npm.task.NpmTask) {
-  dependsOn("npmInstall")
-  workingDir.set(file("${project.projectDir}/client"))
-  args.set(["run", "build", "--", "--configuration", "production"])
-}
-
-tasks.register("copyFrontend", Copy) {
-  dependsOn("npmBuild")
-  from("${project.projectDir}/client/dist/krsk-rogain-results-front/browser") // ⚠️ тут укажи имя папки из Angular dist
-  into("${project.buildDir}/resources/main/static")
-}
-
-tasks.named("processResources") {
-  dependsOn("copyFrontend")
-}
+//
+//tasks.register("npmBuild", com.github.gradle.node.npm.task.NpmTask) {
+//  dependsOn("npmInstall")
+//  workingDir.set(file("${project.projectDir}/client"))
+//  args.set(["run", "build", "--", "--configuration", "production"])
+//}
+//
+//tasks.register("copyFrontend", Copy) {
+//  dependsOn("npmBuild")
+//  from("${project.projectDir}/client/dist/krsk-rogain-results-front/browser") // ⚠️ тут укажи имя папки из Angular dist
+//  into("${project.buildDir}/resources/main/static")
+//}
+//
+//tasks.named("processResources") {
+//  dependsOn("copyFrontend")
+//}
