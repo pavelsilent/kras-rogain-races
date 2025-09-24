@@ -19,6 +19,7 @@ import { MatInput, MatLabel } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { lastValueFrom, startWith, Subject } from 'rxjs';
 import { AthletesService } from '../../components/athlete-list/athletes.service';
+import { AttachFieldComponent } from '../../components/core/attach-field/attach-field.component';
 import { RaceService } from '../../components/race/race.service';
 import { AthleteGroupModel } from '../../models/athlete-group.model';
 import { RaceFormatType } from '../../models/enums/race-format-type.enum';
@@ -54,6 +55,7 @@ export interface AddRaceFormatDialogConfig {
                MatPrefix,
                MatSuffix,
                MatIconButton,
+               AttachFieldComponent,
              ],
              providers: [
                { provide: MAT_DATE_LOCALE, useValue: 'ru-RU' },
@@ -82,6 +84,7 @@ export class AddRaceFormatDialogComponent {
                          finishDate: [undefined, Validators.required],
                          finishTime: ['', Validators.required],
                          athleteGroups: this.athleteGroupsControl,
+                         img: [],
                        });
 
   constructor(
@@ -96,6 +99,7 @@ export class AddRaceFormatDialogComponent {
   }
 
   submit() {
+    console.log( this.form.value);
     if (this.form.valid) {
       let value = this.form.value;
 

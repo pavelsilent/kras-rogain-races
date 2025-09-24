@@ -14,11 +14,12 @@ export class AppComponent {
   protected readonly title = signal('krsk-rogain-results-front');
 
   tabs = [
-    { label: 'Races', route: '/races' },
-    { label: 'Athletes', route: '/athletes' }
+    { label: 'Соревнования', route: '/races' },
+    { label: 'Атлеты', route: '/athletes' },
   ];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) {
+  }
 
   onTabChange(index: number) {
     this.router.navigate([this.tabs[index].route]);

@@ -16,6 +16,20 @@ export class CityModel {
     }
   }
 
+  public getName() {
+    if (!exists(this.type) || this.type === CityType.OTHER) {
+      return this.name;
+    }
+
+    return this.type.shortName + ' ' + this.name;
+  }
+
+  static of(id: number) {
+    let city = new CityModel();
+    city.id = id;
+    return city;
+  }
+
   static fromDTO(dto?: CityDTO) {
     return new CityModel(dto);
   }
@@ -24,7 +38,7 @@ export class CityModel {
     return {
       id: this.id,
       name: this.name,
-      type: this.type.code,
+      type: this.type?.code,
     };
   }
 }

@@ -37,7 +37,7 @@ public class AthleteDTO {
     private LocalDate birthDate;
 
     @Schema(description = "Город")
-    private String city;
+    private CityDTO city;
 
     @Schema(description = "Клуб")
     private String club;

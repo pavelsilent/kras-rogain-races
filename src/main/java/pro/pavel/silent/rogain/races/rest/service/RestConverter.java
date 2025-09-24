@@ -193,7 +193,7 @@ public class RestConverter {
                          .middleName(athlete.getMiddleName())
                          .sex(athlete.getSex().name())
                          .birthDate(athlete.getBirthDate())
-                         .city(Optional.ofNullable(athlete.getCity()).map(City::getName).orElse(null))
+                         .city(Optional.ofNullable(athlete.getCity()).map(this::toDTO).orElse(null))
                          .club(Optional.ofNullable(athlete.getClub()).map(Club::getName).orElse(null))
                          .build();
     }

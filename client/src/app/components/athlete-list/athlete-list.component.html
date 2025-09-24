@@ -34,8 +34,8 @@
     </ng-container>
 
     <ng-container matColumnDef="city">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Город</th>
-      <td mat-cell *matCellDef="let athlete"> {{ athlete.city }}</td>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Местоположение</th>
+      <td mat-cell *matCellDef="let athlete"> {{ athlete.city?.getName() }}</td>
     </ng-container>
 
     <ng-container matColumnDef="club">

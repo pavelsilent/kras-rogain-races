@@ -2,6 +2,7 @@ plugins {
   id 'java'
   id 'org.springframework.boot' version '3.5.5'
   id 'io.spring.dependency-management' version '1.1.7'
+  id "com.github.node-gradle.node" version "7.0.1"
 }
 
 group = 'pro.pavel.silent'
@@ -43,4 +44,32 @@ dependencies {
 
 tasks.named('test') {
   useJUnitPlatform()
+}
+
+node {
+  download = true
+  version = "22.19.0"
+  npmVersion = "10.2.4"
+  workDir = file("${project.buildDir}/nodejs")
+  npmWorkDir = file("${project.buildDir}/npm")
+}
+
+//tasks.register("npmInstall", com.github.gradle.node.npm.task.NpmInstallTask) {
+//  workingDir.set(file("${project.projectDir}/client"))
+//}
+
+tasks.register("npmBuild", com.github.gradle.node.npm.task.NpmTask) {
+  dependsOn("npmInstall")
+  workingDir.set(file("${project.projectDir}/client"))
+  args.set(["run", "build", "--", "--configuration", "production"])
+}
+
+tasks.register("copyFrontend", Copy) {
+  dependsOn("npmBuild")
+  from("${project.projectDir}/client/dist/krsk-rogain-results-front/browser") // ⚠️ тут укажи имя папки из Angular dist
+  into("${project.buildDir}/resources/main/static")
+}
+
+tasks.named("processResources") {
+  dependsOn("copyFrontend")
 }

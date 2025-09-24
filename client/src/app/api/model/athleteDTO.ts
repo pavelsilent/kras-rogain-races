@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { CityDTO } from './cityDTO';
 
 
 /**
@@ -40,7 +41,7 @@ export interface AthleteDTO {
     /**
      * Город
      */
-    city?: string;
+    city?: CityDTO;
     /**
      * Клуб
      */

@@ -34,7 +34,7 @@
     <!-- Место проведения -->
     <ng-container matColumnDef="city">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Место проведения</th>
-      <td mat-cell *matCellDef="let race"> {{  race.city?.type.shortName }} {{  race.city?.name }}</td>
+      <td mat-cell *matCellDef="let race"> {{ race.city?.getName() }}</td>
     </ng-container>
 
     <!-- Статус -->

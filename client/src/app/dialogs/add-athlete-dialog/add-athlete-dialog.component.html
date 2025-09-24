@@ -27,10 +27,18 @@
         <mat-option *ngFor="let sex of sexes" [value]="sex.code">{{ sex.name }}</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>Город</mat-label>
-      <input matInput formControlName="city"/>
+    <mat-form-field appearance="fill" *ngIf="cities$ | async as cities">
+      <mat-label>Местоположение</mat-label>
+      <mat-select formControlName="city" (selectionChange)="onSelectCity($event.value)">
+        <mat-option *ngFor="let city of cities"
+                    [value]="city.id">{{ city.name }}
+        </mat-option>
+        <mat-option value="-1">
+          <em>+ Добавить новое…</em>
+        </mat-option>
+      </mat-select>
     </mat-form-field>
+
     <mat-form-field appearance="fill">
       <mat-label>Клуб</mat-label>
       <input matInput formControlName="club"/>

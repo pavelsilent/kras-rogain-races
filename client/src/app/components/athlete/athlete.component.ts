@@ -13,6 +13,7 @@ import { Option } from 'funfix-core';
 import { Moment } from 'moment';
 import { ReplaySubject, Subject } from 'rxjs';
 import { AthleteModel } from '../../models/athlete.model';
+import { CityModel } from '../../models/city.model';
 import { AthleteField } from '../../models/enums/athlete-field.enum';
 import { Sex } from '../../models/enums/sex.enum';
 import { EnumPipe } from '../../utils/enum.pipe';
@@ -64,7 +65,7 @@ export class AthleteComponent
   middleNameControl = new FormControl('');
   birthDateControl = new FormControl(undefined as any as Moment, Validators.required);
   sexControl = new FormControl('', Validators.required);
-  cityControl = new FormControl('', Validators.required);
+  cityControl = new FormControl(undefined, Validators.required);
   clubControl = new FormControl('', Validators.required);
 
   form = new FormGroup({
@@ -94,7 +95,8 @@ export class AthleteComponent
                                            .getOrElse(null));
 
       this.sexControl.setValue(data.sex!.code!);
-      this.cityControl.setValue(data.city!);
+      // @ts-ignore
+      this.cityControl.setValue(data.city?.id!);
       this.clubControl.setValue(data.club!);
     });
   }
@@ -124,7 +126,7 @@ export class AthleteComponent
     model.sex = resolveEnum(formValue.sex, Sex.store);
     model.birthDate = parseLocalDate(formValue.birthDate!);
     model.club = formValue.club || undefined;
-    model.city = formValue.city || undefined;
+    model.city = Option.of(formValue.city).map(id => CityModel.of(id!)).getOrElse(undefined);
 
     return model;
   }

@@ -4,7 +4,7 @@ mat-dialog-content {
   flex-direction: column;
   gap: 12px;
   width: 100%;
-  overflow: hidden;
+  overflow: auto;
 }
 
 /* Все mat-form-field одинаковой ширины */

@@ -4,7 +4,7 @@
     <mat-label (click)="$event.stopPropagation()">{{ label }}</mat-label>
     <mat-form-field appearance="fill" style="width:70px; " class="inner-input">
       <input matInput
-             type="text"
+             type="number"
              maxlength="2"
              [pattern]="'^[0-9]{1,2}$'"
              [(ngModel)]="hours"
@@ -14,7 +14,7 @@
     </mat-form-field>
     <mat-form-field appearance="fill" style="width:70px;" class="inner-input">
       <input matInput
-             type="text"
+             type="number"
              maxlength="2"
              [pattern]="'^([0-5]?[0-9])$'"
              [(ngModel)]="minutes"
@@ -25,7 +25,7 @@
     </mat-form-field>
     <mat-form-field appearance="fill" style="width:70px;" class="inner-input">
       <input matInput
-             type="text"
+             type="number"
              maxlength="2"
              [pattern]="'^([0-5]?[0-9])$'"
              [(ngModel)]="seconds"

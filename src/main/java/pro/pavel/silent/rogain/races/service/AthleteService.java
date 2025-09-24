@@ -1,11 +1,13 @@
 package pro.pavel.silent.rogain.races.service;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pro.pavel.silent.rogain.races.data.AthleteRepository;
 import pro.pavel.silent.rogain.races.domain.enumeration.Sex;
 import pro.pavel.silent.rogain.races.entity.Athlete;
 import pro.pavel.silent.rogain.races.rest.dto.AthleteDTO;
+import pro.pavel.silent.rogain.races.rest.dto.CityDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +36,9 @@ public class AthleteService {
         athlete.setMiddleName(dto.getMiddleName());
         athlete.setBirthDate(dto.getBirthDate());
         athlete.setSex(Sex.valueOf(dto.getSex()));
-        athlete.setCity(cityService.ensureCity(dto.getCity()));
+        athlete.setCity(Optional.ofNullable(dto.getCity())
+                                .map(CityDTO::getId)
+                                .map(cityService::getById).orElse(null));
         athlete.setClub(clubService.ensureClub(dto.getClub()));
         return athleteRepository.save(athlete);
     }

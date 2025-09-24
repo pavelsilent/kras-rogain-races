@@ -4,10 +4,6 @@ server:
 spring:
   application:
     name: krsk-rogain-races
-  datasource:
-    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/rogain}
-    username: ${POSTGRES_USER:postgres}
-    password: ${POSTGRES_PASSWORD:12345678}
   jpa:
     hibernate:
       ddl-auto: update

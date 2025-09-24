@@ -1,6 +1,7 @@
 import { LocalDate } from '@js-joda/core';
 import { AthleteDTO } from '../api/index';
 import { exists, hasLength, parseLocalDate, resolveEnumOrDefault } from '../utils/utils';
+import { CityModel } from './city.model';
 import { Sex } from './enums/sex.enum';
 
 export class AthleteModel {
@@ -10,8 +11,8 @@ export class AthleteModel {
   middleName?: string;
   sex?: Sex;
   birthDate?: LocalDate;
+  city?: CityModel;
   club?: string;
-  city?: string;
 
   constructor(dto?: AthleteDTO) {
     if (exists(dto)) {
@@ -22,7 +23,7 @@ export class AthleteModel {
       this.sex = resolveEnumOrDefault(dto.sex, Sex.store, undefined);
       this.birthDate = parseLocalDate(dto.birthDate);
       this.club = dto.club;
-      this.city = dto.city;
+      this.city = CityModel.fromDTO(dto.city);
     }
   }
 
@@ -48,7 +49,7 @@ export class AthleteModel {
       birthDate: this.birthDate,
       // @ts-ignore
       sex: this.sex?.code,
-      city: this.city,
+      city: this.city?.toDTO(),
       club: this.club,
     };
   }
