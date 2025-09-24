@@ -1,6 +1,6 @@
 # Stage 1: Build Angular
 FROM node:20 AS frontend-builder
-WORKDIR /client
+WORKDIR /
 COPY client/package*.json ./
 RUN npm install
 COPY client/ .
