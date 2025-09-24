@@ -13,7 +13,10 @@ COPY gradlew .
 COPY gradle/ gradle/
 COPY build.gradle .
 COPY settings.gradle .
-# Скачиваем Gradle Wrapper зависимости
+
+# ⚡ Дать права на исполнение gradlew
+RUN chmod +x gradlew
+
 RUN ./gradlew clean build -x test
 
 # Stage 3: Final runtime image
