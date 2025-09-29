@@ -11,6 +11,7 @@
     "useSingleRequestParameter": false,
     "enumPropertyNaming": "original",
     "httpResponseType": "json",
-    "withSeparateModelsAndApi": true
+    "withSeparateModelsAndApi": true,
+    "environmentVariable": "apiBaseUrl"
   }
 }

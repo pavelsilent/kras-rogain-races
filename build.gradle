@@ -3,6 +3,7 @@ plugins {
   id 'org.springframework.boot' version '3.5.5'
   id 'io.spring.dependency-management' version '1.1.7'
   id "com.github.node-gradle.node" version "7.0.1"
+  id 'org.springdoc.openapi-gradle-plugin' version '1.9.0'
 }
 
 group = 'pro.pavel.silent'
@@ -23,7 +24,37 @@ configurations {
 
 repositories {
   mavenCentral()
+  gradlePluginPortal()
 }
+
+bootRun {
+  systemProperty "spring.profiles.active", System.getProperty("spring.profiles.active", "default")
+}
+
+openApi {
+  apiDocsUrl.set("http://localhost:8888/v3/api-docs")
+  outputDir.set(file("$buildDir/openapi"))
+  outputFileName.set("openapi.json")
+  waitTimeInSeconds.set(10)
+  // поднимаем Spring Boot с профилем openapi
+  customBootRun {
+    jvmArgs = ["-Dspring.profiles.active=openapi"]
+  }
+}
+
+
+//tasks.named('generateOpenApiDocs', org.springdoc.openapi.gradle.plugin.OpenApiGeneratorTask) {
+//  outputDir.set(project.layout.buildDirectory.dir("openapi"))          // Куда писать файл
+//  outputFileName.set("api.json")              // Имя файла
+//  systemProperties.set(["spring.profiles.active": "openapi"])
+//}
+
+//
+//generateOpenApiDocs {
+//  outputDir = file(project.layout.buildDirectory.dir("openapi"))
+//  outputFileName = 'api.json'
+//
+//}
 
 dependencies {
   implementation 'org.springframework.boot:spring-boot-starter'
@@ -36,6 +67,7 @@ dependencies {
   implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13'
   implementation 'org.springframework.boot:spring-boot-starter-actuator'
   runtimeOnly 'org.postgresql:postgresql'
+  runtimeOnly 'com.h2database:h2'
   compileOnly 'org.projectlombok:lombok'
   annotationProcessor 'org.projectlombok:lombok'
   testImplementation 'org.springframework.boot:spring-boot-starter-test'

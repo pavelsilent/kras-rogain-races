@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "generate:api": "openapi-generator-cli generate -i ../build/openapi/openapi.json -g typescript-angular -c openapi-generator-config.json -o ./src/app/api -t ./templates "
   },
   "prettier": {
     "printWidth": 100,

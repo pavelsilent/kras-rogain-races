@@ -10,6 +10,8 @@
 /node_modules
 npm-debug.log
 yarn-error.log
+/my-templates
+/src/app/api
 
 # IDEs and editors
 .idea/
