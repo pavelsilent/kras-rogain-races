@@ -35,7 +35,7 @@ openApi {
   apiDocsUrl.set("http://localhost:8888/v3/api-docs")
   outputDir.set(file("$buildDir/openapi"))
   outputFileName.set("openapi.json")
-  waitTimeInSeconds.set(10)
+  waitTimeInSeconds.set(120)
   // поднимаем Spring Boot с профилем openapi
   customBootRun {
     jvmArgs = ["-Dspring.profiles.active=openapi"]
