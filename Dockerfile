@@ -24,6 +24,11 @@ COPY client/ .
 # Копируем сгенерированный openapi.json из backend
 COPY --from=backend-builder /app/build/openapi/openapi.json ./openapi.json
 
+# Установка Java (требуется для openapi-generator-cli)
+RUN apt-get update && \
+    apt-get install -y openjdk-17-jdk && \
+    rm -rf /var/lib/apt/lists/*
+
 RUN npm install @openapitools/openapi-generator-cli -g
 
 # Генерация Angular DTO и сервисов через кастомный шаблон
