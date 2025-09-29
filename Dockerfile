@@ -1,5 +1,5 @@
 # ---------- Stage 1: Backend Build & OpenAPI ----------
-FROM gradle:8.14-jdk21 AS backend-builder
+FROM eclipse-temurin:17 AS backend-builder
 WORKDIR /app
 
 # Копируем Spring Boot проект (корень)
