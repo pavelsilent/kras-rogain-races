@@ -43,18 +43,31 @@ RUN openapi-generator-cli generate \
 # Сборка фронта с production конфигурацией
 RUN npm run build -- --configuration production
 
-# ---------- Stage 3: Runtime ----------
+# ---------- Stage 3: Backend Final Build with Frontend ----------
+FROM eclipse-temurin:17 AS final-backend
+WORKDIR /app
+
+# Копируем исходники backend для сборки финального jar
+COPY gradlew .
+COPY gradle/ gradle/
+COPY build.gradle .
+COPY settings.gradle .
+COPY src/ src/
+
+RUN chmod +x gradlew
+
+# Копируем собранную фронт-статику в ресурсы backend
+COPY --from=frontend-builder /app/client/dist/krsk-rogain-results-front/browser ./src/main/resources/static
+
+# Собираем финальный jar с фронтом
+RUN ./gradlew clean build -x test
+
+# ---------- Stage 4: Runtime ----------
 FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 
-# Копируем backend jar
-COPY --from=backend-builder /app /app
-
-# Копируем собранный фронт
-COPY --from=frontend-builder /app/client/dist/krsk-rogain-results-front/browser src/main/resources/static
-
-RUN ./gradlew clean build -x test
+# Копируем финальный jar
+COPY --from=final-backend /app/build/libs/*.jar app.jar
 
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","app.jar","--spring.profiles.active=prod"]
-ENTRYPOINT ["java","-jar","build/libs/*.jar","--spring.profiles.active=prod"]
+ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=prod"]
