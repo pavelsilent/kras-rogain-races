@@ -24,8 +24,10 @@ COPY client/ .
 # Копируем сгенерированный openapi.json из backend
 COPY --from=backend-builder /app/build/openapi/openapi.json ./openapi.json
 
+RUN npm install @openapitools/openapi-generator-cli -g
+
 # Генерация Angular DTO и сервисов через кастомный шаблон
-RUN npx openapi-generator-cli generate \
+RUN openapi-generator-cli generate \
   -i ./openapi.json \
   -g typescript-angular \
   -c ./openapi-generator-config.json \
