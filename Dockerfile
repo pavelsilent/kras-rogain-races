@@ -53,5 +53,7 @@ COPY --from=backend-builder /app/build/libs/*.jar app.jar
 # Копируем собранный фронт
 COPY --from=frontend-builder /app/client/dist/krsk-rogain-results-front/browser src/main/resources/static
 
+RUN ./gradlew clean build -x test
+
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","app.jar","--spring.profiles.active=prod"]
