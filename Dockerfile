@@ -48,7 +48,7 @@ FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 
 # Копируем backend jar
-COPY --from=backend-builder /app/build/libs/*.jar app.jar
+COPY --from=backend-builder /app /app
 
 # Копируем собранный фронт
 COPY --from=frontend-builder /app/client/dist/krsk-rogain-results-front/browser src/main/resources/static
