@@ -57,3 +57,4 @@ RUN ./gradlew clean build -x test
 
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","app.jar","--spring.profiles.active=prod"]
+ENTRYPOINT ["java","-jar","build/libs/*.jar","--spring.profiles.active=prod"]
