@@ -22,6 +22,7 @@ import {
 } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 import { lastValueFrom, map, Subject } from 'rxjs';
+import { AppService } from '../../app.service';
 import { AddAthleteDialogComponent } from '../../dialogs/add-athlete-dialog/add-athlete-dialog.component';
 import { AthleteModel } from '../../models/athlete.model';
 import { EnumPipe } from '../../utils/enum.pipe';
@@ -77,7 +78,8 @@ export class AthleteListComponent
   @Output()
   onSelectRow = new EventEmitter<AthleteModel>();
 
-  constructor(private service: AthletesService, private dialog: MatDialog) {
+  constructor(private service: AthletesService, private dialog: MatDialog, private appService: AppService) {
+    this.appService.setEditAvailable();
     this.refresh$.subscribe(
       value => this.service.getAthletes()
                    .pipe(map(athletes => athletes.filter(athlete => !hasLength(this.selectedIds) ||

@@ -2,6 +2,7 @@ import { NgForOf } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatTab, MatTabGroup } from '@angular/material/tabs';
 import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
+import { AppService } from '../../app.service';
 import { RaceFormatPageService } from './race-format-page.service';
 
 @Component({
@@ -26,10 +27,17 @@ export class RaceFormatPageComponent {
     { label: 'Результаты', route: 'result' },
   ];
 
-  constructor(private route: ActivatedRoute, private router: Router, private page: RaceFormatPageService) {
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private page: RaceFormatPageService,
+    private appService: AppService,
+  ) {
     let raceId = Number(this.route.snapshot.paramMap.get('id'));
     let formatId = Number(this.route.snapshot.paramMap.get('formatId'));
     this.page.setData(raceId, formatId);
+    this.page.setCanEdit(true);
+    this.appService.setEditAvailable();
   }
 
   onTabChange(index: number) {

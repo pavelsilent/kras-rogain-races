@@ -12,6 +12,7 @@ import pro.pavel.silent.lib.core.util.DurationHelper;
 import pro.pavel.silent.lib.core.util.ListHelper;
 import pro.pavel.silent.lib.core.util.OptionalHelper;
 import pro.pavel.silent.lib.core.util.ThreeMap;
+import pro.pavel.silent.rogain.races.domain.model.RaceFormatTokenModel;
 import pro.pavel.silent.rogain.races.entity.Athlete;
 import pro.pavel.silent.rogain.races.entity.AthleteGroup;
 import pro.pavel.silent.rogain.races.entity.City;
@@ -32,6 +33,7 @@ import pro.pavel.silent.rogain.races.rest.dto.RaceAthleteGroupDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatCheckPointDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatDTO;
+import pro.pavel.silent.rogain.races.rest.dto.RaceFormatTokenDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatResultDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceTypeDTO;
 import pro.pavel.silent.rogain.races.service.RaceQueryService;
@@ -263,6 +265,18 @@ public class RestConverter {
                       .build();
     }
 
+    public RaceFormatTokenDTO toDTO(RaceFormatTokenModel model) {
+        if (model == null) {
+            return null;
+        }
+        return RaceFormatTokenDTO.builder()
+                                 .raceId(model.getRaceId())
+                                 .raceFormatId(model.getRaceFormatId())
+                                 .token(model.getToken())
+                                 .tokenType(model.getTokenType().name())
+                                 .build();
+    }
+
     public RaceFormatDTO toDTO(RaceFormat raceFormat) {
         if (raceFormat == null) {
             return null;
@@ -271,7 +285,10 @@ public class RestConverter {
                             .id(raceFormat.getId())
                             .name(raceFormat.getName())
                             .description(raceFormat.getDescription())
+                            .raceName(raceFormat.getRace().getName())
                             .type(raceFormat.getType().name())
+                            .viewToken(raceFormat.getViewToken())
+                            .editToken(raceFormat.getEditToken())
                             .startTime(raceFormat.getStartTime())
                             .finishTime(raceFormat.getFinishTime())
                             .state(raceFormat.getState().name())

@@ -20,6 +20,11 @@ public interface RaceFormatCheckPointRepository extends PagingAndSortingReposito
         Integer orderNumber
     );
 
+    Optional<RaceFormatCheckPoint> findFirstByRaceFormatAndOrderNumber(
+        RaceFormat raceFormat,
+        Integer orderNumber
+    );
+
     Optional<RaceFormatCheckPoint> findFirstByRaceFormatAndIsStartTrue(RaceFormat raceFormat);
 
     Optional<RaceFormatCheckPoint> findFirstByRaceFormatAndIsFinishTrue(RaceFormat raceFormat);

@@ -65,4 +65,12 @@ public class RaceFormat {
     @Schema(description = "Статус")
     private RaceState state;
 
+    @Column(name = "view_token", length = 255)
+    @Schema(description = "Токен просмотра")
+    private String viewToken;
+
+    @Column(name = "edit_token", length = 255)
+    @Schema(description = "Токен редактирования")
+    private String editToken;
+
 }

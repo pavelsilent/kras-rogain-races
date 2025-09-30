@@ -1,6 +1,7 @@
 package pro.pavel.silent.rogain.races.data;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -14,5 +15,7 @@ public interface RaceFormatRepository extends PagingAndSortingRepository<RaceFor
     List<RaceFormat> findAllByRace(Race race);
 
     List<RaceFormat> findAllByRaceId(Long id);
+
+    Optional<RaceFormat> findFirstByViewTokenOrEditToken(String viewToken, String editToken);
 
 }

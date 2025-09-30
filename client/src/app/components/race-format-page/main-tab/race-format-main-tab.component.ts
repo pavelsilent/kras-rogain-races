@@ -1,9 +1,10 @@
 import { AsyncPipe, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Option } from 'funfix-core';
 import { map, Observable, startWith, Subject, switchMap } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 import { RaceFormatModel } from '../../../models/race-format.model';
 import { EnumPipe } from '../../../utils/enum.pipe';
 import { BoolPipe } from '../../../utils/list.pipe';
@@ -21,6 +22,7 @@ import { RaceService } from '../../race/race.service';
                EnumPipe,
                RussianDateTimePipe,
                BoolPipe,
+               RouterLink,
              ],
              templateUrl: './race-format-main-tab.component.html',
              standalone: true,
@@ -32,8 +34,9 @@ export class RaceFormatMainTabComponent {
   raceFormat$: Observable<RaceFormatModel>;
   athleteGroups$: Observable<string[]>;
   refresh$: Subject<void> = new Subject<void>();
+  basePath: string;
 
-  constructor(private route: ActivatedRoute, private service: RaceService) {
+  constructor(private router: Router, private route: ActivatedRoute, private service: RaceService) {
     this.id = Number(this.route.parent?.snapshot.paramMap.get('id'));
     this.formatId = Number(this.route.parent?.snapshot.paramMap.get('formatId'));
     this.raceFormat$ = this.refresh$.pipe(
@@ -45,5 +48,10 @@ export class RaceFormatMainTabComponent {
             Option.of(data.athleteGroups)
                   .map(groups => groups.map(value => value.name))
                   .getOrElse([])));
+    this.basePath = environment.apiBaseUrl;
+  }
+
+  navigate(token: string | undefined) {
+    this.router.navigateByUrl(`/results/` + token);
   }
 }

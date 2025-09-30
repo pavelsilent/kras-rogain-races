@@ -4,10 +4,10 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,6 +80,8 @@ public class RaceService {
         Race race = raceQueryService.getRaceById(raceId);
         RaceFormat raceFormat = new RaceFormat();
         raceFormat.setState(RaceState.DRAFT);
+        raceFormat.setViewToken(UUID.randomUUID().toString());
+        raceFormat.setEditToken(UUID.randomUUID().toString());
         fillRaceFormat(raceFormat, race, dto);
         raceFormatRepository.save(raceFormat);
 
@@ -225,7 +227,6 @@ public class RaceService {
         RaceFormatCheckPoint raceFormatCheckPoint = raceQueryService.getRaceFormatCheckPoint(checkPoint.getId());
 
         LocalDateTime realTime = checkPoint.getTime();
-//        LocalDateTime raceTime = calcRaceTime(raceFormat.getStartTime(), realTime);
 
         RaceAthleteCheckPoint raceAthleteCheckPoint =
             raceQueryService.findRaceAthleteCheckPoint(raceAthlete, raceFormatCheckPoint)
@@ -234,12 +235,6 @@ public class RaceService {
         raceAthleteCheckPoint.setRaceAthlete(raceAthlete);
         raceAthleteCheckPoint.setRaceFormatCheckPoint(raceFormatCheckPoint);
         raceAthleteCheckPoint.setTime(realTime);
-
-//        raceAthleteCheckPoint.setRaceTime(raceTime);
-//        raceAthleteCheckPoint.setPreviousCheckPointDiffTime(null);
-//        if (raceFormatCheckPoint.getIsStart()) {
-//            raceAthleteCheckPoint.setPreviousCheckPointDiffTime(raceTime);
-//        }
         raceAthleteCheckPoint.setPassed(checkPoint.getPassed());
 
         raceAthleteCheckPointRepository.save(raceAthleteCheckPoint);
@@ -249,23 +244,6 @@ public class RaceService {
 
     private void calcDiffs(RaceAthlete raceAthlete) {
         ensureRaceAthleteStartPoint(raceAthlete);
-        List<RaceAthleteCheckPoint> raceAthleteCheckPoints = ensureRaceAthleteCheckPoints(raceAthlete);
-
-//        List<RaceAthleteCheckPoint> passedCheckPoints =
-//            raceAthleteCheckPoints.stream()
-//                                  .filter(RaceAthleteCheckPoint::isPassed)
-//                                  .filter(raceAthleteCheckPoint -> Objects.nonNull(raceAthleteCheckPoint.getRaceTime()))
-//                                  .sorted(Comparator.comparing(o -> o.getRaceFormatCheckPoint().getOrderNumber()))
-//                                  .toList();
-
-//        for (int i = 1; i < passedCheckPoints.size(); i++) {
-//            RaceAthleteCheckPoint prev = passedCheckPoints.get(i - 1);
-//            RaceAthleteCheckPoint current = passedCheckPoints.get(i);
-//            LocalDateTime diffTime = calcRaceTime(prev.getRaceTime(), current.getRaceTime());
-//            current.setPreviousCheckPointDiffTime(diffTime);
-//            raceAthleteCheckPointRepository.save(current);
-//        }
-
         raceQueryService
             .findLastPassedCheckPoint(raceAthlete)
             .ifPresent(lastCheckPoint -> {
@@ -284,13 +262,9 @@ public class RaceService {
 
         if (!raceAthleteStartPoint.isPassed()) {
             LocalDateTime realTime = raceFormat.getStartTime();
-//            LocalDateTime raceTime = calcRaceTime(raceFormat.getStartTime(), realTime);
-
             raceAthleteStartPoint.setRaceAthlete(raceAthlete);
             raceAthleteStartPoint.setRaceFormatCheckPoint(startCheckPoint);
             raceAthleteStartPoint.setTime(realTime);
-//            raceAthleteStartPoint.setRaceTime(raceTime);
-//            raceAthleteStartPoint.setPreviousCheckPointDiffTime(raceTime);
             raceAthleteStartPoint.setPassed(true);
         }
         raceAthleteCheckPointRepository.save(raceAthleteStartPoint);

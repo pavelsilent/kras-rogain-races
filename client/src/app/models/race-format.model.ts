@@ -1,6 +1,6 @@
 import { LocalDateTime } from '@js-joda/core';
 import { Option } from 'funfix-core';
-import { RaceAthleteCheckPointDTO, RaceFormatDTO } from '../api/index';
+import { RaceFormatDTO } from '../api/index';
 import { exists, parseLocalDateTime, resolveEnum, resolveEnumOrDefault } from '../utils/utils';
 import { AthleteGroupModel } from './athlete-group.model';
 import { RaceFormatType } from './enums/race-format-type.enum';
@@ -10,8 +10,11 @@ export class RaceFormatModel {
   id: number;
   name: string;
   description?: string;
+  raceName: string;
   type: RaceFormatType;
   state: RaceState;
+  viewToken?: string;
+  editToken?: string;
   startDateTime?: LocalDateTime;
   finishDateTime?: LocalDateTime;
   athleteGroups?: AthleteGroupModel[];
@@ -21,6 +24,9 @@ export class RaceFormatModel {
       this.id = dto.id;
       this.name = dto.name;
       this.description = dto.description;
+      this.raceName = dto.raceName;
+      this.viewToken = dto.viewToken;
+      this.editToken = dto.editToken;
       this.type = resolveEnumOrDefault(dto.type, RaceFormatType.store, RaceFormatType.PERSONAL);
       this.state = resolveEnum(dto.state, RaceState.store);
       this.startDateTime = parseLocalDateTime(dto.startTime);
@@ -46,7 +52,7 @@ export class RaceFormatModel {
       startTime: this.startDateTime,
       // @ts-ignore
       finishTime: this.finishDateTime,
-      athleteGroups: this.athleteGroups?.map(value => value.toDTO())
+      athleteGroups: this.athleteGroups?.map(value => value.toDTO()),
     };
   }
 }

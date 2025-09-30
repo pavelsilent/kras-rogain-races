@@ -9,7 +9,7 @@
 
     <mat-form-field appearance="fill" class="w-full">
       <mat-label>Контрольный пункт</mat-label>
-      <mat-select formControlName="checkPointId">
+      <mat-select formControlName="checkPointId" (selectionChange)="onSelectCheckPoint($event.value)">
         <mat-option *ngFor="let cp of checkPoints" [value]="cp.id">
           {{ cp.name }}
         </mat-option>

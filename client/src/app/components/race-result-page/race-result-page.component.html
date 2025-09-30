@@ -1,0 +1,4 @@
+<h3 class="header" *ngIf="raceFormat$ | async as raceFormat">{{
+    raceFormat.raceName + ' / ' + raceFormat.name + ' (' + (raceFormat.startDateTime | toRusDateTime) + ')'
+  }}</h3>
+<app-race-format-result></app-race-format-result>

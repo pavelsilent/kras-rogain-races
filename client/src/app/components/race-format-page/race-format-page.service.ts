@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { combineLatest, Observable, ReplaySubject, switchMap } from 'rxjs';
+import { AppService } from '../../app.service';
+import { TokenType } from '../../models/enums/token-type.enum';
 import { RaceFormatModel } from '../../models/race-format.model';
 import { RaceService } from '../race/race.service';
 
@@ -11,19 +13,27 @@ export class RaceFormatPageService {
   private raceId$: ReplaySubject<number> = new ReplaySubject<number>();
   private raceFormatId$: ReplaySubject<number> = new ReplaySubject<number>();
   private raceFormat$: Observable<RaceFormatModel>;
+  private canEdit$: ReplaySubject<boolean> = new ReplaySubject<boolean>();
 
-  constructor(private raceService: RaceService) {
+  constructor(private raceService: RaceService, private appService: AppService) {
     this.raceFormat$ = combineLatest([this.raceId$, this.raceFormatId$])
       .pipe(switchMap(([raceId, raceFormatId]) => this.raceService.getRaceFormatById(raceId, raceFormatId)));
   }
 
   setData(raceId: number, raceFormatId: number) {
+    console.log(raceId);
+    console.log(raceFormatId);
     this.raceId$.next(raceId);
     this.raceFormatId$.next(raceFormatId);
   }
 
   getData() {
+    console.log('FFF');
     return combineLatest([this.raceId$, this.raceFormatId$]);
+  }
+
+  getTokenData(token: string) {
+    return this.raceService.getRaceFormatToken(token);
   }
 
   public getRaceId() {
@@ -36,5 +46,17 @@ export class RaceFormatPageService {
 
   public getRaceFormat() {
     return this.raceFormat$;
+  }
+
+  public canEdit() {
+    return this.canEdit$.pipe();
+  }
+
+  public setToken(mode: TokenType) {
+    return this.setCanEdit(mode === TokenType.EDIT);
+  }
+
+  public setCanEdit(canEdit: boolean) {
+    return this.canEdit$.next(canEdit);
   }
 }

@@ -312,4 +312,13 @@
     </addColumn>
   </changeSet>
 
+  <changeSet author="p.brychev" id="2025-09-16--01-init-schema.012">
+    <addColumn schemaName="public" tableName="race_format">
+      <column name="view_token" type="VARCHAR(255)"/>
+    </addColumn>
+    <addColumn schemaName="public" tableName="race_format">
+      <column name="edit_token" type="VARCHAR(255)"/>
+    </addColumn>
+  </changeSet>
+
 </databaseChangeLog>

@@ -8,6 +8,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 import { lastValueFrom, Subject } from 'rxjs';
+import { AppService } from '../../app.service';
 import { AddRaceDialogComponent } from '../../dialogs/add-race-dialog/add-race-dialog.component';
 import { RaceModel } from '../../models/race.model';
 import { RussianDatePipe } from '../../utils/russian-date.pipe';
@@ -33,7 +34,8 @@ export class RaceListComponent
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private raceService: RaceService, private dialog: MatDialog) {
+  constructor(private raceService: RaceService, private dialog: MatDialog, private appService: AppService) {
+    this.appService.setEditAvailable();
     this.refresh$.subscribe(
       data => this.raceService.getRaces()
                   .subscribe(data => this.dataSource.data = data));

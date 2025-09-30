@@ -28,6 +28,9 @@ public class RaceFormatDTO {
     @Schema(description = "Описание")
     private String description;
 
+    @Schema(description = "Название гонки", requiredMode = REQUIRED)
+    private String raceName;
+
     @Schema(description = "Тип участия", requiredMode = REQUIRED)
     private String type;
 
@@ -42,4 +45,11 @@ public class RaceFormatDTO {
 
     @Schema(description = "Группы участников")
     private List<AthleteGroupDTO> athleteGroups;
+
+    @Schema(description = "Токен страницы просмотра результата")
+    private String viewToken;
+
+    @Schema(description = "Токен страницы редактирования результата")
+    private String editToken;
+
 }

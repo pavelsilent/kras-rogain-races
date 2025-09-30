@@ -8,6 +8,7 @@ import { RaceAthleteModel } from '../../models/race-athlete.model';
 import { RaceCheckPointSetupModel } from '../../models/race-check-point-setup.model';
 import { RaceCheckPointModel } from '../../models/race-check-point.model';
 import { RaceFormatResultModel } from '../../models/race-format-result.model';
+import { RaceFormatTokenModel } from '../../models/race-format-token.model';
 import { RaceFormatModel } from '../../models/race-format.model';
 import { RaceSetupModel } from '../../models/race-setup.model';
 import { RaceModel } from '../../models/race.model';
@@ -43,6 +44,12 @@ export class RaceService {
   getRaceFormatById(id: number, formatId: number): Observable<RaceFormatModel> {
     return this.backend.getRaceFormat(id, formatId).pipe(
       map(item => RaceFormatModel.fromDTO(item)),
+    );
+  }
+
+  getRaceFormatToken(token: string): Observable<RaceFormatTokenModel> {
+    return this.backend.getRaceFormatLink(token).pipe(
+      map(item => RaceFormatTokenModel.fromDTO(item)),
     );
   }
 
@@ -88,8 +95,32 @@ export class RaceService {
     formatId: number,
     data: RaceAthleteCheckPointModel,
   ): Promise<RaceFormatResultModel> {
-    return lastValueFrom(this.backend.addRaceAthleteCheckPoint(id, formatId, data.toDTO()))
+    return lastValueFrom(this.backend.addRaceAthleteCheckPoint(
+      id,
+      formatId,
+      data.athleteBibNumber,
+      data.id,
+      data.toDTO(),
+    ))
       .then(value => RaceFormatResultModel.fromDTO(value));
+  }
+
+  getRaceAthleteCheckPoint(
+    id: number,
+    formatId: number,
+    athleteBibNumber: number,
+    checkPointId: number,
+  ): Promise<RaceAthleteCheckPointModel> {
+    return lastValueFrom(this.backend.getRaceAthleteCheckPoint(id, formatId, athleteBibNumber, checkPointId))
+      .then(value => RaceAthleteCheckPointModel.fromDTO(value));
+  }
+
+  getRaceAthleteNextCheckPoint(
+    id: number,
+    formatId: number,
+    athleteBibNumber: number,
+  ): Promise<number> {
+    return lastValueFrom(this.backend.getRaceAthleteNextCheckPoint(id, formatId, athleteBibNumber));
   }
 
 }

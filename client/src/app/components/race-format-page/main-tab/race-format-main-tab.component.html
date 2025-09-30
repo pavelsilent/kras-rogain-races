@@ -6,4 +6,10 @@
   <p><strong>Дата начала:</strong> {{ raceFormat?.startDateTime | toRusDateTime }}</p>
   <p><strong>Дата завершения:</strong> {{ raceFormat?.finishDateTime | toRusDateTime }}</p>
   <p><strong>Группы атлетов:</strong> {{ athleteGroups$ | async | joinList }}</p>
+  <p><strong>Ссылка на просмотр результатов: </strong>
+    <a href="#" (click)="navigate(raceFormat.viewToken);$event.preventDefault();">{{ raceFormat?.viewToken }}</a>
+  </p>
+  <p><strong>Ссылка на редактирование результатов: </strong>
+    <a href="#" (click)="navigate(raceFormat.editToken);$event.preventDefault();">{{ raceFormat?.editToken }}</a>
+  </p>
 </ng-container>

@@ -1,7 +1,10 @@
 package pro.pavel.silent.rogain.races.service;
 
 import static pro.pavel.silent.lib.core.util.SimpleFunctions.firstArgSupplier;
+import static pro.pavel.silent.lib.core.util.StringHelper.hasLength;
 import static pro.pavel.silent.rogain.races.domain.enumeration.RaceAthleteType.ATHLETE;
+import static pro.pavel.silent.rogain.races.domain.enumeration.RaceFormatTokenType.EDIT;
+import static pro.pavel.silent.rogain.races.domain.enumeration.RaceFormatTokenType.VIEW;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -18,6 +21,7 @@ import pro.pavel.silent.rogain.races.data.RaceFormatAthleteGroupRepository;
 import pro.pavel.silent.rogain.races.data.RaceFormatCheckPointRepository;
 import pro.pavel.silent.rogain.races.data.RaceFormatRepository;
 import pro.pavel.silent.rogain.races.data.RaceRepository;
+import pro.pavel.silent.rogain.races.domain.model.RaceFormatTokenModel;
 import pro.pavel.silent.rogain.races.entity.Athlete;
 import pro.pavel.silent.rogain.races.entity.AthleteGroup;
 import pro.pavel.silent.rogain.races.entity.Race;
@@ -79,10 +83,19 @@ public class RaceQueryService {
                                         "Not found race athlete with id: " + athlete.getId()));
     }
 
+    public Optional<RaceFormatCheckPoint> findRaceFormatCheckPoint(Long id) {
+        return raceFormatCheckPointRepository.findById(id);
+    }
+
     public RaceFormatCheckPoint getRaceFormatCheckPoint(Long id) {
-        return raceFormatCheckPointRepository.findById(id)
+        return findRaceFormatCheckPoint(id)
+            .orElseThrow(() -> new RuntimeException("Not found race format check point with id: " + id));
+    }
+
+    public RaceFormatCheckPoint getRaceFormatCheckPoint(RaceFormat raceFormat, Integer orderNumber) {
+        return raceFormatCheckPointRepository.findFirstByRaceFormatAndOrderNumber(raceFormat, orderNumber)
                                              .orElseThrow(() -> new RuntimeException(
-                                                 "Not found race format check point with id: " + id));
+                                                 "Not found race format check point with number: " + orderNumber));
     }
 
     public List<RaceFormatCheckPoint> getRaceFormatCheckPoints(RaceFormat raceFormat, Integer startedOrderNumber) {
@@ -177,14 +190,6 @@ public class RaceQueryService {
         return raceAthleteGroupRepository.findFirstByRaceAthleteAndAthleteGroup(raceAthlete, athleteGroup);
     }
 
-    //    public Optional<RaceAthlete> findRaceCheckTime(RaceFormat raceFormat) {
-    //        return raceAthleteRepository.findFirstByRaceFormatAndType(raceFormat, CONTROL);
-    //    }
-    //
-    //    public Optional<RaceAthlete> findRaceLeaderTime(RaceFormat raceFormat) {
-    //        return raceAthleteRepository.findFirstByRaceFormatAndType(raceFormat, LEADER);
-    //    }
-
     public Optional<RaceAthleteCheckPoint> findRaceAthleteCheckPoint(
         RaceAthlete raceAthlete,
         RaceFormatCheckPoint checkPoint
@@ -212,6 +217,55 @@ public class RaceQueryService {
             checkPoint.getRaceAthlete(),
             checkPoint.getRaceFormatCheckPoint().getOrderNumber()
         );
+    }
+
+    public RaceFormatTokenModel getRaceFormatTokenModel(String link) {
+        RaceFormat raceFormat = raceFormatRepository
+            .findFirstByViewTokenOrEditToken(link, link)
+            .orElseThrow(() -> new RuntimeException("Not found race format by link:" + link));
+
+        RaceFormatTokenModel model = new RaceFormatTokenModel();
+        model.setRaceId(raceFormat.getRace().getId());
+        model.setRaceFormatId(raceFormat.getId());
+        model.setToken(link);
+        model.setTokenType(
+            hasLength(raceFormat.getViewToken()) && link.equals(raceFormat.getViewToken()) ? VIEW :
+            hasLength(raceFormat.getEditToken()) && link.equals(raceFormat.getEditToken()) ? EDIT : null);
+        return model;
+    }
+
+    public Optional<RaceAthleteCheckPoint> getRaceAthleteCheckPoint(
+        Long raceId,
+        Long raceFormatId,
+        Integer bibNumber,
+        Long checkPointId
+    ) {
+        RaceFormat raceFormat = getRaceFormatById(raceFormatId);
+        RaceAthlete raceAthlete = getRaceAthleteByBibNumber(raceFormat, bibNumber);
+        RaceFormatCheckPoint raceFormatCheckPoint = getRaceFormatCheckPoint(checkPointId);
+
+        return findRaceAthleteCheckPoint(raceAthlete, raceFormatCheckPoint);
+    }
+
+    public RaceFormatCheckPoint getRaceAthleteNextCheckPoint(
+        Long raceId,
+        Long raceFormatId,
+        Integer bibNumber
+    ) {
+        RaceFormat raceFormat = getRaceFormatById(raceFormatId);
+        RaceAthlete raceAthlete = getRaceAthleteByBibNumber(raceFormat, bibNumber);
+        Integer lastCheckPointOrderNumber = raceAthlete.getLastCheckPointOrderNumber();
+        Integer nextCheckPointOrderNumber = lastCheckPointOrderNumber + 1;
+
+        RaceFormatCheckPoint lastCheckPoint = getRaceFormatCheckPoint(
+            raceFormat,
+            raceAthlete.getLastCheckPointOrderNumber()
+        );
+        if (lastCheckPoint.getIsFinish()) {
+            return lastCheckPoint;
+        }
+
+        return getRaceFormatCheckPoint(raceFormat, nextCheckPointOrderNumber);
     }
 
 }

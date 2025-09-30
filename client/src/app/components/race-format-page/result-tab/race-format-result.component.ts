@@ -27,6 +27,7 @@ import { ActivatedRoute } from '@angular/router';
 import { LocalDateTime } from '@js-joda/core';
 import { Option } from 'funfix-core';
 import {
+  combineLatest,
   filter,
   firstValueFrom,
   lastValueFrom,
@@ -39,9 +40,7 @@ import {
 } from 'rxjs';
 import {
   AddRaceAthleteCheckPointDialogComponent,
-  AddRaceAthleteCheckPointDialogResult,
 } from '../../../dialogs/add-race-athlete-check-point-dialog/add-race-athlete-check-point-dialog.component';
-import { RaceAthleteCheckPointModel } from '../../../models/race-athlete-check-point.model';
 import { RaceAthleteModel } from '../../../models/race-athlete.model';
 import { RaceCheckPointModel } from '../../../models/race-check-point.model';
 import { RaceFormatResultModel } from '../../../models/race-format-result.model';
@@ -93,12 +92,8 @@ export class RaceFormatResultComponent {
   startDateTime$: Observable<LocalDateTime>;
   leaderFinishDuration$: Observable<string>;
   refresh$: Subject<void> = new Subject<void>();
-  id: number;
-  formatId: number;
   checkPoints: RaceCheckPointModel[] = [];
   checkPointsCount = 0;
-  // checkPointAthlete?: RaceAthleteModel;
-  // leaderAthlete?: RaceAthleteModel;
 
   topHeaderDef: string[] = [
     'paramsHeader',
@@ -126,13 +121,13 @@ export class RaceFormatResultComponent {
   membersDataSource = new MatTableDataSource<RaceAthleteModel>();
 
   constructor(private route: ActivatedRoute, private service: RaceService, private dialog: MatDialog,
-              private page: RaceFormatPageService,
+              public page: RaceFormatPageService,
   ) {
-    this.id = Number(this.route.parent?.snapshot.paramMap.get('id'));
-    this.formatId = Number(this.route.parent?.snapshot.paramMap.get('formatId'));
     this.format$ = this.refresh$.pipe(
       startWith(null),
-      switchMap(data => this.service.getRaceFormatResult(this.id, this.formatId).pipe(shareReplay(1))),
+      switchMap(data => combineLatest([this.page.getRaceId(), this.page.getRaceFormatId()])),
+      switchMap(([raceId, raceFormatId]) => this.service.getRaceFormatResult(raceId, raceFormatId)
+                                                .pipe(shareReplay(1))),
     );
 
     this.startDateTime$ = this.page.getRaceFormat().pipe(map(format => format.startDateTime!));
@@ -140,8 +135,6 @@ export class RaceFormatResultComponent {
 
       this.checkPoints = Option.of(format.checkPoints).getOrElse([]);
       this.checkPointsCount = this.checkPoints.length;
-      // this.leaderAthlete = format.leader;
-      // this.checkPointAthlete = format.checkTime;
 
       this.checkPointsHeaderDef = [
         ...this.checkPoints.map(checkPoint => 'checkPointHeader' + checkPoint.id),
@@ -204,30 +197,6 @@ export class RaceFormatResultComponent {
         });
   }
 
-  // getControlCheckPointRaceTime(checkPointId: number): LocalDateTime | undefined {
-  //   return this.getCheckPointRaceTime(this.checkPointAthlete, checkPointId);
-  // }
-  //
-  // getControlCheckPointTime(checkPointId: number): LocalDateTime | undefined {
-  //   return this.getCheckPointTime(this.checkPointAthlete, checkPointId);
-  // }
-  //
-  // getLeaderCheckPointRaceTime(checkPointId: number): LocalDateTime | undefined {
-  //   return this.getCheckPointRaceTime(this.leaderAthlete, checkPointId);
-  // }
-  //
-  // getLeaderCheckPointTime(checkPointId: number): LocalDateTime | undefined {
-  //   return this.getCheckPointTime(this.leaderAthlete, checkPointId);
-  // }
-
-  // getLeaderCheckPointDiffTime(checkPointId: number): LocalDateTime | undefined {
-  //   return this.getCheckPointDiffTime(this.leaderAthlete, checkPointId);
-  // }
-
-  // getLeaderCheckPointTime(checkPointId: number): LocalDateTime | undefined {
-  //   return member.checkPoints?.find(value => value.id === checkPointId)?.time;
-  // }
-
   getCheckPointRaceTime(member: RaceAthleteModel | undefined, checkPointId: number): LocalDateTime | undefined {
     if (member === undefined) {
       return undefined;
@@ -257,9 +226,11 @@ export class RaceFormatResultComponent {
   }
 
   onAddCheckPoint(row: RaceAthleteModel) {
-    firstValueFrom(this.startDateTime$)
-      .then(startDateTime => this.dialog.open(AddRaceAthleteCheckPointDialogComponent, {
+    firstValueFrom(combineLatest([this.page.getRaceId(), this.page.getRaceFormatId(), this.startDateTime$]))
+      .then(([raceId, raceFormatId, startDateTime]) => this.dialog.open(AddRaceAthleteCheckPointDialogComponent, {
         data: {
+          raceId: raceId,
+          raceFormatId: raceFormatId,
           checkPoints: this.checkPoints,
           raceDate: startDateTime?.toLocalDate(),
           athleteBibNumber: row.bibNumber,
@@ -267,15 +238,7 @@ export class RaceFormatResultComponent {
         width: '400px',
       }))
       .then(dialogRef => lastValueFrom(dialogRef.afterClosed()))
-      .then((result: AddRaceAthleteCheckPointDialogResult) => {
-        let model = new RaceAthleteCheckPointModel();
-        model.id = result?.checkPointId;
-        model.athleteBibNumber = result.athleteBibNumber;
-        model.time = result.checkPointDateTime;
-        model.passed = true;
-
-        return this.service.addRaceAthleteCheckPoint(this.id, this.formatId, model);
-      })
       .then(value => this.refresh$.next());
   }
+
 }
