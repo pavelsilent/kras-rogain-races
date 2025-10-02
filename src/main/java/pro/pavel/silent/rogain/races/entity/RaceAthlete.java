@@ -59,11 +59,11 @@ public class RaceAthlete {
     private RaceAthleteState state;
 
     @Column(name = "last_check_point_order_number")
-    @Schema(description = "Космическое время прохождения")
+    @Schema(description = "Последняя пройденная КТ")
     private Integer lastCheckPointOrderNumber;
 
     @Column(name = "last_check_point_time")
-    @Schema(description = "Космическое время прохождения")
+    @Schema(description = "Местное время прохождения последней КТ")
     private LocalDateTime lastCheckPointTime;
 
 }

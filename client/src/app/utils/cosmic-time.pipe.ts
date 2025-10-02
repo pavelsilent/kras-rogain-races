@@ -6,11 +6,14 @@ import { format } from './utils';
 export class CosmicTimePipe
   implements PipeTransform {
 
-  transform(value: LocalDateTime | LocalTime | undefined): string {
+  transform(value: LocalDateTime | LocalTime | undefined, needBrackets: boolean = true): string {
     if (value === undefined) {
       return '';
     }
-    return format(value, '(HH:mm)');
+    if (needBrackets) {
+      return format(value, '(HH:mm)');
+    }
+    return format(value, 'HH:mm');
   }
 
 }

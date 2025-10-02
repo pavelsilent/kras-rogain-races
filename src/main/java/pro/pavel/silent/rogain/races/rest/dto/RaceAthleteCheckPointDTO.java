@@ -24,7 +24,7 @@ public class RaceAthleteCheckPointDTO {
     @Schema(description = "Номер участника", requiredMode = REQUIRED)
     private Integer athleteBibNumber;
 
-    @Schema(description = "Космическое время прохождения")
+    @Schema(description = "Местное время прохождения")
     private LocalDateTime time;
 
     @Schema(description = "Время прохождения")

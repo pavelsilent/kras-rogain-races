@@ -66,7 +66,9 @@
       <th *matHeaderCellDef mat-header-cell class="time-detail-column action-button-container">
         <span class="underline">Время гонки {{ '0:00:00' }}</span>
         <br>
-        <span>Косм.время <span>{{ (startDateTime$ | async)! | toCosmicTime }}</span></span>
+        <span>Местн. время <span>{{
+            '(старт в ' + ((startDateTime$ | async)! | toCosmicTime:false) + ')'
+          }}</span></span>
       </th>
     </ng-container>
 
@@ -89,7 +91,7 @@
       <th *matHeaderCellDef mat-header-cell class="time-detail-column">
         <span class="underline">Чистое время лидера на КТ</span>
         <br>
-        <span>Космическое время</span>
+        <span>Местное время</span>
       </th>
     </ng-container>
 

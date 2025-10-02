@@ -74,7 +74,8 @@
 }
 
 .time-detail-column {
-  width: 330px;
+  width: 380px;
+  min-width: 240px;
 }
 
 .diff-time {

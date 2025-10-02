@@ -41,16 +41,8 @@ public class RaceAthleteCheckPoint {
     private RaceFormatCheckPoint raceFormatCheckPoint;
 
     @Column(name = "time")
-    @Schema(description = "Космическое время прохождения")
+    @Schema(description = "Местное время прохождения")
     private LocalDateTime time;
-
-//    @Column(name = "race_time")
-//    @Schema(description = "Время прохождения")
-//    private LocalDateTime raceTime;
-
-//    @Column(name = "previous_check_point_diff_time")
-//    @Schema(description = "Разница времени с предыдущего пункта")
-//    private LocalDateTime previousCheckPointDiffTime;
 
     @Column(name = "passed", nullable = false)
     @Schema(description = "Пройдено?")
