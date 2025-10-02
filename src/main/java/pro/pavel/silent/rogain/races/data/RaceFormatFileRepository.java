@@ -8,5 +8,5 @@ import pro.pavel.silent.rogain.races.entity.RaceFormatFile;
 
 public interface RaceFormatFileRepository extends EntityRepository<RaceFormatFile, Long> {
 
-    Optional<RaceFormatFile> findFirstByEntityAndType(RaceFormat raceFormat, RaceFormatFileType type);
+    Optional<RaceFormatFile> findFirstByEntityAndTypeOrderByIdDesc(RaceFormat raceFormat, RaceFormatFileType type);
 }

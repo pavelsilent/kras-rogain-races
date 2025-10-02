@@ -7,7 +7,7 @@ import { environment } from '../environments/environment';
 import { provideApi } from './api/index';
 
 import { routes } from './app.routes';
-import { loaderInterceptor } from './components/loader/loader.service';
+import { errorInterceptor, loaderInterceptor } from './utils/interceptors';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -18,6 +18,6 @@ export const appConfig: ApplicationConfig = {
     provideMomentDateAdapter(),
     provideAnimations(),
     provideApi(environment.apiBaseUrl),
-    provideHttpClient(withInterceptors([loaderInterceptor])),
+    provideHttpClient(withInterceptors([loaderInterceptor, errorInterceptor])),
   ],
 };

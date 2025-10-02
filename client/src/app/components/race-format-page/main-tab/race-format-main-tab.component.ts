@@ -66,6 +66,7 @@ export class RaceFormatMainTabComponent {
   onAddDistanceSchema() {
     const dialogRef = this.dialog.open(AddFileDialogComponent, {
       width: '600px',
+      disableClose: true,
       data: {
         entityId: this.formatId,
         entityType: 'RaceFormat',
@@ -74,13 +75,13 @@ export class RaceFormatMainTabComponent {
     });
 
     lastValueFrom(dialogRef.afterClosed())
-      .then(value => lastValueFrom(value))
       .then(value => this.refresh$.next());
   }
 
   onAddAttitudeProfile() {
     const dialogRef = this.dialog.open(AddFileDialogComponent, {
       width: '600px',
+      disableClose: true,
       data: {
         entityId: this.formatId,
         entityType: 'RaceFormat',
@@ -89,7 +90,6 @@ export class RaceFormatMainTabComponent {
     });
 
     lastValueFrom(dialogRef.afterClosed())
-      .then(value => lastValueFrom(value))
       .then(value => this.refresh$.next());
   }
 }

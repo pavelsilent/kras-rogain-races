@@ -4,8 +4,8 @@
         raceFormat.raceName + ' / ' + raceFormat.name + ' (' + (raceFormat.startDateTime | toRusDateTime) + ')' + ' / '
         + raceFormat.state.name
       }}</span>
-    <div *ngIf="page.canEdit() | async as canEdit" class="actions">
-      <div>
+    <div class="actions">
+      <div *ngIf="page.canEdit() | async as canEdit">
         <!--      <button *ngIf="raceFormat.state != states.STARTED && raceFormat.state != states.FINISHED"-->
         <button *ngIf="raceFormat.state != states.STARTED"
                 mat-flat-button
@@ -18,12 +18,18 @@
                 (click)="onSetRaceState(RaceState.FINISHED)">Завершить гонку
         </button>
       </div>
-      <div>
+      <div class="actions">
         <button *ngIf="!showAttitude" mat-flat-button color="primary"
                 (click)="onToggleAttitudeProfileVisibility()">Показать профиль высоты
         </button>
         <button *ngIf="showAttitude" mat-flat-button color="primary"
                 (click)="onToggleAttitudeProfileVisibility()">Спрятать профиль высоты
+        </button>
+        <button *ngIf="!showDistanceSchema" mat-flat-button color="primary"
+                (click)="onToggleDistanceSchemaVisibility()">Показать схему дистанции
+        </button>
+        <button *ngIf="showDistanceSchema" mat-flat-button color="primary"
+                (click)="onToggleDistanceSchemaVisibility()">Спрятать схему дистанции
         </button>
       </div>
 
@@ -31,4 +37,5 @@
 
   </div>
 </h3>
-<app-race-format-result [showAttitude]="showAttitude"></app-race-format-result>
+<app-race-format-result [showAttitude]="showAttitude"
+                        [showDistanceSchema]="showDistanceSchema"></app-race-format-result>

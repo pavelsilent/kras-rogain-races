@@ -103,6 +103,7 @@ export class AthleteListComponent
     const dialogRef =
       this.dialog.open(AddAthleteDialogComponent, {
         width: '500px',
+        disableClose: true,
       });
 
     lastValueFrom(dialogRef.afterClosed())

@@ -48,7 +48,7 @@ import { RaceFormatResultModel } from '../../../models/race-format-result.model'
 import { CosmicTimePipe } from '../../../utils/cosmic-time.pipe';
 import { RussianDateTimePipe } from '../../../utils/russian-date-time.pipe';
 import { RussianTimePipe } from '../../../utils/russian-time.pipe';
-import { hasLength } from '../../../utils/utils';
+import { exists, hasLength } from '../../../utils/utils';
 import { FileService } from '../../core/file.service';
 import { RaceService } from '../../race/race.service';
 import { RaceFormatPageService } from '../race-format-page.service';
@@ -96,10 +96,14 @@ export class RaceFormatResultComponent {
   raceState$: Observable<RaceState>;
   leaderFinishDuration$: Observable<string>;
   attitudeProfile$: Observable<string>;
+  distanceSchema$: Observable<string>;
   checkPoints$: Observable<RaceCheckPointModel[]>;
 
   @Input()
   showAttitude: boolean;
+
+  @Input()
+  showDistanceSchema: boolean;
 
   topHeaderDef: string[] = [
     'paramsHeader',
@@ -140,6 +144,12 @@ export class RaceFormatResultComponent {
     this.raceState$ = this.format$.pipe(map(value => value.state));
     this.attitudeProfile$ = this.format$.pipe(
       map(value => value.attitudeProfileFileId),
+      filter(value => exists(value)),
+      switchMap(id => this.fileService.download(id)),
+    );
+    this.distanceSchema$ = this.format$.pipe(
+      map(value => value.distanceSchemaFileId),
+      filter(value => exists(value)),
       switchMap(id => this.fileService.download(id)),
     );
 
@@ -245,6 +255,7 @@ export class RaceFormatResultComponent {
       .then(([raceId, raceFormatId, startDateTime, checkPoints]) => this.dialog.open(
         AddRaceAthleteCheckPointDialogComponent,
         {
+          disableClose: true,
           data: {
             raceId: raceId,
             raceFormatId: raceFormatId,
@@ -262,6 +273,7 @@ export class RaceFormatResultComponent {
   onSetAthleteState(row: RaceAthleteModel) {
     firstValueFrom(combineLatest([this.page.getRaceId(), this.page.getRaceFormatId()]))
       .then(([raceId, raceFormatId]) => this.dialog.open(SetAthleteStateDialogComponent, {
+        disableClose: true,
         data: {
           raceId: raceId,
           raceFormatId: raceFormatId,

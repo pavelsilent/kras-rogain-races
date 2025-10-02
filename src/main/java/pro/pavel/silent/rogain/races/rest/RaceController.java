@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,7 +58,7 @@ public class RaceController {
     @ApiResponse(responseCode = "200", description = "Список соревнований")
     public ResponseEntity<List<RaceDTO>> getAllRaces() {
         List<Race> races = raceQueryService.getRaces();
-        return new ResponseEntity<>(races.stream().map(restConverter::toDTO).toList(), HttpStatus.OK);
+        return ResponseEntity.ok(races.stream().map(restConverter::toDTO).toList());
     }
 
     @PostMapping
@@ -67,22 +66,19 @@ public class RaceController {
     @ApiResponse(responseCode = "200", description = "Данные о новом соревновании")
     public ResponseEntity<Long> createRace(@RequestBody RaceSetupDTO dto) {
         Race race = raceService.createRace(dto);
-        return new ResponseEntity<>(race.getId(), HttpStatus.OK);
+        return ResponseEntity.ok(race.getId());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Получить соревнование по ID")
     public ResponseEntity<RaceDTO> getRaceById(@PathVariable Long id) {
-        return new ResponseEntity<>(restConverter.toDTO(raceQueryService.getRaceById(id)), HttpStatus.OK);
+        return ResponseEntity.ok(restConverter.toDTO(raceQueryService.getRaceById(id)));
     }
 
     @GetMapping("/{id}/formats")
     @Operation(summary = "Получить форматы")
     public ResponseEntity<List<RaceFormatDTO>> getRaceFormats(@PathVariable Long id) {
-        return new ResponseEntity<>(
-            map(raceQueryService.getRaceFormats(id), restConverter::toDTO),
-            HttpStatus.OK
-        );
+        return ResponseEntity.ok(map(raceQueryService.getRaceFormats(id), restConverter::toDTO));
     }
 
     @PostMapping("/{id}/formats")
@@ -90,7 +86,7 @@ public class RaceController {
     @ApiResponse(responseCode = "200", description = "Данные о новом формате")
     public ResponseEntity<Long> addRaceFormat(@PathVariable Long id, @RequestBody RaceFormatDTO dto) {
         RaceFormat raceFormat = raceService.addRaceFormat(id, dto);
-        return new ResponseEntity<>(raceFormat.getId(), HttpStatus.OK);
+        return ResponseEntity.ok(raceFormat.getId());
     }
 
     @GetMapping("/{id}/formats/{formatId}")
@@ -99,10 +95,7 @@ public class RaceController {
         @PathVariable Long id,
         @PathVariable Long formatId
     ) {
-        return new ResponseEntity<>(
-            restConverter.toDTO(raceQueryService.getRaceFormatById(formatId)),
-            HttpStatus.OK
-        );
+        return ResponseEntity.ok(restConverter.toDTO(raceQueryService.getRaceFormatById(formatId)));
     }
 
     @GetMapping("/{id}/formats/{formatId}/athletes")
@@ -111,10 +104,7 @@ public class RaceController {
         @PathVariable Long id,
         @PathVariable Long formatId
     ) {
-        return new ResponseEntity<>(
-            map(raceQueryService.getRaceAthletes(formatId), restConverter::toDTO),
-            HttpStatus.OK
-        );
+        return ResponseEntity.ok(map(raceQueryService.getRaceAthletes(formatId), restConverter::toDTO));
     }
 
     @PostMapping("/{id}/formats/{formatId}/athlete-groups")
@@ -125,7 +115,7 @@ public class RaceController {
         @RequestBody List<AthleteGroupDTO> dto
     ) {
         List<RaceFormatAthleteGroup> groups = raceService.addRaceFormatAthleteGroups(id, formatId, dto);
-        return new ResponseEntity<>(map(groups, RaceFormatAthleteGroup::getId), HttpStatus.OK);
+        return ResponseEntity.ok(map(groups, RaceFormatAthleteGroup::getId));
     }
 
     @PostMapping("/{id}/formats/{formatId}/athletes")
@@ -136,7 +126,7 @@ public class RaceController {
         @RequestBody RaceAthleteSetupDTO dto
     ) {
         RaceAthlete raceAthlete = raceService.addRaceAthlete(id, formatId, dto);
-        return new ResponseEntity<>(raceAthlete.getId(), HttpStatus.OK);
+        return ResponseEntity.ok(raceAthlete.getId());
     }
 
     @GetMapping("/{id}/formats/{formatId}/checkpoints")
@@ -145,10 +135,7 @@ public class RaceController {
         @PathVariable Long id,
         @PathVariable Long formatId
     ) {
-        return new ResponseEntity<>(
-            map(raceQueryService.getRaceFormatCheckPoints(formatId), restConverter::toDTO),
-            HttpStatus.OK
-        );
+        return ResponseEntity.ok(map(raceQueryService.getRaceFormatCheckPoints(formatId), restConverter::toDTO));
     }
 
     @PostMapping("/{id}/formats/{formatId}/checkpoints")
@@ -159,7 +146,7 @@ public class RaceController {
         @RequestBody RaceFormatCheckPointSetupDTO dto
     ) {
         RaceFormatCheckPoint raceCheckPoint = raceService.addRaceCheckPoint(id, formatId, dto);
-        return new ResponseEntity<>(raceCheckPoint.getId(), HttpStatus.OK);
+        return ResponseEntity.ok(raceCheckPoint.getId());
     }
 
     @GetMapping("/{id}/formats/{formatId}/result")
@@ -168,21 +155,15 @@ public class RaceController {
         @PathVariable Long id,
         @PathVariable Long formatId
     ) {
-        return new ResponseEntity<>(
-            restConverter.toResultDTO(raceQueryService.getRaceFormatById(formatId)),
-            HttpStatus.OK
-        );
+        return ResponseEntity.ok(restConverter.toResultDTO(raceQueryService.getRaceFormatById(formatId)));
     }
 
     @GetMapping("/{token}/token")
     @Operation(summary = "Получить данные формата соревнований по токену")
     public ResponseEntity<RaceFormatTokenDTO> getRaceFormatLink(@PathVariable String token) {
-        return new ResponseEntity<>(
+        return ResponseEntity.ok(
             restConverter.toDTO(
-                raceQueryService.getRaceFormatTokenModel(token)
-            ),
-            HttpStatus.OK
-        );
+                raceQueryService.getRaceFormatTokenModel(token)));
     }
 
     @PutMapping("/{id}/formats/{formatId}/state")
@@ -197,10 +178,8 @@ public class RaceController {
         } else if (RaceState.FINISHED.name().equals(dto.getState())) {
             raceService.finishRace(id, formatId, dto);
         }
-        return new ResponseEntity<>(
-            restConverter.toResultDTO(raceQueryService.getRaceFormatById(formatId)),
-            HttpStatus.OK
-        );
+        return ResponseEntity.ok(
+            restConverter.toResultDTO(raceQueryService.getRaceFormatById(formatId)));
     }
 
     @GetMapping("/{id}/formats/{formatId}/athlete/{athleteBibNumber}/state/")
@@ -210,10 +189,8 @@ public class RaceController {
         @PathVariable Long formatId,
         @PathVariable Integer athleteBibNumber
     ) {
-        return new ResponseEntity<>(
-            StringDTO.of(raceQueryService.getRaceAthleteState(id, formatId, athleteBibNumber).name()),
-            HttpStatus.OK
-        );
+        return ResponseEntity.ok(
+            StringDTO.of(raceQueryService.getRaceAthleteState(id, formatId, athleteBibNumber).name()));
     }
 
     @PutMapping("/{id}/formats/{formatId}/athlete/{athleteBibNumber}/state/")
@@ -225,10 +202,8 @@ public class RaceController {
         @RequestBody StringDTO state
     ) {
         raceService.setRaceAthleteState(id, formatId, athleteBibNumber, state.getValue());
-        return new ResponseEntity<>(
-            restConverter.toResultDTO(raceQueryService.getRaceFormatById(formatId)),
-            HttpStatus.OK
-        );
+        return ResponseEntity.ok(
+            restConverter.toResultDTO(raceQueryService.getRaceFormatById(formatId)));
     }
 
     @GetMapping("/{id}/formats/{formatId}/athlete/{athleteBibNumber}/checkpoint/{checkpointId}")
@@ -263,7 +238,7 @@ public class RaceController {
         Optional<RaceAthleteCheckPoint> nextCheckPoint =
             raceQueryService.findNextCheckPoint(raceAthlete, checkPoint);
 
-        return new ResponseEntity<>(
+        return ResponseEntity.ok(
             RaceAthleteCheckPointSetupDTO
                 .builder()
                 .data(raceAthleteCheckPointDTO)
@@ -271,9 +246,8 @@ public class RaceController {
                                              .orElseGet(() -> checkPoint.getRaceFormat().getStartTime()))
                 .nextPointTime(nextCheckPoint.map(RaceAthleteCheckPoint::getTime)
                                              .orElseGet(() -> checkPoint.getRaceFormat().getFinishTime()))
-                .build(),
-            HttpStatus.OK
-        );
+                .build())
+            ;
     }
 
     @GetMapping("/{id}/formats/{formatId}/athlete/{athleteBibNumber}/checkpoint/next")
@@ -283,10 +257,8 @@ public class RaceController {
         @PathVariable Long formatId,
         @PathVariable Integer athleteBibNumber
     ) {
-        return new ResponseEntity<>(
-            raceQueryService.getRaceAthleteNextCheckPoint(id, formatId, athleteBibNumber).getId(),
-            HttpStatus.OK
-        );
+        return ResponseEntity.ok(
+            raceQueryService.getRaceAthleteNextCheckPoint(id, formatId, athleteBibNumber).getId());
     }
 
     @PutMapping("/{id}/formats/{formatId}/athlete/{athleteBibNumber}/checkpoint/{checkpointId}")
@@ -299,28 +271,8 @@ public class RaceController {
         @RequestBody RaceAthleteCheckPointDTO checkPoint
     ) {
         raceService.addRaceAthleteCheckPoint(id, formatId, checkPoint);
-        return new ResponseEntity<>(
-            restConverter.toResultDTO(raceQueryService.getRaceFormatById(formatId)),
-            HttpStatus.OK
-        );
+        return ResponseEntity.ok(
+            restConverter.toResultDTO(raceQueryService.getRaceFormatById(formatId)));
     }
 
-    //
-    //    @PostMapping
-    //    @Operation(summary = "Создать новое соревнование")
-    //    public RaceDTO create(@RequestBody RaceDTO dto) {
-    //        return service.create(dto);
-    //    }
-    //
-    //    @PutMapping("/{id}")
-    //    @Operation(summary = "Обновить соревнование")
-    //    public RaceDTO update(@PathVariable Long id, @RequestBody RaceDTO dto) {
-    //        return service.update(id, dto);
-    //    }
-    //
-    //    @DeleteMapping("/{id}")
-    //    @Operation(summary = "Удалить соревнование")
-    //    public void delete(@PathVariable Long id) {
-    //        service.delete(id);
-    //    }
 }

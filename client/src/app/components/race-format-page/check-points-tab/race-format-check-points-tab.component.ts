@@ -121,6 +121,7 @@ export class RaceFormatCheckPointsTabComponent
       .then(raceFormat =>
               this.dialog.open(AddRaceFormatCheckPointDialogComponent, {
                 width: '600px',
+                disableClose: true,
                 data: {
                   raceId: this.id,
                   raceFormatId: this.formatId,

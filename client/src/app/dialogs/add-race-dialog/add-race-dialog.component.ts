@@ -116,6 +116,7 @@ export class AddRaceDialogComponent {
       const dialogRef =
         this.dialog.open(AddRaceTypeDialogComponent, {
           width: '500px',
+          disableClose: true,
         });
 
       lastValueFrom(dialogRef.afterClosed())
@@ -133,6 +134,7 @@ export class AddRaceDialogComponent {
       const dialogRef =
         this.dialog.open(AddCityDialogComponent, {
           width: '500px',
+          disableClose: true,
         });
 
       lastValueFrom(dialogRef.afterClosed())

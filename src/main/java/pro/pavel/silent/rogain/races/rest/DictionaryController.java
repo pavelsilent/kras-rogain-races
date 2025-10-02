@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +37,7 @@ public class DictionaryController {
     @Operation(summary = "Получить список типов соревнований")
     @ApiResponse(responseCode = "200", description = "Список")
     public ResponseEntity<List<RaceTypeDTO>> getAllRaceTypes() {
-        return new ResponseEntity<>(map(raceTypeService.getAll(), restConverter::toDTO), HttpStatus.OK);
+        return ResponseEntity.ok(map(raceTypeService.getAll(), restConverter::toDTO));
     }
 
     @PostMapping("/race-types")
@@ -46,14 +45,14 @@ public class DictionaryController {
     @ApiResponse(responseCode = "200", description = "Данные типа")
     public ResponseEntity<Long> createRaceType(@RequestBody RaceTypeDTO dto) {
         RaceType raceType = raceTypeService.create(dto);
-        return new ResponseEntity<>(raceType.getId(), HttpStatus.OK);
+        return ResponseEntity.ok(raceType.getId());
     }
 
     @GetMapping("/cities")
     @Operation(summary = "Получить список мест проведения соревнований")
     @ApiResponse(responseCode = "200", description = "Список")
     public ResponseEntity<List<CityDTO>> getAllCities() {
-        return new ResponseEntity<>(map(cityService.getAll(), restConverter::toDTO), HttpStatus.OK);
+        return ResponseEntity.ok(map(cityService.getAll(), restConverter::toDTO));
     }
 
     @PostMapping("/cities")
@@ -61,9 +60,7 @@ public class DictionaryController {
     @ApiResponse(responseCode = "200", description = "Данные места")
     public ResponseEntity<Long> createCity(@RequestBody CityDTO dto) {
         City city = cityService.create(dto);
-        return new ResponseEntity<>(city.getId(), HttpStatus.OK);
+        return ResponseEntity.ok(city.getId());
     }
-
-
 
 }

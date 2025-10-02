@@ -104,6 +104,7 @@ export class SelectAthleteGroupDialog {
       const dialogRef =
         this.dialog.open(AddAthleteGroupDialogComponent, {
           width: '500px',
+          disableClose: true,
         });
 
       lastValueFrom(dialogRef.afterClosed())

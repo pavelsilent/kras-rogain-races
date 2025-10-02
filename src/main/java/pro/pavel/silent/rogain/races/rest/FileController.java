@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Base64;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -46,7 +45,6 @@ public class FileController {
         dto.setFileName(file.getFileName());
         dto.setContentType(file.getContentType());
         dto.setBase64Data(base64Data);
-
         return ResponseEntity.ok(dto);
     }
 
@@ -54,7 +52,7 @@ public class FileController {
     @PostMapping(value = "/link")
     public ResponseEntity<Long> linkFile(@RequestBody FileLinkDTO dto) {
         EntityFile link = fileService.createLink(dto);
-        return new ResponseEntity<>(link.getId(), HttpStatus.OK);
+        return ResponseEntity.ok(link.getId());
     }
 
 }

@@ -88,6 +88,7 @@ export class AddAthleteDialogComponent {
       const dialogRef =
         this.dialog.open(AddCityDialogComponent, {
           width: '500px',
+          disableClose: true,
         });
 
       lastValueFrom(dialogRef.afterClosed())

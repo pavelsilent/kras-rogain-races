@@ -11,12 +11,16 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AppService } from './app.service';
-import { LoaderComponent } from './components/loader/loader.component';
-import { LoaderService } from './components/loader/loader.service';
+import { ErrorDialogComponent } from './components/core/error-dialog/error-dialog.component';
+import { LoaderComponent } from './components/core/loader/loader.component';
+import { LoaderService } from './components/core/loader/loader.service';
 
 @Component({
              selector: 'app-root',
-             imports: [RouterOutlet, MatTab, MatTabGroup, NgForOf, NgIf, AsyncPipe, LoaderComponent],
+             imports: [
+               RouterOutlet, MatTab, MatTabGroup, NgForOf, NgIf, AsyncPipe, LoaderComponent,
+               ErrorDialogComponent,
+             ],
              templateUrl: './app.component.html',
              standalone: true,
              styleUrl: './app.component.css',

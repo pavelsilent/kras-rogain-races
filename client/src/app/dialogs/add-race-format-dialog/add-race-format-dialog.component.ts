@@ -131,10 +131,10 @@ export class AddRaceFormatDialogComponent {
 
   onSelectAthleteGroups(athleteGroupIds: any) {
     if (athleteGroupIds.find((id: string) => id === '-1')) {
-      // this.raceTypeControl.reset();
       const dialogRef =
         this.dialog.open(AddAthleteGroupDialogComponent, {
           width: '500px',
+          disableClose: true,
         });
 
       lastValueFrom(dialogRef.afterClosed())

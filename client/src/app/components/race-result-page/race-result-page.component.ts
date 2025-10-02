@@ -38,6 +38,7 @@ export class RaceResultPageComponent {
   states = RaceState;
   protected readonly RaceState = RaceState;
   showAttitude: boolean;
+  showDistanceSchema: boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -71,6 +72,7 @@ export class RaceResultPageComponent {
                   stateDateTime: raceFormat.startDateTime,
                 },
                 width: '400px',
+                disableClose: true,
               }))
       .then(dialogRef => lastValueFrom(dialogRef.afterClosed()))
       .then(value => {
@@ -83,5 +85,9 @@ export class RaceResultPageComponent {
 
   onToggleAttitudeProfileVisibility() {
     this.showAttitude = !this.showAttitude;
+  }
+
+  onToggleDistanceSchemaVisibility() {
+    this.showDistanceSchema = !this.showDistanceSchema;
   }
 }

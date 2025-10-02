@@ -30,7 +30,7 @@ public class RaceFormatFileService implements FileEntityService<RaceFormat, Race
     }
 
     public Optional<File> findFile(RaceFormat raceFormat, RaceFormatFileType fileType) {
-        return raceFormatFileRepository.findFirstByEntityAndType(raceFormat, fileType)
+        return raceFormatFileRepository.findFirstByEntityAndTypeOrderByIdDesc(raceFormat, fileType)
                                        .map(RaceFormatFile::getFile);
     }
 

@@ -91,6 +91,7 @@ export class RaceComponent
           raceId: this.raceId,
         },
         width: '500px',
+        disableClose: true,
       });
 
     lastValueFrom(dialogRef.afterClosed())

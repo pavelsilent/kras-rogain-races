@@ -14,12 +14,3 @@ export class LoaderService {
     this.isLoading.set(false);
   }
 }
-
-export const loaderInterceptor = (
-  req: HttpRequest<unknown>,
-  next: HttpHandlerFn,
-): Observable<HttpEvent<unknown>> => {
-  const loader = inject(LoaderService);
-  loader.show();
-  return next(req).pipe(finalize(() => loader.hide()));
-};

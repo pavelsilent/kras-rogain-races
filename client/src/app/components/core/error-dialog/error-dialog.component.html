@@ -1,0 +1,7 @@
+<div class="overlay" *ngIf="service.error()">
+  <div class="dialog">
+    <h3>{{ service.error()?.title }}</h3>
+    <p><span>Произошла ошибка: </span>{{ service.error()?.message }}</p>
+    <button mat-flat-button color="primary" (click)="service.hide()">Закрыть</button>
+  </div>
+</div>

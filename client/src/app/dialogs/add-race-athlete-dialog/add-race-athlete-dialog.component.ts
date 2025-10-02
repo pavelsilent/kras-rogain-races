@@ -119,6 +119,7 @@ export class AddRaceAthleteDialogComponent {
                   width: '900px',
                   height: '850px',
                   maxWidth: '90vw',
+                  disableClose: true,
                   data: { selectedAthleteIds: ids },
                 }))
       .then(value => lastValueFrom(value.afterClosed()))
@@ -135,6 +136,7 @@ export class AddRaceAthleteDialogComponent {
         .then(value => value.map(value => value.id))
         .then(raceForamtAthleteGroupIds => this.dialog.open(SelectAthleteGroupDialog, {
           width: '500px',
+          disableClose: true,
           data: {
             raceId: this.data.raceId,
             formatId: this.data.formatId,

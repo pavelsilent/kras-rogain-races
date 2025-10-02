@@ -102,6 +102,7 @@ export class RaceFormatAthletesTabComponent
     const dialogRef =
       this.dialog.open(AddRaceAthleteDialogComponent, {
         width: '500px',
+        disableClose: true,
         data: {
           raceId: this.id,
           formatId: this.formatId,

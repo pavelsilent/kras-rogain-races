@@ -56,6 +56,7 @@ export class RaceListComponent
     const dialogRef =
       this.dialog.open(AddRaceDialogComponent, {
         width: '500px',
+        disableClose: true,
       });
 
     lastValueFrom(dialogRef.afterClosed())
