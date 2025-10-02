@@ -1,9 +1,30 @@
-/* You can add global styles to this file, and also import other style files */
+html, body {
+  height: 99%;
+}
 
-html, body { height: 99%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
-/*.mdc-text-field--outlined .mat-mdc-form-field-infix,*/
-/*.mdc-text-field--no-label .mat-mdc-form-field-infix {*/
-/*  padding: 0;*/
-/*}*/
+/* Диалог */
+mat-dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  overflow: auto;
+}
+
+/* Все mat-form-field одинаковой ширины */
+mat-form-field {
+  width: 100%;
+}
+
+/* Кнопки действий */
+mat-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}

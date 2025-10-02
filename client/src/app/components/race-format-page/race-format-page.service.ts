@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { combineLatest, Observable, ReplaySubject, switchMap } from 'rxjs';
+import { combineLatest, Observable, ReplaySubject, Subject, switchMap } from 'rxjs';
 import { AppService } from '../../app.service';
 import { TokenType } from '../../models/enums/token-type.enum';
 import { RaceFormatModel } from '../../models/race-format.model';
@@ -14,6 +14,7 @@ export class RaceFormatPageService {
   private raceFormatId$: ReplaySubject<number> = new ReplaySubject<number>();
   private raceFormat$: Observable<RaceFormatModel>;
   private canEdit$: ReplaySubject<boolean> = new ReplaySubject<boolean>();
+  refresh$: Subject<void> = new Subject<void>();
 
   constructor(private raceService: RaceService, private appService: AppService) {
     this.raceFormat$ = combineLatest([this.raceId$, this.raceFormatId$])

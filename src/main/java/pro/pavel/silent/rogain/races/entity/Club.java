@@ -9,9 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import pro.pavel.silent.lib.core.domain.model.ResourceName;
-import pro.pavel.silent.lib.core.domain.model.Resourced;
-import pro.pavel.silent.rogain.races.domain.enumeration.DataResourceName;
 
 /**
  * Сущность "Клуб"
@@ -22,7 +19,7 @@ import pro.pavel.silent.rogain.races.domain.enumeration.DataResourceName;
 @Entity
 @Table(schema = "public", name = "club")
 @Schema(description = "Клуб")
-public class Club implements Resourced {
+public class Club {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,10 +30,5 @@ public class Club implements Resourced {
     @Column(name = "name", nullable = false)
     @Schema(description = "Название")
     private String name;
-
-    @Override
-    public ResourceName getResource() {
-        return DataResourceName.CLUB;
-    }
 
 }

@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
+import { LocalDateTime } from '@js-joda/core';
+import { Option } from 'funfix-core';
 import { lastValueFrom, map, Observable, tap } from 'rxjs';
 import { RaceControllerService } from '../../api/index';
 import { AthleteGroupModel } from '../../models/athlete-group.model';
+import { AthleteState } from '../../models/enums/athlete-state.enum';
+import { RaceAthleteCheckPointSetupModel } from '../../models/race-athlete-check-point-setup.model';
 import { RaceAthleteCheckPointModel } from '../../models/race-athlete-check-point.model';
 import { RaceAthleteSetupModel } from '../../models/race-athlete-setup.model';
 import { RaceAthleteModel } from '../../models/race-athlete.model';
@@ -110,9 +114,9 @@ export class RaceService {
     formatId: number,
     athleteBibNumber: number,
     checkPointId: number,
-  ): Promise<RaceAthleteCheckPointModel> {
+  ): Promise<RaceAthleteCheckPointSetupModel> {
     return lastValueFrom(this.backend.getRaceAthleteCheckPoint(id, formatId, athleteBibNumber, checkPointId))
-      .then(value => RaceAthleteCheckPointModel.fromDTO(value));
+      .then(value => RaceAthleteCheckPointSetupModel.fromDTO(value));
   }
 
   getRaceAthleteNextCheckPoint(
@@ -121,6 +125,40 @@ export class RaceService {
     athleteBibNumber: number,
   ): Promise<number> {
     return lastValueFrom(this.backend.getRaceAthleteNextCheckPoint(id, formatId, athleteBibNumber));
+  }
+
+  getRaceAthleteState(
+    id: number,
+    formatId: number,
+    athleteBibNumber: number,
+  ): Promise<AthleteState> {
+    return lastValueFrom(this.backend.getRaceAthleteState(id, formatId, athleteBibNumber))
+      .then(value => Option.of(value).map(value => value.value)
+                           .map(code => AthleteState.store.get(code!))
+                           .getOrElse(AthleteState.NOT_DATA));
+  }
+
+  setRaceAthleteState(
+    id: number,
+    formatId: number,
+    athleteBibNumber: number,
+    state: string,
+  ): Promise<RaceFormatResultModel> {
+    return lastValueFrom(this.backend.setRaceAthleteState(id, formatId, athleteBibNumber, { value: state }))
+      .then(value => RaceFormatResultModel.fromDTO(value));
+  }
+
+  setRaceState(
+    id: number,
+    formatId: number,
+    state: string,
+    stateTime: LocalDateTime,
+  ): Promise<RaceFormatResultModel> {
+    const dto = { state: state, stateTime: stateTime };
+    //@ts-ignore
+    return lastValueFrom(this.backend.setRaceState(id, formatId, dto))
+      //@ts-ignore
+      .then(value => RaceFormatResultModel.fromDTO(value));
   }
 
 }

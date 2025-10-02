@@ -14,9 +14,6 @@ import jakarta.persistence.Table;
 import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
-import pro.pavel.silent.lib.core.domain.model.ResourceName;
-import pro.pavel.silent.lib.core.domain.model.Resourced;
-import pro.pavel.silent.rogain.races.domain.enumeration.DataResourceName;
 import pro.pavel.silent.rogain.races.domain.enumeration.RaceState;
 
 /**
@@ -28,7 +25,7 @@ import pro.pavel.silent.rogain.races.domain.enumeration.RaceState;
 @Entity
 @Table(schema = "public", name = "race")
 @Schema(description = "Соревнование")
-public class Race implements Resourced {
+public class Race {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,10 +59,5 @@ public class Race implements Resourced {
     @Column(name = "state", nullable = false, length = 255)
     @Schema(description = "Статус")
     private RaceState state;
-
-    @Override
-    public ResourceName getResource() {
-        return DataResourceName.RACE;
-    }
 
 }

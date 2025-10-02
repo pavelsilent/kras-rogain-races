@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +18,16 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pro.pavel.silent.rogain.races.domain.enumeration.RaceState;
 import pro.pavel.silent.rogain.races.entity.Race;
 import pro.pavel.silent.rogain.races.entity.RaceAthlete;
+import pro.pavel.silent.rogain.races.entity.RaceAthleteCheckPoint;
 import pro.pavel.silent.rogain.races.entity.RaceFormat;
 import pro.pavel.silent.rogain.races.entity.RaceFormatAthleteGroup;
 import pro.pavel.silent.rogain.races.entity.RaceFormatCheckPoint;
 import pro.pavel.silent.rogain.races.rest.dto.AthleteGroupDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceAthleteCheckPointDTO;
+import pro.pavel.silent.rogain.races.rest.dto.RaceAthleteCheckPointSetupDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceAthleteDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceAthleteSetupDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceDTO;
@@ -33,6 +37,8 @@ import pro.pavel.silent.rogain.races.rest.dto.RaceFormatDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatResultDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatTokenDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceSetupDTO;
+import pro.pavel.silent.rogain.races.rest.dto.StateDTO;
+import pro.pavel.silent.rogain.races.rest.dto.core.StringDTO;
 import pro.pavel.silent.rogain.races.rest.service.RestConverter;
 import pro.pavel.silent.rogain.races.service.RaceQueryService;
 import pro.pavel.silent.rogain.races.service.RaceService;
@@ -179,16 +185,68 @@ public class RaceController {
         );
     }
 
+    @PutMapping("/{id}/formats/{formatId}/state")
+    @Operation(summary = "Установить статус соревнованию")
+    public ResponseEntity<RaceFormatResultDTO> setRaceState(
+        @PathVariable Long id,
+        @PathVariable Long formatId,
+        @RequestBody StateDTO dto
+    ) {
+        if (RaceState.STARTED.name().equals(dto.getState())) {
+            raceService.startRace(id, formatId, dto);
+        } else if (RaceState.FINISHED.name().equals(dto.getState())) {
+            raceService.finishRace(id, formatId, dto);
+        }
+        return new ResponseEntity<>(
+            restConverter.toResultDTO(raceQueryService.getRaceFormatById(formatId)),
+            HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/{id}/formats/{formatId}/athlete/{athleteBibNumber}/state/")
+    @Operation(summary = "Получить статус атлета")
+    public ResponseEntity<StringDTO> getRaceAthleteState(
+        @PathVariable Long id,
+        @PathVariable Long formatId,
+        @PathVariable Integer athleteBibNumber
+    ) {
+        return new ResponseEntity<>(
+            StringDTO.of(raceQueryService.getRaceAthleteState(id, formatId, athleteBibNumber).name()),
+            HttpStatus.OK
+        );
+    }
+
+    @PutMapping("/{id}/formats/{formatId}/athlete/{athleteBibNumber}/state/")
+    @Operation(summary = "Установить статус атлету")
+    public ResponseEntity<RaceFormatResultDTO> setRaceAthleteState(
+        @PathVariable Long id,
+        @PathVariable Long formatId,
+        @PathVariable Integer athleteBibNumber,
+        @RequestBody StringDTO state
+    ) {
+        raceService.setRaceAthleteState(id, formatId, athleteBibNumber, state.getValue());
+        return new ResponseEntity<>(
+            restConverter.toResultDTO(raceQueryService.getRaceFormatById(formatId)),
+            HttpStatus.OK
+        );
+    }
+
     @GetMapping("/{id}/formats/{formatId}/athlete/{athleteBibNumber}/checkpoint/{checkpointId}")
     @Operation(summary = "Получить контрольную отсечку")
-    public ResponseEntity<RaceAthleteCheckPointDTO> getRaceAthleteCheckPoint(
+    public ResponseEntity<RaceAthleteCheckPointSetupDTO> getRaceAthleteCheckPoint(
         @PathVariable Long id,
         @PathVariable Long formatId,
         @PathVariable Integer athleteBibNumber,
         @PathVariable Long checkpointId
     ) {
-        return new ResponseEntity<>(
-            raceQueryService.getRaceAthleteCheckPoint(id, formatId, athleteBibNumber, checkpointId)
+        RaceFormatCheckPoint checkPoint = raceQueryService.getRaceFormatCheckPoint(checkpointId);
+        RaceAthlete raceAthlete = raceQueryService.getRaceAthleteByBibNumber(
+            checkPoint.getRaceFormat(),
+            athleteBibNumber
+        );
+
+        RaceAthleteCheckPointDTO raceAthleteCheckPointDTO =
+            raceQueryService.findRaceAthleteCheckPoint(raceAthlete, checkPoint)
                             .map(restConverter::toDTO)
                             .orElseGet(() -> RaceAthleteCheckPointDTO.builder()
                                                                      .id(checkpointId)
@@ -198,12 +256,27 @@ public class RaceController {
                                                                      .time(null)
                                                                      .prevCheckPointDiffDuration(null)
                                                                      .checkTimeExpired(false)
-                                                                     .build()),
+                                                                     .build());
+
+        Optional<RaceAthleteCheckPoint> prevCheckPoint =
+            raceQueryService.findPrevCheckPoint(raceAthlete, checkPoint);
+        Optional<RaceAthleteCheckPoint> nextCheckPoint =
+            raceQueryService.findNextCheckPoint(raceAthlete, checkPoint);
+
+        return new ResponseEntity<>(
+            RaceAthleteCheckPointSetupDTO
+                .builder()
+                .data(raceAthleteCheckPointDTO)
+                .prevPointTime(prevCheckPoint.map(RaceAthleteCheckPoint::getTime)
+                                             .orElseGet(() -> checkPoint.getRaceFormat().getStartTime()))
+                .nextPointTime(nextCheckPoint.map(RaceAthleteCheckPoint::getTime)
+                                             .orElseGet(() -> checkPoint.getRaceFormat().getFinishTime()))
+                .build(),
             HttpStatus.OK
         );
     }
 
-    @GetMapping("/{id}/formats/{formatId}/athlete/{athleteBibNumber}/checkpoint/")
+    @GetMapping("/{id}/formats/{formatId}/athlete/{athleteBibNumber}/checkpoint/next")
     @Operation(summary = "Получить следующую контрольную отсечку")
     public ResponseEntity<Long> getRaceAthleteNextCheckPoint(
         @PathVariable Long id,

@@ -1,25 +1,3 @@
-/* Диалог */
-mat-dialog-content {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: 100%;
-  overflow: auto;
-}
-
-/* Все mat-form-field одинаковой ширины */
-mat-form-field {
-  width: 100%;
-}
-
-/* Кнопки действий */
-mat-dialog-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 16px;
-}
-
 .date-time{
  display: flex;
   flex-direction: row;

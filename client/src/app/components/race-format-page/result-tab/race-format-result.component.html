@@ -1,5 +1,6 @@
-<div class="protocol-table-wrapper">
-  <table mat-table [dataSource]="membersDataSource" matSort class="protocol-table" multiTemplateDataRows="true">
+<div *ngIf="raceState$ | async as raceState" class="protocol-table-wrapper">
+  <table mat-table matSort *ngIf="checkPoints$ | async as checkPoints"
+         [dataSource]="membersDataSource" class="protocol-table" multiTemplateDataRows="true">
     <!-- Первая строка заголовка-->
     <!-- Параметры -->
     <ng-container matColumnDef="paramsHeader">
@@ -105,7 +106,7 @@
       <th *matHeaderCellDef mat-header-cell class="diff-time">Время лидера между КТ</th>
     </ng-container>
 
-    <ng-container *ngFor="let cp of checkPoints" [matColumnDef]="'leaderCheckPointDiffTime' + cp.id">
+    <ng-container *ngFor="let cp of checkPoints$ | async" [matColumnDef]="'leaderCheckPointDiffTime' + cp.id">
       <th *matHeaderCellDef mat-header-cell class="center">
         <span class="diff-time">{{ cp.leaderDiffDuration }}</span>
       </th>
@@ -124,7 +125,7 @@
       <th *matHeaderCellDef
           mat-header-cell
           class="athlete-name-column center bold"
-          [attr.colspan]="checkPointsCount + 1">
+          [attr.colspan]="checkPoints!.length + 1">
         Время участников
       </th>
     </ng-container>
@@ -154,14 +155,26 @@
         <ng-container>
           <div class="athlete-data-container">
             <div class="athlete-data">
-              <span>{{ row.athlete.getFIO() }}</span>
+              <span>{{ row.athlete.getFIO() }} </span> <span class="underline">{{ '(' + row.state.name + ')' }}</span>
               <br>
               <span style="font-style: italic; font-size: 11px">{{ row.athlete.club }}</span>
             </div>
-            <div *ngIf="page.canEdit() | async"  class="athlete-actions" >
-              <button mat-icon-button color="primary" matTooltip="Добавить отсечку" class="action-button"
-                      (click)="onAddCheckPoint(row)">
+            <div *ngIf="page.canEdit() | async" class="athlete-actions">
+              <button mat-icon-button
+                      *ngIf="raceState === RaceState.STARTED"
+                      color="primary"
+                      matTooltip="Добавить отсечку"
+                      class="action-button"
+                      (click)="onAddAthleteCheckPoint(row)">
                 <mat-icon>add</mat-icon>
+              </button>
+              <button mat-icon-button
+                      *ngIf="raceState === RaceState.STARTED"
+                      color="primary"
+                      matTooltip="Установить статус"
+                      class="action-button"
+                      (click)="onSetAthleteState(row)">
+                <mat-icon>edit</mat-icon>
               </button>
             </div>
           </div>
@@ -230,6 +243,5 @@
     <tr mat-header-row class="one-line-row" *matRowDef="let row; columns: dataTableBodyDef"></tr>
     <tr class="diff-time-row one-line-row" mat-row *matRowDef="let row; columns: dataTableDiffDef">
   </table>
-<!--  <mat-paginator [pageSizeOptions]="[10, 100]" showFirstLastButtons></mat-paginator>-->
 </div>
 

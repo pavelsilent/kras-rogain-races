@@ -14,10 +14,7 @@ import jakarta.persistence.Table;
 import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
-import pro.pavel.silent.lib.core.domain.model.ResourceName;
-import pro.pavel.silent.lib.core.domain.model.Resourced;
 import pro.pavel.silent.lib.core.util.StringHelper;
-import pro.pavel.silent.rogain.races.domain.enumeration.DataResourceName;
 import pro.pavel.silent.rogain.races.domain.enumeration.Sex;
 
 /**
@@ -29,7 +26,7 @@ import pro.pavel.silent.rogain.races.domain.enumeration.Sex;
 @Entity
 @Table(schema = "public", name = "athlete")
 @Schema(description = "Спортсмен")
-public class Athlete implements Resourced {
+public class Athlete {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -74,11 +71,6 @@ public class Athlete implements Resourced {
             result += " %s".formatted(middleName);
         }
         return result;
-    }
-
-    @Override
-    public ResourceName getResource() {
-        return DataResourceName.ATHLETE;
     }
 
 }

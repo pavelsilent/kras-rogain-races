@@ -12,6 +12,7 @@ import pro.pavel.silent.lib.core.util.DurationHelper;
 import pro.pavel.silent.lib.core.util.ListHelper;
 import pro.pavel.silent.lib.core.util.OptionalHelper;
 import pro.pavel.silent.lib.core.util.ThreeMap;
+import pro.pavel.silent.rogain.races.domain.enumeration.RaceState;
 import pro.pavel.silent.rogain.races.domain.model.RaceFormatTokenModel;
 import pro.pavel.silent.rogain.races.entity.Athlete;
 import pro.pavel.silent.rogain.races.entity.AthleteGroup;
@@ -33,8 +34,8 @@ import pro.pavel.silent.rogain.races.rest.dto.RaceAthleteGroupDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatCheckPointDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatDTO;
-import pro.pavel.silent.rogain.races.rest.dto.RaceFormatTokenDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatResultDTO;
+import pro.pavel.silent.rogain.races.rest.dto.RaceFormatTokenDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceTypeDTO;
 import pro.pavel.silent.rogain.races.service.RaceQueryService;
 
@@ -54,11 +55,13 @@ public class RestConverter {
                                                            .stream()
                                                            .map(RaceFormatAthleteGroup::getAthleteGroup)
                                                            .toList();
-
-        ThreeMap<Long, AthleteGroup, Integer> placesMap = raceQueryService.resolveAthleteGroupsPlaceMap(
-            raceAthletes,
-            athleteGroups
-        );
+        RaceState raceState = raceFormat.getState();
+        ThreeMap<Long, AthleteGroup, Integer> placesMap =
+            raceState.isHasPlace() ?
+            raceQueryService.resolveAthleteGroupsPlaceMap(
+                raceAthletes,
+                athleteGroups
+            ) : new ThreeMap<>();
 
         return RaceFormatResultDTO.builder()
                                   .id(raceFormat.getId())

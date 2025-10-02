@@ -1,8 +1,10 @@
+import { LocalDateTime } from '@js-joda/core';
 import { Option } from 'funfix-core';
 import { RaceFormatResultDTO } from '../api/index';
-import { exists, resolveEnum } from '../utils/utils';
+import { exists, parseLocalDateTime, resolveEnum } from '../utils/utils';
 import { AthleteGroupModel } from './athlete-group.model';
 import { RaceFormatType } from './enums/race-format-type.enum';
+import { RaceState } from './enums/race-state.enum';
 import { RaceAthleteModel } from './race-athlete.model';
 import { RaceCheckPointModel } from './race-check-point.model';
 
@@ -13,14 +15,17 @@ export class RaceFormatResultModel {
   checkPoints: RaceCheckPointModel[];
   athletesGroups: AthleteGroupModel[];
   athletes: RaceAthleteModel[];
-  // checkTime?: RaceAthleteModel;
-  // leader?: RaceAthleteModel;
+  startDateTime?: LocalDateTime;
+  finishDateTime?: LocalDateTime;
+  state: RaceState;
 
   constructor(dto?: RaceFormatResultDTO) {
     if (exists(dto)) {
       this.id = dto.id;
       this.name = dto.name;
       this.type = resolveEnum(dto.type, RaceFormatType.store);
+      this.startDateTime = parseLocalDateTime(dto.startTime);
+      this.finishDateTime = parseLocalDateTime(dto.finishTime);
       this.checkPoints = Option.of(dto.checkPoints)
                                .map(points => points.map(value => RaceCheckPointModel.fromDTO(value)))
                                .getOrElse([]);
@@ -30,12 +35,7 @@ export class RaceFormatResultModel {
       this.athletes = Option.of(dto.athletes)
                             .map(athletes => athletes.map(value => RaceAthleteModel.fromDTO(value)))
                             .getOrElse([]);
-      // this.checkTime = Option.of(dto.checkTime)
-      //                        .map(data => RaceAthleteModel.fromDTO(data))
-      //                        .getOrElse(undefined);
-      // this.leader = Option.of(dto.leaderTime)
-      //                     .map(data => RaceAthleteModel.fromDTO(data))
-      //                     .getOrElse(undefined);
+      this.state = resolveEnum(dto.state!, RaceState.store);
     }
   }
 

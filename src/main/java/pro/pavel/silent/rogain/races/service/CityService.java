@@ -6,18 +6,15 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import pro.pavel.silent.lib.core.domain.model.ResourceName;
-import pro.pavel.silent.lib.core.service.ResourceService;
 import pro.pavel.silent.lib.core.util.OptionalHelper;
 import pro.pavel.silent.rogain.races.data.CityRepository;
 import pro.pavel.silent.rogain.races.domain.enumeration.CityType;
-import pro.pavel.silent.rogain.races.domain.enumeration.DataResourceName;
 import pro.pavel.silent.rogain.races.entity.City;
 import pro.pavel.silent.rogain.races.rest.dto.CityDTO;
 
 @Service
 @RequiredArgsConstructor
-public class CityService implements ResourceService<City> {
+public class CityService {
 
     @Getter
     private final CityRepository repository;
@@ -59,11 +56,6 @@ public class CityService implements ResourceService<City> {
                        .map(cityOpt -> cityOpt
                            .orElseGet(() -> create(name, "")))
                        .orElse(null);
-    }
-
-    @Override
-    public ResourceName getResourceName() {
-        return DataResourceName.RACE_TYPE;
     }
 
 }

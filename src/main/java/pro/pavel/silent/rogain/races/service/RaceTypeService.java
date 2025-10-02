@@ -4,17 +4,14 @@ import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pro.pavel.silent.lib.core.domain.model.ResourceName;
-import pro.pavel.silent.lib.core.service.ResourceService;
 import pro.pavel.silent.rogain.races.data.RaceTypeRepository;
-import pro.pavel.silent.rogain.races.domain.enumeration.DataResourceName;
 import pro.pavel.silent.rogain.races.entity.RaceType;
 import pro.pavel.silent.rogain.races.rest.dto.RaceTypeDTO;
 
 @Getter
 @Service
 @RequiredArgsConstructor
-public class RaceTypeService implements ResourceService<RaceType> {
+public class RaceTypeService {
 
     private final RaceTypeRepository repository;
 
@@ -42,11 +39,6 @@ public class RaceTypeService implements ResourceService<RaceType> {
     private void fill(RaceType entity, RaceTypeDTO dto) {
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());
-    }
-
-    @Override
-    public ResourceName getResourceName() {
-        return DataResourceName.RACE_TYPE;
     }
 
 }

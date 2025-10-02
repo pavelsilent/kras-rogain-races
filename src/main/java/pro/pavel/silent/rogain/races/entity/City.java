@@ -11,11 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import pro.pavel.silent.lib.core.domain.model.ResourceName;
-import pro.pavel.silent.lib.core.domain.model.Resourced;
-import pro.pavel.silent.lib.core.util.StringHelper;
 import pro.pavel.silent.rogain.races.domain.enumeration.CityType;
-import pro.pavel.silent.rogain.races.domain.enumeration.DataResourceName;
 
 /**
  * Сущность "Населенный пункт"
@@ -26,7 +22,7 @@ import pro.pavel.silent.rogain.races.domain.enumeration.DataResourceName;
 @Entity
 @Table(schema = "public", name = "city")
 @Schema(description = "Город проведения соревнования")
-public class City implements Resourced {
+public class City {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,15 +38,5 @@ public class City implements Resourced {
     @Column(name = "name", nullable = false)
     @Schema(description = "Название")
     private String name;
-
-    @Override
-    public ResourceName getResource() {
-        return DataResourceName.CITY;
-    }
-
-    @Override
-    public String getResourceLinkName() {
-        return name;
-    }
 
 }

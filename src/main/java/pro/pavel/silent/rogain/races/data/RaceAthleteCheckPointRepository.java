@@ -2,16 +2,13 @@ package pro.pavel.silent.rogain.races.data;
 
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import pro.pavel.silent.lib.core.service.EntityRepository;
 import pro.pavel.silent.rogain.races.entity.RaceAthlete;
 import pro.pavel.silent.rogain.races.entity.RaceAthleteCheckPoint;
+import pro.pavel.silent.rogain.races.entity.RaceFormat;
 import pro.pavel.silent.rogain.races.entity.RaceFormatCheckPoint;
 
-public interface RaceAthleteCheckPointRepository extends PagingAndSortingRepository<RaceAthleteCheckPoint, Long>,
-                                                         CrudRepository<RaceAthleteCheckPoint, Long>,
-                                                         JpaSpecificationExecutor<RaceAthleteCheckPoint> {
+public interface RaceAthleteCheckPointRepository extends EntityRepository<RaceAthleteCheckPoint, Long> {
 
     List<RaceAthleteCheckPoint> findAllByRaceAthlete(RaceAthlete raceAthlete);
 
@@ -32,5 +29,12 @@ public interface RaceAthleteCheckPointRepository extends PagingAndSortingReposit
         RaceAthlete raceAthlete,
         Integer orderNumber
     );
+
+    Optional<RaceAthleteCheckPoint> findFirstByRaceAthleteAndRaceFormatCheckPointOrderNumberGreaterThanAndTimeNotNullOrderByRaceFormatCheckPointOrderNumberAsc(
+        RaceAthlete raceAthlete,
+        Integer orderNumber
+    );
+
+    void deleteAllByRaceFormatCheckPointRaceFormat(RaceFormat raceFormat);
 
 }

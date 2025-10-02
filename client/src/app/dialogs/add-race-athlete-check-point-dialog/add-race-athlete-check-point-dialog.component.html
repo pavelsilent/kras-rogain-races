@@ -17,14 +17,21 @@
     </mat-form-field>
     <mat-form-field appearance="fill" class="w-full">
       <mat-label>Дата</mat-label>
-      <input matInput [matDatepicker]="picker" formControlName="checkPointDate"/>
+      <input matInput [matDatepicker]="picker" formControlName="checkPointDate"
+             (dateChange)="validateDateTime($event)"
+             (dateInput)="validateDateTime($event)"/>
       <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
+      <mat-datepicker #picker (input)="validateDateTime($event)"></mat-datepicker>
     </mat-form-field>
     <mat-form-field appearance="fill" class="w-full">
       <mat-label>Время</mat-label>
-      <input matInput type="time" formControlName="checkPointTime" step="1"/>
+      <input matInput type="time" formControlName="checkPointTime" step="1"
+             (change)="validateDateTime($event)"
+             (input)="validateDateTime($event)"/>
     </mat-form-field>
+    <mat-error *ngIf="form.get('checkPointDate')?.hasError('timeRange') || form.get('checkPointTime')?.hasError('timeRange')">
+      {{ validatorMessage$ | async }}
+    </mat-error>
   </form>
 </mat-dialog-content>
 

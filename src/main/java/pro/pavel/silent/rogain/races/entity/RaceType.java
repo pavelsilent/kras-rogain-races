@@ -9,10 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import pro.pavel.silent.lib.core.domain.model.ResourceName;
-import pro.pavel.silent.lib.core.domain.model.Resourced;
-import pro.pavel.silent.lib.core.util.StringHelper;
-import pro.pavel.silent.rogain.races.domain.enumeration.DataResourceName;
 
 /**
  * Сущность "Тип соревнования"
@@ -23,7 +19,7 @@ import pro.pavel.silent.rogain.races.domain.enumeration.DataResourceName;
 @Entity
 @Table(schema = "public", name = "race_type")
 @Schema(description = "Тип соревнования")
-public class RaceType implements Resourced {
+public class RaceType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,15 +34,5 @@ public class RaceType implements Resourced {
     @Column(name = "description", nullable = false, length = 1000)
     @Schema(description = "Описание")
     private String description;
-
-    @Override
-    public ResourceName getResource() {
-        return DataResourceName.RACE_TYPE;
-    }
-
-    @Override
-    public String getResourceLinkName() {
-        return name;
-    }
 
 }

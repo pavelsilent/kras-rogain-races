@@ -38,6 +38,7 @@ import pro.pavel.silent.rogain.races.rest.dto.RaceAthleteSetupDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatCheckPointSetupDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceSetupDTO;
+import pro.pavel.silent.rogain.races.rest.dto.StateDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -253,7 +254,7 @@ public class RaceService {
             });
     }
 
-    public void ensureRaceAthleteStartPoint(RaceAthlete raceAthlete) {
+    public RaceAthleteCheckPoint ensureRaceAthleteStartPoint(RaceAthlete raceAthlete) {
         RaceFormat raceFormat = raceAthlete.getRaceFormat();
         RaceFormatCheckPoint startCheckPoint = raceQueryService.getRaceFormatStartCheckPoint(raceFormat);
         RaceAthleteCheckPoint raceAthleteStartPoint =
@@ -267,7 +268,7 @@ public class RaceService {
             raceAthleteStartPoint.setTime(realTime);
             raceAthleteStartPoint.setPassed(true);
         }
-        raceAthleteCheckPointRepository.save(raceAthleteStartPoint);
+        return raceAthleteCheckPointRepository.save(raceAthleteStartPoint);
     }
 
     public LocalDateTime calcRaceTime(LocalDateTime startTime, LocalDateTime realTime) {
@@ -289,6 +290,60 @@ public class RaceService {
                                 }));
 
         return raceQueryService.getRaceAthleteCheckPoints(raceAthlete);
+    }
+
+    @Transactional
+    public void startRace(Long raceId, Long raceFormatId, StateDTO dto) {
+        RaceState raceState = RaceState.valueOf(dto.getState());
+        RaceFormat raceFormat = raceQueryService.getRaceFormatById(raceFormatId);
+        raceFormat.setState(raceState);
+        raceFormat.setStartTime(dto.getStateTime());
+        raceFormatRepository.save(raceFormat);
+
+        raceAthleteCheckPointRepository.deleteAllByRaceFormatCheckPointRaceFormat(raceFormat);
+
+        List<RaceAthlete> raceAthletes = raceAthleteRepository.findAllByRaceFormatAndTypeOrderByTypeAsc(
+            raceFormat,
+            RaceAthleteType.ATHLETE
+        );
+
+        raceAthletes.forEach(
+            raceAthlete -> {
+                RaceAthleteCheckPoint startPoint = ensureRaceAthleteStartPoint(raceAthlete);
+                raceAthlete.setState(RaceAthleteState.STARTED);
+                raceAthlete.setLastCheckPointOrderNumber(startPoint.getRaceFormatCheckPoint().getOrderNumber());
+                raceAthlete.setLastCheckPointTime(startPoint.getTime());
+                raceAthleteRepository.save(raceAthlete);
+            });
+    }
+
+
+    @Transactional
+    public void finishRace(Long raceId, Long raceFormatId, StateDTO dto) {
+        RaceState raceState = RaceState.valueOf(dto.getState());
+        RaceFormat raceFormat = raceQueryService.getRaceFormatById(raceFormatId);
+        raceFormat.setState(raceState);
+        raceFormat.setFinishTime(dto.getStateTime());
+        raceFormatRepository.save(raceFormat);
+
+        List<RaceAthlete> raceAthletes = raceAthleteRepository.findAllByRaceFormatAndTypeOrderByTypeAsc(
+            raceFormat,
+            RaceAthleteType.ATHLETE
+        );
+
+        raceAthletes.stream()
+                    .filter(raceAthlete -> raceAthlete.getState().equals(RaceAthleteState.STARTED)).forEach(
+                        raceAthlete -> {
+                            raceAthlete.setState(RaceAthleteState.DID_NOT_FINISH);
+                            raceAthleteRepository.save(raceAthlete);
+                        });
+    }
+
+    public void setRaceAthleteState(Long raceId, Long raceFormatId, Integer athleteBibNumber, String state) {
+        RaceFormat raceFormat = raceQueryService.getRaceFormatById(raceFormatId);
+        RaceAthlete raceAthlete = raceQueryService.getRaceAthleteByBibNumber(raceFormat, athleteBibNumber);
+        raceAthlete.setState(RaceAthleteState.valueOf(state));
+        raceAthleteRepository.save(raceAthlete);
     }
 
 }

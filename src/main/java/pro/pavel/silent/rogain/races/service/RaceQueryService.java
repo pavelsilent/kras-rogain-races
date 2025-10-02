@@ -1,6 +1,6 @@
 package pro.pavel.silent.rogain.races.service;
 
-import static pro.pavel.silent.lib.core.util.SimpleFunctions.firstArgSupplier;
+import static pro.pavel.silent.lib.core.util.FunctionHelper.firstArgSupplier;
 import static pro.pavel.silent.lib.core.util.StringHelper.hasLength;
 import static pro.pavel.silent.rogain.races.domain.enumeration.RaceAthleteType.ATHLETE;
 import static pro.pavel.silent.rogain.races.domain.enumeration.RaceFormatTokenType.EDIT;
@@ -21,6 +21,7 @@ import pro.pavel.silent.rogain.races.data.RaceFormatAthleteGroupRepository;
 import pro.pavel.silent.rogain.races.data.RaceFormatCheckPointRepository;
 import pro.pavel.silent.rogain.races.data.RaceFormatRepository;
 import pro.pavel.silent.rogain.races.data.RaceRepository;
+import pro.pavel.silent.rogain.races.domain.enumeration.RaceAthleteState;
 import pro.pavel.silent.rogain.races.domain.model.RaceFormatTokenModel;
 import pro.pavel.silent.rogain.races.entity.Athlete;
 import pro.pavel.silent.rogain.races.entity.AthleteGroup;
@@ -144,9 +145,11 @@ public class RaceQueryService {
 
     public List<RaceAthlete> getRaceAthletes(RaceFormat raceFormat) {
         return raceAthleteRepository.findAllByRaceFormatAndTypeOrderByLastCheckPointOrderNumberDescLastCheckPointTimeAscBibNumberAsc(
-            raceFormat,
-            ATHLETE
-        );
+                                        raceFormat,
+                                        ATHLETE
+                                    ).stream()
+                                    .sorted(Comparator.comparing(order -> order.getState().getOrder()))
+                                    .toList();
     }
 
     public ThreeMap<Long, AthleteGroup, Integer> resolveAthleteGroupsPlaceMap(
@@ -165,6 +168,9 @@ public class RaceQueryService {
         List<RaceAthlete> places = new ArrayList<>();
         for (int i = 0; i < raceAthletes.size(); i++) {
             RaceAthlete raceAthlete = raceAthletes.get(i);
+            if (!raceAthlete.getState().isHasPlace()) {
+                continue;
+            }
             if (findRaceAthleteGroup(raceAthlete, athleteGroup).isPresent()) {
                 places.add(raceAthlete);
             }
@@ -213,9 +219,33 @@ public class RaceQueryService {
     }
 
     public Optional<RaceAthleteCheckPoint> findPrevCheckPoint(RaceAthleteCheckPoint checkPoint) {
-        return raceAthleteCheckPointRepository.findFirstByRaceAthleteAndRaceFormatCheckPointOrderNumberLessThanAndTimeNotNullOrderByRaceFormatCheckPointOrderNumberDesc(
+        return findPrevCheckPoint(
             checkPoint.getRaceAthlete(),
-            checkPoint.getRaceFormatCheckPoint().getOrderNumber()
+            checkPoint.getRaceFormatCheckPoint()
+        );
+    }
+
+    public Optional<RaceAthleteCheckPoint> findPrevCheckPoint(
+        RaceAthlete raceAthlete,
+        RaceFormatCheckPoint checkPoint
+    ) {
+        return raceAthleteCheckPointRepository.findFirstByRaceAthleteAndRaceFormatCheckPointOrderNumberLessThanAndTimeNotNullOrderByRaceFormatCheckPointOrderNumberDesc(
+            raceAthlete,
+            checkPoint.getOrderNumber()
+        );
+    }
+
+    public Optional<RaceAthleteCheckPoint> findNextCheckPoint(RaceAthleteCheckPoint checkPoint) {
+        return findNextCheckPoint(checkPoint.getRaceAthlete(), checkPoint.getRaceFormatCheckPoint());
+    }
+
+    public Optional<RaceAthleteCheckPoint> findNextCheckPoint(
+        RaceAthlete raceAthlete,
+        RaceFormatCheckPoint checkPoint
+    ) {
+        return raceAthleteCheckPointRepository.findFirstByRaceAthleteAndRaceFormatCheckPointOrderNumberGreaterThanAndTimeNotNullOrderByRaceFormatCheckPointOrderNumberAsc(
+            raceAthlete,
+            checkPoint.getOrderNumber()
         );
     }
 
@@ -234,7 +264,7 @@ public class RaceQueryService {
         return model;
     }
 
-    public Optional<RaceAthleteCheckPoint> getRaceAthleteCheckPoint(
+    public Optional<RaceAthleteCheckPoint> findRaceAthleteCheckPoint(
         Long raceId,
         Long raceFormatId,
         Integer bibNumber,
@@ -266,6 +296,16 @@ public class RaceQueryService {
         }
 
         return getRaceFormatCheckPoint(raceFormat, nextCheckPointOrderNumber);
+    }
+
+    public RaceAthleteState getRaceAthleteState(
+        Long raceId,
+        Long raceFormatId,
+        Integer bibNumber
+    ) {
+        RaceFormat raceFormat = getRaceFormatById(raceFormatId);
+        RaceAthlete raceAthlete = getRaceAthleteByBibNumber(raceFormat, bibNumber);
+        return raceAthlete.getState();
     }
 
 }

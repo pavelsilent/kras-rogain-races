@@ -1,11 +1,18 @@
 package pro.pavel.silent.rogain.races.domain.enumeration;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum RaceState {
-    DRAFT,
-    PLANNED,
-    REGISTRATION_STARTED,
-    REGISTRATION_FINISHED,
-    STARTED,
-    FINISHED,
-    CANCELED,
+    DRAFT(false),
+    PLANNED(false),
+    REGISTRATION_STARTED(false),
+    REGISTRATION_FINISHED(false),
+    STARTED(true),
+    FINISHED(true),
+    CANCELED(false);
+
+    private final boolean hasPlace;
 }

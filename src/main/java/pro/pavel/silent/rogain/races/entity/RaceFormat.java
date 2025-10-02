@@ -60,6 +60,14 @@ public class RaceFormat {
     @Schema(description = "Время финиша")
     private LocalDateTime finishTime;
 
+    @Column(name = "start_time_fact")
+    @Schema(description = "Фактическое время старта")
+    private LocalDateTime startTimeFact;
+
+    @Column(name = "finish_time_fact", nullable = false)
+    @Schema(description = "Фактическое время финиша")
+    private LocalDateTime finishTimeFact;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "state", nullable = false, length = 255)
     @Schema(description = "Статус")

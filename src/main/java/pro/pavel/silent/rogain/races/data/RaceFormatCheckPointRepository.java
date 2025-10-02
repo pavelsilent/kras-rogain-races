@@ -2,16 +2,11 @@ package pro.pavel.silent.rogain.races.data;
 
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import pro.pavel.silent.lib.core.service.EntityRepository;
 import pro.pavel.silent.rogain.races.entity.RaceFormat;
 import pro.pavel.silent.rogain.races.entity.RaceFormatCheckPoint;
 
-public interface RaceFormatCheckPointRepository extends PagingAndSortingRepository<RaceFormatCheckPoint, Long>,
-                                                        CrudRepository<RaceFormatCheckPoint, Long>,
-                                                        JpaSpecificationExecutor<RaceFormatCheckPoint> {
-
+public interface RaceFormatCheckPointRepository extends EntityRepository<RaceFormatCheckPoint, Long> {
 
     List<RaceFormatCheckPoint> findAllByRaceFormatOrderByOrderNumberAsc(RaceFormat raceFormat);
 

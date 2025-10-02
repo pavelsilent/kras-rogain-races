@@ -101,7 +101,7 @@ public class ThreeMap<L, M, R> {
                            map.add(triple.getLeft(), triple.getMiddle(), triple.getRight());
                            return map;
                        },
-                       SimpleFunctions.firstArgSupplier()
+                       FunctionHelper.firstArgSupplier()
                    );
     }
 
