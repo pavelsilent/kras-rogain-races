@@ -2,8 +2,8 @@
   width: 100%;
 
   .thumb {
-    width: 32px;
-    height: 32px;
+    width: 132px;
+    height: 132px;
     object-fit: cover;
     border-radius: 4px;
   }

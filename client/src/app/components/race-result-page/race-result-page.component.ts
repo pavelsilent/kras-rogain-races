@@ -36,11 +36,12 @@ export class RaceResultPageComponent {
 
   raceFormat$: Observable<RaceFormatModel>;
   states = RaceState;
+  protected readonly RaceState = RaceState;
+  showAttitude: boolean;
 
   constructor(
     private route: ActivatedRoute,
     protected page: RaceFormatPageService,
-    private service: RaceService,
     private appService: AppService,
     private dialog: MatDialog,
     private router: Router,
@@ -80,5 +81,7 @@ export class RaceResultPageComponent {
       });
   }
 
-  protected readonly RaceState = RaceState;
+  onToggleAttitudeProfileVisibility() {
+    this.showAttitude = !this.showAttitude;
+  }
 }

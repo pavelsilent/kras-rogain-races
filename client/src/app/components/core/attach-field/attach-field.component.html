@@ -4,9 +4,8 @@
   <input matInput [value]="fileName" placeholder="Выберите файл" readonly/>
 
   <button mat-icon-button matIconSuffix (click)="fileInput.click()" type="button">
-    <mat-icon *ngIf="!previewUrl">upload</mat-icon>
-    <img *ngIf="previewUrl" [src]="previewUrl" class="thumb"/>
+    <mat-icon>upload</mat-icon>
   </button>
-
+  <img *ngIf="previewUrl" [src]="previewUrl" class="thumb"/>
   <input type="file" accept="image/*" hidden #fileInput (change)="onFileSelected($event)">
 </mat-form-field>

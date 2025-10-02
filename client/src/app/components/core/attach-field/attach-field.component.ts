@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import { Component, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
@@ -14,6 +15,7 @@ import { MatInput } from '@angular/material/input';
                MatIconButton,
                MatInput,
                MatSuffix,
+               NgIf,
              ],
              templateUrl: './attach-field.component.html',
              standalone: true,

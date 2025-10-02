@@ -4,19 +4,31 @@
         raceFormat.raceName + ' / ' + raceFormat.name + ' (' + (raceFormat.startDateTime | toRusDateTime) + ')' + ' / '
         + raceFormat.state.name
       }}</span>
-    <div *ngIf="page.canEdit() | async as canEdit">
-      <!--      <button *ngIf="raceFormat.state != states.STARTED && raceFormat.state != states.FINISHED"-->
-      <button *ngIf="raceFormat.state != states.STARTED"
-              mat-flat-button
-              color="primary"
-              (click)="onSetRaceState(RaceState.STARTED)">Начать гонку
-      </button>
-      <button *ngIf="raceFormat.state == states.STARTED"
-              mat-flat-button
-              color="primary"
-              (click)="onSetRaceState(RaceState.FINISHED)">Завершить гонку
-      </button>
+    <div *ngIf="page.canEdit() | async as canEdit" class="actions">
+      <div>
+        <!--      <button *ngIf="raceFormat.state != states.STARTED && raceFormat.state != states.FINISHED"-->
+        <button *ngIf="raceFormat.state != states.STARTED"
+                mat-flat-button
+                color="primary"
+                (click)="onSetRaceState(RaceState.STARTED)">Начать гонку
+        </button>
+        <button *ngIf="raceFormat.state == states.STARTED"
+                mat-flat-button
+                color="primary"
+                (click)="onSetRaceState(RaceState.FINISHED)">Завершить гонку
+        </button>
+      </div>
+      <div>
+        <button *ngIf="!showAttitude" mat-flat-button color="primary"
+                (click)="onToggleAttitudeProfileVisibility()">Показать профиль высоты
+        </button>
+        <button *ngIf="showAttitude" mat-flat-button color="primary"
+                (click)="onToggleAttitudeProfileVisibility()">Спрятать профиль высоты
+        </button>
+      </div>
+
     </div>
+
   </div>
 </h3>
-<app-race-format-result></app-race-format-result>
+<app-race-format-result [showAttitude]="showAttitude"></app-race-format-result>

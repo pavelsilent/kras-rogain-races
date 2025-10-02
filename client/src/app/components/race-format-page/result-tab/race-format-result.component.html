@@ -1,5 +1,5 @@
 <div *ngIf="raceState$ | async as raceState" class="protocol-table-wrapper">
-  <div class="img-container">
+  <div *ngIf="showAttitude" class="img-container">
     <img *ngIf="attitudeProfile$ | async as attitudeProfileSrc" [src]="attitudeProfileSrc" alt="Профиль высоты" class="img">
   </div>
   <table mat-table matSort *ngIf="checkPoints$ | async as checkPoints"

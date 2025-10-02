@@ -9,3 +9,11 @@
   justify-content: space-between;
   align-items: center;
 }
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  & > div {
+    padding-left: 10px;
+  }
+}

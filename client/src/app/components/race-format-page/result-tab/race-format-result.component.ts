@@ -1,11 +1,9 @@
 import { AsyncPipe, NgClass, NgForOf, NgIf, NgStyle } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-
 import { MatFormField } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-
 import { MatInput } from '@angular/material/input';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
@@ -98,8 +96,10 @@ export class RaceFormatResultComponent {
   raceState$: Observable<RaceState>;
   leaderFinishDuration$: Observable<string>;
   attitudeProfile$: Observable<string>;
-
   checkPoints$: Observable<RaceCheckPointModel[]>;
+
+  @Input()
+  showAttitude: boolean;
 
   topHeaderDef: string[] = [
     'paramsHeader',
@@ -132,8 +132,8 @@ export class RaceFormatResultComponent {
     this.format$ = this.page.refresh$.pipe(
       startWith(null),
       switchMap(data => combineLatest([this.page.getRaceId(), this.page.getRaceFormatId()])),
-      switchMap(([raceId, raceFormatId]) => this.service.getRaceFormatResult(raceId, raceFormatId)
-                                                .pipe(shareReplay(1))),
+      switchMap(([raceId, raceFormatId]) => this.service.getRaceFormatResult(raceId, raceFormatId)),
+      shareReplay({ bufferSize: 1, refCount: true }),
     );
 
     this.startDateTime$ = this.format$.pipe(map(value => value.startDateTime!));
@@ -192,59 +192,7 @@ export class RaceFormatResultComponent {
         ...checkPoints.map(checkPoint => 'athleteCheckPointDiffTime' + checkPoint.id),
       ];
       return checkPoints;
-    }), shareReplay(1));
-
-    // this.format$.subscribe(format => {
-    //   console.log('***');
-    //   this.checkPoints = Option.of(format.checkPoints).getOrElse([]);
-    //   this.checkPointsCount = this.checkPoints.length;
-    //
-    //   this.checkPointsHeaderDef = [
-    //     ...this.checkPoints.map(checkPoint => 'checkPointHeader' + checkPoint.id),
-    //   ];
-    //
-    //   this.raceDistanceHeaderDef = [
-    //     'distanceHeader',
-    //     'emptyHeader',
-    //     ...this.checkPoints.map(checkPoint => 'checkPointDistance' + checkPoint.id),
-    //     'emptyHeaderRowSpan4',
-    //     'emptyHeaderRowSpan4',
-    //   ];
-    //   // КВ
-    //   this.raceCheckTimeHeaderDef = [
-    //     'checkTimeHeader',
-    //     'checkTimeDetailHeader',
-    //     ...this.checkPoints.map(checkPoint => 'checkPointTime' + checkPoint.id),
-    //   ];
-    //
-    //   this.raceLeaderHeaderDef = [
-    //     'leaderTimeHeader',
-    //     'leaderTimeDetailHeader',
-    //     ...this.checkPoints.map(
-    //       checkPoint => 'leaderCheckPointTime' + checkPoint.id),
-    //   ];
-    //
-    //   this.raceLeaderDiffTimeHeaderDef = [
-    //     'leaderDiffTimeHeader',
-    //     ...this.checkPoints.map(
-    //       checkPoint => 'leaderCheckPointDiffTime' + checkPoint.id),
-    //   ];
-    //
-    //   this.dataTableBodyDef = [
-    //     'bib',
-    //     'name',
-    //
-    //     'timeDetail',
-    //     ...this.checkPoints.map(checkPoint => 'athleteCheckPoint' + checkPoint.id),
-    //     'absolutePlace',
-    //     'groupPlace',
-    //   ];
-    //
-    //   this.dataTableDiffDef = [
-    //     'time-diff-detail',
-    //     ...this.checkPoints.map(checkPoint => 'athleteCheckPointDiffTime' + checkPoint.id),
-    //   ];
-    // });
+    }), shareReplay({ bufferSize: 1, refCount: true }));
 
     this.leaderFinishDuration$ = this.format$.pipe(
       map(format => format.checkPoints.filter(value => value.isFinish)),
