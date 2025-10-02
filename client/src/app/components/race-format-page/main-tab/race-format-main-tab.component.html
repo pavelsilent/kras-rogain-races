@@ -12,4 +12,12 @@
   <p><strong>Ссылка на редактирование результатов: </strong>
     <a href="#" (click)="navigate(raceFormat.editToken);$event.preventDefault();">{{ raceFormat?.editToken }}</a>
   </p>
+
+  <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 16px; min-width: 200px">
+    <button mat-flat-button color="primary" (click)="onAddDistanceSchema()">Добавить схему круга</button>
+  </div>
+  <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 16px; min-width: 200px">
+    <button mat-flat-button color="primary" (click)="onAddAttitudeProfile()">Добавить профиль высоты</button>
+  </div>
 </ng-container>
+

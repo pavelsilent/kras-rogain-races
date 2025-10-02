@@ -49,4 +49,10 @@ public class RaceFormatResultDTO {
     @Schema(description = "Статус")
     private String state;
 
+    @Schema(description = "Идентификатор файла профиля высоты")
+    private Long attitudeProfileFileId;
+
+    @Schema(description = "Идентификатор файла схемы круга")
+    private Long distanceSchemaFileId;
+
 }

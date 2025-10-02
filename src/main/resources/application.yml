@@ -17,6 +17,10 @@ spring:
     change-log: classpath:/db/changelog/db.changelog-master.xml
     drop-first: false
     default-schema: public
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
 
 management:
   endpoints:

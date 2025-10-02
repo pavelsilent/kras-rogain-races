@@ -328,4 +328,56 @@
     </addColumn>
   </changeSet>
 
+  <changeSet author="p.brychev" id="2025-09-16--01-init-schema.015">
+    <createTable schemaName="public" tableName="file">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" primaryKeyName="file_pkey"/>
+      </column>
+      <column name="file_name" type="VARCHAR(1000)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="content_type" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="file_data" type="BYTEA">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createTable schemaName="public" tableName="race_format_file">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" primaryKeyName="race_format_file_pkey"/>
+      </column>
+      <column name="file_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="race_format_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="type" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <addForeignKeyConstraint
+      baseTableSchemaName="public"
+      baseTableName="race_format_file"
+      baseColumnNames="race_format_id"
+      referencedTableSchemaName="public"
+      referencedTableName="race_format"
+      referencedColumnNames="id"
+      constraintName="fk_race_format_file_race_format"
+      deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"/>
+
+    <addForeignKeyConstraint
+      baseTableSchemaName="public"
+      baseTableName="race_format_file"
+      baseColumnNames="race_format_id"
+      referencedTableSchemaName="public"
+      referencedTableName="file"
+      referencedColumnNames="id"
+      constraintName="fk_race_format_file_file"
+      deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"/>
+
+  </changeSet>
 </databaseChangeLog>

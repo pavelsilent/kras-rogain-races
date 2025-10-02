@@ -1,10 +1,10 @@
 <h3 class="header" *ngIf="raceFormat$ | async as raceFormat">
-  <div class="header-container" *ngIf="page.canEdit() | async as canEdit">
+  <div class="header-container">
     <span>{{
         raceFormat.raceName + ' / ' + raceFormat.name + ' (' + (raceFormat.startDateTime | toRusDateTime) + ')' + ' / '
         + raceFormat.state.name
       }}</span>
-    <div *ngIf="canEdit">
+    <div *ngIf="page.canEdit() | async as canEdit">
       <!--      <button *ngIf="raceFormat.state != states.STARTED && raceFormat.state != states.FINISHED"-->
       <button *ngIf="raceFormat.state != states.STARTED"
               mat-flat-button

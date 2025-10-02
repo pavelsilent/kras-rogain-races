@@ -18,6 +18,8 @@ export class RaceFormatResultModel {
   startDateTime?: LocalDateTime;
   finishDateTime?: LocalDateTime;
   state: RaceState;
+  attitudeProfileFileId: number;
+  distanceSchemaFileId: number;
 
   constructor(dto?: RaceFormatResultDTO) {
     if (exists(dto)) {
@@ -36,6 +38,8 @@ export class RaceFormatResultModel {
                             .map(athletes => athletes.map(value => RaceAthleteModel.fromDTO(value)))
                             .getOrElse([]);
       this.state = resolveEnum(dto.state!, RaceState.store);
+      this.attitudeProfileFileId = dto.attitudeProfileFileId!;
+      this.distanceSchemaFileId = dto.distanceSchemaFileId!;
     }
   }
 

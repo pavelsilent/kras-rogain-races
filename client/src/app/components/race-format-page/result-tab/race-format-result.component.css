@@ -148,3 +148,17 @@
   top: 0;
   right: 0;
 }
+
+.img-container {
+
+  min-width: 60%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 5px;
+}
+
+.img {
+  width: 90%;
+  height: auto;
+}

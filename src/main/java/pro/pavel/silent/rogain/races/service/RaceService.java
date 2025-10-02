@@ -17,6 +17,7 @@ import pro.pavel.silent.rogain.races.data.RaceAthleteGroupRepository;
 import pro.pavel.silent.rogain.races.data.RaceAthleteRepository;
 import pro.pavel.silent.rogain.races.data.RaceFormatAthleteGroupRepository;
 import pro.pavel.silent.rogain.races.data.RaceFormatCheckPointRepository;
+import pro.pavel.silent.rogain.races.data.RaceFormatFileRepository;
 import pro.pavel.silent.rogain.races.data.RaceFormatRepository;
 import pro.pavel.silent.rogain.races.data.RaceRepository;
 import pro.pavel.silent.rogain.races.domain.enumeration.RaceAthleteState;
@@ -55,6 +56,8 @@ public class RaceService {
     private final RaceFormatAthleteGroupRepository raceFormatAthleteGroupRepository;
     private final RaceAthleteGroupRepository raceAthleteGroupRepository;
     private final RaceFormatCheckPointRepository raceFormatCheckPointRepository;
+    private final FileService fileService;
+    private final RaceFormatFileRepository raceFormatFileRepository;
 
     public Race createRace(RaceSetupDTO dto) {
         Race race = new Race();
@@ -345,5 +348,4 @@ public class RaceService {
         raceAthlete.setState(RaceAthleteState.valueOf(state));
         raceAthleteRepository.save(raceAthlete);
     }
-
 }

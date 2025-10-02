@@ -51,6 +51,7 @@ import { CosmicTimePipe } from '../../../utils/cosmic-time.pipe';
 import { RussianDateTimePipe } from '../../../utils/russian-date-time.pipe';
 import { RussianTimePipe } from '../../../utils/russian-time.pipe';
 import { hasLength } from '../../../utils/utils';
+import { FileService } from '../../core/file.service';
 import { RaceService } from '../../race/race.service';
 import { RaceFormatPageService } from '../race-format-page.service';
 
@@ -96,7 +97,7 @@ export class RaceFormatResultComponent {
   startDateTime$: Observable<LocalDateTime>;
   raceState$: Observable<RaceState>;
   leaderFinishDuration$: Observable<string>;
-
+  attitudeProfile$: Observable<string>;
 
   checkPoints$: Observable<RaceCheckPointModel[]>;
 
@@ -126,7 +127,7 @@ export class RaceFormatResultComponent {
   membersDataSource = new MatTableDataSource<RaceAthleteModel>();
 
   constructor(private route: ActivatedRoute, private service: RaceService, private dialog: MatDialog,
-              public page: RaceFormatPageService,
+              public page: RaceFormatPageService, private fileService: FileService,
   ) {
     this.format$ = this.page.refresh$.pipe(
       startWith(null),
@@ -137,6 +138,10 @@ export class RaceFormatResultComponent {
 
     this.startDateTime$ = this.format$.pipe(map(value => value.startDateTime!));
     this.raceState$ = this.format$.pipe(map(value => value.state));
+    this.attitudeProfile$ = this.format$.pipe(
+      map(value => value.attitudeProfileFileId),
+      switchMap(id => this.fileService.download(id)),
+    );
 
     this.checkPoints$ = this.format$.pipe(map(format => {
       console.log('***');

@@ -24,7 +24,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInput, MatLabel } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { LocalDateTime } from '@js-joda/core';
-import { DurationFieldComponent } from '../../components/core/duration-field/duration-field.component';
 import { DurationSplitFieldComponent } from '../../components/core/duration-split-field/duration-split-field.component';
 import { RaceService } from '../../components/race/race.service';
 import { RaceCheckPointSetupModel } from '../../models/race-check-point-setup.model';
@@ -60,7 +59,6 @@ export interface AddRaceFormatCheckPointDialogConfig {
                MatSuffix,
                MatIconButton,
                MatButtonToggle,
-               DurationFieldComponent,
                DurationSplitFieldComponent,
              ],
              providers: [

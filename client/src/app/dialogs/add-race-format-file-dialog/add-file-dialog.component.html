@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>Вложения</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <app-attach-field formControlName="file"/>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Отмена</button>
+  <button mat-raised-button color="primary" (click)="submit()">Сохранить</button>
+</mat-dialog-actions>

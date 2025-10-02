@@ -8,6 +8,8 @@ import pro.pavel.silent.rogain.races.entity.RaceFormat;
 
 public interface RaceFormatRepository extends EntityRepository<RaceFormat, Long> {
 
+    RaceFormat getById(Long id);
+
     List<RaceFormat> findAllByRace(Race race);
 
     List<RaceFormat> findAllByRaceId(Long id);

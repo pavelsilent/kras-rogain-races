@@ -1,5 +1,8 @@
 package pro.pavel.silent.rogain.races.rest.service;
 
+import static pro.pavel.silent.rogain.races.domain.enumeration.RaceFormatFileType.DISTANCE_ATTITUDE_PROFILE;
+import static pro.pavel.silent.rogain.races.domain.enumeration.RaceFormatFileType.DISTANCE_SCHEMA;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,6 +21,7 @@ import pro.pavel.silent.rogain.races.entity.Athlete;
 import pro.pavel.silent.rogain.races.entity.AthleteGroup;
 import pro.pavel.silent.rogain.races.entity.City;
 import pro.pavel.silent.rogain.races.entity.Club;
+import pro.pavel.silent.rogain.races.entity.File;
 import pro.pavel.silent.rogain.races.entity.Race;
 import pro.pavel.silent.rogain.races.entity.RaceAthlete;
 import pro.pavel.silent.rogain.races.entity.RaceAthleteCheckPoint;
@@ -37,6 +41,7 @@ import pro.pavel.silent.rogain.races.rest.dto.RaceFormatDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatResultDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatTokenDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceTypeDTO;
+import pro.pavel.silent.rogain.races.service.RaceFormatFileService;
 import pro.pavel.silent.rogain.races.service.RaceQueryService;
 
 @Service
@@ -44,6 +49,7 @@ import pro.pavel.silent.rogain.races.service.RaceQueryService;
 public class RestConverter {
 
     private final RaceQueryService raceQueryService;
+    private final RaceFormatFileService raceFormatFileService;
 
     public RaceFormatResultDTO toResultDTO(RaceFormat raceFormat) {
         if (raceFormat == null) {
@@ -91,14 +97,14 @@ public class RestConverter {
                                           )
                                       )
                                   )
-                                  //                                  .checkTime(raceQueryService.findRaceCheckTime(raceFormat)
-                                  //                                                             .map(this::toDTO)
-                                  //                                                             .orElse(null)
-                                  //                                  )
-                                  //                                  .leaderTime(raceQueryService.findRaceLeaderTime(raceFormat)
-                                  //                                                              .map(this::toDTO)
-                                  //                                                              .orElse(null)
-                                  //                                  )
+                                  .attitudeProfileFileId(raceFormatFileService.findFile(
+                                      raceFormat,
+                                      DISTANCE_ATTITUDE_PROFILE
+                                  ).map(File::getId).orElse(null))
+                                  .distanceSchemaFileId(raceFormatFileService.findFile(
+                                      raceFormat,
+                                      DISTANCE_SCHEMA
+                                  ).map(File::getId).orElse(null))
                                   .build();
     }
 

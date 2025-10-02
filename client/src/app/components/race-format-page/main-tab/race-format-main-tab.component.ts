@@ -1,10 +1,13 @@
 import { AsyncPipe, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatButton } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Option } from 'funfix-core';
-import { map, Observable, startWith, Subject, switchMap } from 'rxjs';
+import { lastValueFrom, map, Observable, startWith, Subject, switchMap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
+import { AddFileDialogComponent } from '../../../dialogs/add-race-format-file-dialog/add-file-dialog.component';
+import { RaceFormatFileType } from '../../../models/enums/race-format-file-type.enum';
 import { RaceFormatModel } from '../../../models/race-format.model';
 import { EnumPipe } from '../../../utils/enum.pipe';
 import { BoolPipe } from '../../../utils/list.pipe';
@@ -36,7 +39,12 @@ export class RaceFormatMainTabComponent {
   refresh$: Subject<void> = new Subject<void>();
   basePath: string;
 
-  constructor(private router: Router, private route: ActivatedRoute, private service: RaceService) {
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private service: RaceService,
+    private dialog: MatDialog,
+  ) {
     this.id = Number(this.route.parent?.snapshot.paramMap.get('id'));
     this.formatId = Number(this.route.parent?.snapshot.paramMap.get('formatId'));
     this.raceFormat$ = this.refresh$.pipe(
@@ -53,5 +61,35 @@ export class RaceFormatMainTabComponent {
 
   navigate(token: string | undefined) {
     this.router.navigateByUrl(`/results/` + token);
+  }
+
+  onAddDistanceSchema() {
+    const dialogRef = this.dialog.open(AddFileDialogComponent, {
+      width: '600px',
+      data: {
+        entityId: this.formatId,
+        entityType: 'RaceFormat',
+        fileType: RaceFormatFileType.DISTANCE_SCHEMA.code,
+      },
+    });
+
+    lastValueFrom(dialogRef.afterClosed())
+      .then(value => lastValueFrom(value))
+      .then(value => this.refresh$.next());
+  }
+
+  onAddAttitudeProfile() {
+    const dialogRef = this.dialog.open(AddFileDialogComponent, {
+      width: '600px',
+      data: {
+        entityId: this.formatId,
+        entityType: 'RaceFormat',
+        fileType: RaceFormatFileType.DISTANCE_ATTITUDE_PROFILE.code,
+      },
+    });
+
+    lastValueFrom(dialogRef.afterClosed())
+      .then(value => lastValueFrom(value))
+      .then(value => this.refresh$.next());
   }
 }
