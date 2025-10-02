@@ -1,4 +1,4 @@
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
 import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -7,6 +7,7 @@ import { environment } from '../environments/environment';
 import { provideApi } from './api/index';
 
 import { routes } from './app.routes';
+import { loaderInterceptor } from './components/loader/loader.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,6 +17,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideMomentDateAdapter(),
     provideAnimations(),
-    provideApi(environment.apiBaseUrl)
+    provideApi(environment.apiBaseUrl),
+    provideHttpClient(withInterceptors([loaderInterceptor])),
   ],
 };
