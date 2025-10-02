@@ -24,7 +24,6 @@ export class SelectAthleteDialog {
   selectedRow: AthleteModel;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: SelectAthleteDialogConfig) {
-    console.log(data.selectedAthleteIds)
   }
 
   onSelect(row: AthleteModel) {

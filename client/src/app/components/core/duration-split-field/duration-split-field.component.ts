@@ -81,9 +81,9 @@ export class DurationSplitFieldComponent
   }
 
   updateValue(): void {
-    const hh = this.hours.padStart(2, '0') || '00';
-    const mm = this.minutes.padStart(2, '0') || '00';
-    const ss = this.seconds.padStart(2, '0') || '00';
+    const hh = String(this.hours).padStart(2, '0') || '00';
+    const mm = String(this.minutes).padStart(2, '0') || '00';
+    const ss = String(this.seconds).padStart(2, '0') || '00';
     this.onChange(`${hh}:${mm}:${ss}`);
   }
 }

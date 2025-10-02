@@ -137,8 +137,6 @@ export class AthleteComponent
   }
 
   getField(athlete: AthleteModel | null, field: AthleteField) {
-    console.log(athlete);
-    console.log(field);
     if (!exists(athlete)) {
       return;
     }

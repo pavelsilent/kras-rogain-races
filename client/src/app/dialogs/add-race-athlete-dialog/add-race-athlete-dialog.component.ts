@@ -98,7 +98,6 @@ export class AddRaceAthleteDialogComponent {
   submit() {
     if (this.form.valid) {
       let formValue = this.form.value;
-      console.log(this.form.value);
       const model = new RaceAthleteSetupModel();
       model.bibNumber = formValue.bibNumber!;
       model.athlete = formValue.athlete!;
@@ -124,7 +123,6 @@ export class AddRaceAthleteDialogComponent {
                 }))
       .then(value => lastValueFrom(value.afterClosed()))
       .then(value => {
-        console.log(value);
         this.athleteControl.setValue(value);
       });
   };

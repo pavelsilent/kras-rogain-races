@@ -110,10 +110,7 @@ export class AthleteListComponent
 
   }
 
-  protected readonly onselect = onselect;
-
   onSelectAthlete(row: any) {
-    console.log(row);
     this.selected = row;
     this.onSelectRow.next(row);
   }

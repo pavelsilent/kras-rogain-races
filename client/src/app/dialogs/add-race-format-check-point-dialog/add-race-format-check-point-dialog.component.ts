@@ -5,12 +5,7 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatButtonToggle } from '@angular/material/button-toggle';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatOption } from '@angular/material/core';
-import {
-  MatDatepicker,
-  MatDatepickerInput,
-  MatDatepickerInputEvent,
-  MatDatepickerToggle,
-} from '@angular/material/datepicker';
+import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -97,15 +92,6 @@ export class AddRaceFormatCheckPointDialogComponent {
                                 controlDuration: [''],
                                 leaderDuration: [''],
                               });
-
-    // Подписка на изменения
-    this.form.get('checkDate')?.valueChanges.subscribe(value => {
-      console.log('checkDate changed:', value);
-    });
-
-    this.form.get('checkTime')?.valueChanges.subscribe(value => {
-      console.log('checkTime changed:', value);
-    });
   }
 
   submit() {
@@ -119,7 +105,6 @@ export class AddRaceFormatCheckPointDialogComponent {
       model.totalDistance = value.distance!;
       model.checkDuration = value.controlDuration!;
       model.leaderDuration = value.leaderDuration!;
-      console.log(value);
       this.service.addRaceCheckPoint(this.data.raceId, this.data.raceFormatId, model)
           .then(value => this.dialogRef.close(value));
     }
@@ -127,13 +112,5 @@ export class AddRaceFormatCheckPointDialogComponent {
 
   cancel() {
     this.dialogRef.close();
-  }
-
-  onCheckTimeChange($event: Event) {
-    console.log($event);
-  }
-
-  onCheckDateChange($event: MatDatepickerInputEvent<any, any>) {
-    console.log($event);
   }
 }

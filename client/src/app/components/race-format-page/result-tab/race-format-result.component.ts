@@ -144,7 +144,6 @@ export class RaceFormatResultComponent {
     );
 
     this.checkPoints$ = this.format$.pipe(map(format => {
-      console.log('***');
       const checkPoints = Option.of(format.checkPoints).getOrElse([]);
       this.checkPointsHeaderDef = [
         ...checkPoints.map(checkPoint => 'checkPointHeader' + checkPoint.id),

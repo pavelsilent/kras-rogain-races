@@ -102,7 +102,6 @@ export class RaceFormatCheckPointsTabComponent
       switchMap(value => this.service.getRaceFormatsCheckPoints(this.id, this.formatId)),
     ).subscribe(data => {
 
-      console.log(data);
       this.dataSource.data = data;
     });
   }

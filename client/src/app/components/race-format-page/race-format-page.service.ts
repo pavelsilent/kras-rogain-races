@@ -22,14 +22,11 @@ export class RaceFormatPageService {
   }
 
   setData(raceId: number, raceFormatId: number) {
-    console.log(raceId);
-    console.log(raceFormatId);
     this.raceId$.next(raceId);
     this.raceFormatId$.next(raceFormatId);
   }
 
   getData() {
-    console.log('FFF');
     return combineLatest([this.raceId$, this.raceFormatId$]);
   }
 

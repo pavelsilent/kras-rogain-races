@@ -98,7 +98,6 @@ export class AddRaceFormatDialogComponent {
   }
 
   submit() {
-    console.log(this.form.value);
     if (this.form.valid) {
       let value = this.form.value;
 
@@ -111,7 +110,6 @@ export class AddRaceFormatDialogComponent {
       model.athleteGroups = this.getAthleteGroups(hasLength(value.athleteGroups)
                                                   ? value.athleteGroups as any as number[]
                                                   : []);
-      console.log(model);
       this.service.createRaceFormat(this.data.raceId, model)
           .then(value => this.dialogRef.close(value));
     }

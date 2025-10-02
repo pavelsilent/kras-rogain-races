@@ -27,14 +27,12 @@ export class RaceService {
 
   getRaces(): Observable<RaceModel[]> {
     return this.backend.getAllRaces().pipe(
-      tap(value => console.log(value)),
       map(items => items.map(item => RaceModel.fromDTO(item))),
     );
   }
 
   getRaceById(id: number): Observable<RaceModel> {
     return this.backend.getRaceById(id).pipe(
-      tap(value => console.log(value)),
       map(item => RaceModel.fromDTO(item)),
     );
   }

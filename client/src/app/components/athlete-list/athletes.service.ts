@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { lastValueFrom, map, Observable, tap } from 'rxjs';
+import { lastValueFrom, map, Observable } from 'rxjs';
 import { AthleteControllerService } from '../../api/index';
 import { AthleteGroupModel } from '../../models/athlete-group.model';
 import { AthleteModel } from '../../models/athlete.model';
@@ -14,7 +14,6 @@ export class AthletesService {
 
   getAthletes(): Observable<AthleteModel[]> {
     return this.backend.getAllAthletes().pipe(
-      tap(value => console.log(value)),
       map(items => items.map(item => AthleteModel.fromDTO(item))),
     );
   }
@@ -44,15 +43,4 @@ export class AthletesService {
     return lastValueFrom(this.backend.createAthleteGroup(model.toDTO()));
   }
 
-  //
-  // getRaceFormatById(id: number, formatId: number): Observable<RaceFormatModel> {
-  //   return this.backend.getFormatById(id, formatId).pipe(
-  //     tap(value => console.log(value)),
-  //     map(item => RaceFormatModel.fromDTO(item)),
-  //   );
-  // }
-  //
-  // addRaceAthleteCheckPoint(id: number, formatId: number, data: RaceAthleteCheckPointModel): Promise<RaceFormatModel>
-  // { return lastValueFrom(this.backend.addRaceAthleteCheckPoint(id, formatId, data.toDTO())) .then(value =>
-  // RaceFormatModel.fromDTO(value)); }
 }
