@@ -1,2 +1,15 @@
 server:
   port: 8080
+
+spring:
+  datasource:
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+      idle-timeout: 30000           # если неактивно 30 секунд — закрываем соединение
+      max-lifetime: 120000          # обновляем соединения каждые 2 минуты
+      keepalive-time: 45000         # каждые 45 секунд Hikari пингует БД
+      connection-timeout: 15000     # максимум 15 секунд ожидания подключения
+      auto-commit: true             # безопасно оставляем true, transaction pooler это поддерживает
+      connection-test-query: SELECT 1
+      pool-name: HikariPool-Render
