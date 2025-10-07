@@ -69,5 +69,5 @@ WORKDIR /app
 # Копируем финальный jar
 COPY --from=final-backend /app/build/libs/*.jar app.jar
 
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=prod"]
+EXPOSE 80
+ENTRYPOINT ["sh", "-c", "java -Dserver.port=80 -Dserver.address=0.0.0.0 -jar app.jar --spring.profiles.active=prod"]
