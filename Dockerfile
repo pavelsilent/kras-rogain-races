@@ -2,10 +2,6 @@
 FROM eclipse-temurin:17 AS backend-builder
 WORKDIR /app
 
-ARG API_BASE_URL
-ENV API_BASE_URL=${API_BASE_URL:-https://fallback-url.com}
-RUN echo "=== [Build ARG] API_BASE_URL=${API_BASE_URL} ==="
-
 # Копируем Spring Boot проект (корень)
 COPY gradlew .
 COPY gradle/ gradle/
@@ -27,6 +23,10 @@ COPY client/ .
 
 # Копируем сгенерированный openapi.json из backend
 COPY --from=backend-builder /app/build/openapi/openapi.json ./openapi.json
+
+ARG API_BASE_URL
+ENV API_BASE_URL=${API_BASE_URL:-https://fallback-url.com}
+RUN echo "=== [Build ARG] API_BASE_URL=${API_BASE_URL} ==="
 
 # Установка Java (требуется для openapi-generator-cli)
 RUN apt-get update && \
