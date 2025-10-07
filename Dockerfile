@@ -70,4 +70,4 @@ WORKDIR /app
 COPY --from=final-backend /app/build/libs/*.jar app.jar
 
 EXPOSE 80
-ENTRYPOINT ["sh", "-c", "java -Dserver.port=80 -Dserver.address=0.0.0.0 -jar app.jar --spring.profiles.active=prod"]
+ENTRYPOINT ["sh", "-c", "java -Dserver.port=80 -Dserver.address=0.0.0.0 -Dlogging.level.root=INFO -jar app.jar --spring.profiles.active=prod; sleep 600"]
