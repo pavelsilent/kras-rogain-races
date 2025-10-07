@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://kras-rogain-races.onrender.com'
+  apiBaseUrl: 'http://localhost:7777'
 };
