@@ -1,11 +1,10 @@
-# ---------- Stage 0: Build ARGs ----------
-ARG API_BASE_URL
-ENV API_BASE_URL=${API_BASE_URL:-https://fallback-url.com}
-RUN echo "=== [Build ARG] API_BASE_URL=${API_BASE_URL} ==="
-
 # ---------- Stage 1: Backend Build & OpenAPI ----------
 FROM eclipse-temurin:17 AS backend-builder
 WORKDIR /app
+
+ARG API_BASE_URL
+ENV API_BASE_URL=${API_BASE_URL:-https://fallback-url.com}
+RUN echo "=== [Build ARG] API_BASE_URL=${API_BASE_URL} ==="
 
 # Копируем Spring Boot проект (корень)
 COPY gradlew .
