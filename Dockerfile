@@ -34,7 +34,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 RUN npm install @openapitools/openapi-generator-cli -g
-
 RUN sed -i "s#http://localhost:7777#${API_BASE_URL}#g" src/environments/environment.prod.ts
 
 # Генерация Angular DTO и сервисов через кастомный шаблон
