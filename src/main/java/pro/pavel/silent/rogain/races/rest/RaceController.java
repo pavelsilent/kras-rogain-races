@@ -225,7 +225,6 @@ public class RaceController {
                             .map(restConverter::toDTO)
                             .orElseGet(() -> RaceAthleteCheckPointDTO.builder()
                                                                      .id(checkpointId)
-                                                                     .athleteBibNumber(athleteBibNumber)
                                                                      .passed(false)
                                                                      .raceTime(null)
                                                                      .time(null)
@@ -261,16 +260,15 @@ public class RaceController {
             raceQueryService.getRaceAthleteNextCheckPoint(id, formatId, athleteBibNumber).getId());
     }
 
-    @PutMapping("/{id}/formats/{formatId}/athlete/{athleteBibNumber}/checkpoint/{checkpointId}")
+    @PutMapping("/{id}/formats/{formatId}/athlete/{athleteBibNumber}/checkpoint")
     @Operation(summary = "Добавить контрольную отсечку атлету")
     public ResponseEntity<RaceFormatResultDTO> addRaceAthleteCheckPoint(
         @PathVariable Long id,
         @PathVariable Long formatId,
         @PathVariable Integer athleteBibNumber,
-        @PathVariable Long checkpointId,
         @RequestBody RaceAthleteCheckPointDTO checkPoint
     ) {
-        raceService.addRaceAthleteCheckPoint(id, formatId, checkPoint);
+        raceService.addRaceAthleteCheckPoint(id, formatId, athleteBibNumber, checkPoint);
         return ResponseEntity.ok(
             restConverter.toResultDTO(raceQueryService.getRaceFormatById(formatId)));
     }

@@ -11,6 +11,9 @@ import { RaceState } from '../../models/enums/race-state.enum';
 import { RaceFormatModel } from '../../models/race-format.model';
 import { RussianDateTimePipe } from '../../utils/russian-date-time.pipe';
 import { RaceFormatPageService } from '../race-format-page/race-format-page.service';
+import {
+  RaceFormatResultCompactComponent
+} from '../race-format-page/result-tab-compact/race-format-result-compact.component';
 import { RaceFormatResultComponent } from '../race-format-page/result-tab/race-format-result.component';
 import { RaceService } from '../race/race.service';
 
@@ -26,6 +29,7 @@ import { RaceService } from '../race/race.service';
                AsyncPipe,
                RussianDateTimePipe,
                RaceFormatResultComponent,
+               RaceFormatResultCompactComponent,
              ],
              templateUrl: './race-result-page.component.html',
              standalone: true,

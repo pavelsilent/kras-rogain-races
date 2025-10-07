@@ -123,12 +123,12 @@ export class AddRaceAthleteCheckPointDialogComponent {
 
       let model = new RaceAthleteCheckPointModel();
       model.id = value.checkPointId;
-      model.athleteBibNumber = value.athleteBibNumber;
+      // model.athleteBibNumber = value.athleteBibNumber;
       if (exists(value.checkPointDate) && hasLength(value.checkPointTime)) {
         model.time = parseLocalDateTimeFromMoment(value.checkPointDate, value.checkPointTime);
       }
       model.passed = exists(model.time);
-      this.service.addRaceAthleteCheckPoint(this.data.raceId, this.data.raceFormatId, model)
+      this.service.addRaceAthleteCheckPoint(this.data.raceId, this.data.raceFormatId, value.athleteBibNumber, model)
           .then(value => this.dialogRef.close(value));
     }
   }

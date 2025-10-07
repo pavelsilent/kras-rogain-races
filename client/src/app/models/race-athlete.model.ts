@@ -6,6 +6,7 @@ import { AthleteState } from './enums/athlete-state.enum';
 import { AthleteType } from './enums/athlete-type.enum';
 import { RaceAthleteCheckPointModel } from './race-athlete-check-point.model';
 import { RaceAthleteGroupModel } from './race-athlete-group.model';
+import { RaceCheckPointModel } from './race-check-point.model';
 
 export class RaceAthleteModel {
   bibNumber: number;
@@ -13,6 +14,8 @@ export class RaceAthleteModel {
   state: AthleteState;
   type: AthleteType;
   checkPoints: RaceAthleteCheckPointModel[];
+  lastCheckPoint: RaceCheckPointModel;
+  lastRaceAthleteCheckPoint: RaceAthleteCheckPointModel;
   groupPlaces: RaceAthleteGroupModel[];
   absolutePlace: number;
 
@@ -25,6 +28,13 @@ export class RaceAthleteModel {
       this.checkPoints = Option.of(dto.checkPoints)
                                .map(data => data.map(dto => RaceAthleteCheckPointModel.fromDTO(dto)))
                                .getOrElse([]);
+      this.lastCheckPoint = Option.of(dto.lastCheckPoint)
+                                  .map(dto => RaceCheckPointModel.fromDTO(dto))
+                                  .getOrElse(undefined)!;
+      this.lastRaceAthleteCheckPoint = Option.of(dto.lastCheckPoint)
+                                             .map(dto => dto.id)
+                                             .map(id => this.checkPoints.find(checkPoint => checkPoint.id === id))
+                                             .getOrElse(undefined)!;
       this.absolutePlace = dto.absPlace!;
       this.groupPlaces = Option.of(dto.places)
                                .map(data => data.map(dto => RaceAthleteGroupModel.fromDTO(dto)))

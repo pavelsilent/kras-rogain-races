@@ -1,0 +1,62 @@
+<h3 mat-dialog-title>Время участника</h3>
+
+<form>
+  <mat-dialog-content class="dialog-content">
+
+    <table mat-table class="data-table" [dataSource]="data.checkPoints">
+
+      <ng-container matColumnDef="checkPoint">
+        <th *matHeaderCellDef mat-header-cell class="center bold">КТ</th>
+        <td *matCellDef="let row" class="athlete-bib-column center" mat-cell>
+          <ng-container>
+            <span>{{ row.orderNumber }}</span>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="distance">
+        <th *matHeaderCellDef mat-header-cell class="center bold">КМ</th>
+        <td *matCellDef="let row" class="athlete-bib-column center" mat-cell>
+          <ng-container>
+            <ng-container>
+              <span>{{ row.totalDistance }}</span>
+            </ng-container>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="raceTime">
+        <th *matHeaderCellDef mat-header-cell class="athlete-name-column center bold">Чистое время</th>
+        <td *matCellDef="let row" mat-cell class="athlete-name-column">
+          <ng-container>
+            <div class="athlete-data-container">
+              <ng-container>
+                <span>{{ getCheckPointRaceTime(row.id) | toRusTime }}</span>
+              </ng-container>
+            </div>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="prevCheckPointDiff">
+        <th *matHeaderCellDef mat-header-cell class="athlete-name-column center bold">Время между КТ</th>
+        <td *matCellDef="let row" mat-cell class="athlete-name-column">
+          <ng-container>
+            <div class="athlete-data-container">
+              <span>{{ getCheckPointDiffTime(row.id)  }}</span>
+            </div>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <!-- ===== Header rows ===== -->
+      <tr mat-header-row class="zero-line-row header-row" *matHeaderRowDef="dataTableBodyDef"></tr>
+      <tr mat-header-row class="one-line-row" *matRowDef="let row; columns: dataTableBodyDef"></tr>
+    </table>
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()">Отмена</button>
+  </mat-dialog-actions>
+</form>

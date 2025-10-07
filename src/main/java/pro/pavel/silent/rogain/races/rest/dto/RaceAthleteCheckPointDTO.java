@@ -21,9 +21,6 @@ public class RaceAthleteCheckPointDTO {
     @Schema(description = "Идентификатор контрольной точки", requiredMode = REQUIRED)
     private Long id;
 
-    @Schema(description = "Номер участника", requiredMode = REQUIRED)
-    private Integer athleteBibNumber;
-
     @Schema(description = "Местное время прохождения")
     private LocalDateTime time;
 

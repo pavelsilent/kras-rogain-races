@@ -33,6 +33,9 @@ public class RaceAthleteDTO {
     @Schema(description = "Контрольные точки")
     private List<RaceAthleteCheckPointDTO> checkPoints;
 
+    @Schema(description = "Последняя пройденная КТ")
+    private RaceFormatCheckPointDTO lastCheckPoint;
+
     @Schema(description = "Абсолютное место")
     private Integer absPlace;
 

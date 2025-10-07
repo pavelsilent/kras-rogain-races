@@ -1,0 +1,88 @@
+<div *ngIf="raceState$ | async as raceState" class="protocol-table-wrapper">
+  <div *ngIf="showAttitude" class="img-container">
+    <img *ngIf="attitudeProfile$ | async as attitudeProfileSrc"
+         [src]="attitudeProfileSrc"
+         alt="Профиль высоты"
+         class="img">
+  </div>
+  <div *ngIf="showDistanceSchema" class="img-container">
+    <img *ngIf="distanceSchema$ | async as distanceSchemaSrc"
+         [src]="distanceSchemaSrc"
+         alt="Схема дистанции"
+         class="img">
+  </div>
+  <table mat-table matSort *ngIf="checkPoints$ | async as checkPoints"
+         [dataSource]="membersDataSource" class="protocol-table">
+
+    <!-- Номер участника -->
+    <ng-container matColumnDef="bib">
+      <th *matHeaderCellDef mat-header-cell class="center bold">№</th>
+      <td *matCellDef="let row" class="athlete-bib-column center" mat-cell>
+        <ng-container>
+          <div *ngIf="page.canEdit() | async" class="name-column">
+            <div>{{ row.bibNumber }}</div>
+            <button mat-icon-button
+                    *ngIf="raceState === RaceState.STARTED"
+                    color="primary"
+                    matTooltip="Добавить отсечку"
+                    class="action-button"
+                    (click)="onAddAthleteCheckPoint(row)">
+              <mat-icon>add</mat-icon>
+            </button>
+            <button mat-icon-button
+                    *ngIf="raceState === RaceState.STARTED"
+                    color="primary"
+                    matTooltip="Установить статус"
+                    class="action-button"
+                    (click)="onSetAthleteState(row)">
+              <mat-icon class="action-edit-button">edit</mat-icon>
+            </button>
+          </div>
+
+        </ng-container>
+      </td>
+    </ng-container>
+
+    <!-- Name -->
+    <ng-container matColumnDef="name">
+      <th *matHeaderCellDef mat-header-cell class="athlete-name-column center bold">Атлет</th>
+      <td *matCellDef="let row" mat-cell class="athlete-name-column" (click)="onShowAthleteDetailInfo(row)">
+        <ng-container>
+          <div class="athlete-data-container">
+            <div class="athlete-data">
+              <span>{{ row.athlete.getFIO() }} </span>
+              <br>
+              <span class="underline">{{ '(' + row.state.name + ')' }}</span>
+              <br>
+              <span style="font-style: italic; font-size: 11px">{{ row.athlete.club }}</span>
+              <br>
+            </div>
+            <div class="athlete-data-time">
+              <div>
+                <span *ngIf="row?.lastRaceAthleteCheckPoint"
+                      class="bold">{{ row?.lastRaceAthleteCheckPoint.raceTime | toRusTime }}</span>
+                <br>
+                <span style="font-style: italic; font-size: 11px">{{
+                    'КП: ' + row?.lastCheckPoint.orderNumber + ' (' + row?.lastCheckPoint.name + ')'
+                  }}</span>
+                <br>
+              </div>
+              <div class="place-cell">
+                <span >{{ 'Aбс: ' + row?.absolutePlace }}</span>
+                <br>
+                <span *ngFor="let group of row.groupPlaces" [ngStyle]="{'color': group.group.sex.color}">{{
+                    group.group.name + ': ' + group.place
+                  }}<br></span>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </td>
+    </ng-container>
+
+    <!-- ===== Header rows ===== -->
+    <tr mat-header-row class="zero-line-row header-row" *matHeaderRowDef="dataTableBodyDef"></tr>
+    <tr mat-header-row class="one-line-row" *matRowDef="let row; columns: dataTableBodyDef"></tr>
+  </table>
+</div>
+

@@ -1,0 +1,11 @@
+.dialog-content {
+  padding: 0 5px;
+}
+
+.data-table {
+  overflow: scroll;
+}
+
+td, th {
+  padding: 5px;
+}

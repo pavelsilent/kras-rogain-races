@@ -1,0 +1,186 @@
+
+
+.left {
+  text-align: left;
+}
+
+.protocol-table th, .protocol-table td {
+  border: 1px solid black;
+}
+
+
+.def-color {
+  background-color: #faf9fc;
+}
+
+
+.control-row {
+  background: #ffe599;
+  color: red;
+}
+
+.leader-row {
+  background: #fbe4d5;
+}
+
+.header-row {
+  background: #ffe599;
+}
+
+.check-time-expired {
+  color: red;
+}
+
+.checkpoint-distance-row {
+  height: 10px;
+}
+
+.athlete-data-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-self: start;
+}
+
+.athlete-data-time {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-self: start;
+}
+
+.time-detail-column {
+  width: 380px;
+  min-width: 240px;
+}
+
+.diff-time {
+  color: #1976d2;
+}
+
+.diff-time-row {
+  height: 10px;
+}
+
+.control-time {
+  color: red;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.zero-line-row {
+  height: 0;
+}
+
+.one-line-row {
+  height: 25px;
+}
+
+.two-line-row {
+  height: 50px;
+}
+
+.three-line-row {
+  height: 75px;
+}
+
+.center {
+  text-align: center;
+}
+
+.athlete-actions {
+  display: flex;
+  justify-items: stretch;
+
+}
+
+.action-button {
+  background-color: transparent;
+  :hover {
+    color: #1976d2;
+  }
+  border-width: 0;
+}
+
+.action-edit-button {
+  font-size: 18px;
+}
+
+.action-button-container {
+  /*position: relative;*/
+}
+
+.control-action-button {
+  :hover {
+    color: #1976d2;
+  }
+  border-width: 0;
+  position: absolute;
+  /* box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); */
+  background-color: transparent;
+  top: 0;
+  right: 0;
+}
+
+.img-container {
+
+  min-width: 60%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 5px;
+}
+
+.img {
+  width: 90%;
+  height: auto;
+}
+
+.protocol-table-wrapper {
+  width: 100%;
+  height: 100%;
+  padding-left: 5px;
+  padding-right: 5px
+}
+
+.protocol-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table {
+  table-layout: fixed;
+}
+
+.mat-column-bib {
+  width: 15%;
+}
+
+.mat-column-name {
+  width: 85%;
+}
+
+.name-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  align-self: center;
+}
+
+td, th {
+  padding: 5px;
+}
+
+.place-cell {
+  text-align: end;
+  font-weight: bold;
+}
+

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LocalDateTime } from '@js-joda/core';
 import { Option } from 'funfix-core';
-import { lastValueFrom, map, Observable, tap } from 'rxjs';
+import { lastValueFrom, map, Observable } from 'rxjs';
 import { RaceControllerService } from '../../api/index';
 import { AthleteGroupModel } from '../../models/athlete-group.model';
 import { AthleteState } from '../../models/enums/athlete-state.enum';
@@ -95,13 +95,13 @@ export class RaceService {
   addRaceAthleteCheckPoint(
     id: number,
     formatId: number,
+    athleteBibNumber: number,
     data: RaceAthleteCheckPointModel,
   ): Promise<RaceFormatResultModel> {
     return lastValueFrom(this.backend.addRaceAthleteCheckPoint(
       id,
       formatId,
-      data.athleteBibNumber,
-      data.id,
+      athleteBibNumber,
       data.toDTO(),
     ))
       .then(value => RaceFormatResultModel.fromDTO(value));

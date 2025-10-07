@@ -222,12 +222,14 @@ public class RaceService {
         return newCheckPoint;
     }
 
-    public void addRaceAthleteCheckPoint(Long raceId, Long raceFormatId, RaceAthleteCheckPointDTO checkPoint) {
+    public void addRaceAthleteCheckPoint(
+        Long raceId,
+        Long raceFormatId,
+        Integer athleteBibNumber,
+        RaceAthleteCheckPointDTO checkPoint
+    ) {
         RaceFormat raceFormat = raceQueryService.getRaceFormatById(raceFormatId);
-        RaceAthlete raceAthlete = raceQueryService.getRaceAthleteByBibNumber(
-            raceFormat,
-            checkPoint.getAthleteBibNumber()
-        );
+        RaceAthlete raceAthlete = raceQueryService.getRaceAthleteByBibNumber(raceFormat, athleteBibNumber);
         RaceFormatCheckPoint raceFormatCheckPoint = raceQueryService.getRaceFormatCheckPoint(checkPoint.getId());
 
         LocalDateTime realTime = checkPoint.getTime();
@@ -348,4 +350,5 @@ public class RaceService {
         raceAthlete.setState(RaceAthleteState.valueOf(state));
         raceAthleteRepository.save(raceAthlete);
     }
+
 }

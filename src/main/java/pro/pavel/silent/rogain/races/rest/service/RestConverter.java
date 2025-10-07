@@ -166,15 +166,23 @@ public class RestConverter {
         if (raceAthlete == null) {
             return null;
         }
+        List<RaceAthleteCheckPoint> checkPoints = raceQueryService.getRaceAthleteCheckPoints(raceAthlete);
+        RaceFormatCheckPoint lastCheckPoint =
+            checkPoints.stream()
+                       .filter(checkPoint -> checkPoint.getRaceFormatCheckPoint()
+                                                       .getOrderNumber()
+                                                       .equals(raceAthlete.getLastCheckPointOrderNumber()))
+                       .findFirst()
+                       .map(RaceAthleteCheckPoint::getRaceFormatCheckPoint)
+                       .orElse(null);
+
         return RaceAthleteDTO.builder()
                              .athlete(toDTO(raceAthlete.getAthlete()))
                              .bibNumber(raceAthlete.getBibNumber())
                              .state(raceAthlete.getState().name())
                              .type(raceAthlete.getType().name())
-                             .checkPoints(ListHelper.map(
-                                 raceQueryService.getRaceAthleteCheckPoints(raceAthlete),
-                                 this::toDTO
-                             ))
+                             .checkPoints(ListHelper.map(checkPoints, this::toDTO))
+                             .lastCheckPoint(OptionalHelper.map(lastCheckPoint, this::toDTO))
                              .build();
     }
 
@@ -247,7 +255,6 @@ public class RestConverter {
 
         return RaceAthleteCheckPointDTO.builder()
                                        .id(raceFormatCheckPoint.getId())
-                                       .athleteBibNumber(checkPoint.getRaceAthlete().getBibNumber())
                                        .time(checkPoint.getTime())
                                        .raceTime(Optional.ofNullable(checkPoint.getTime())
                                                          .map(time -> time.minus(raceDiff))

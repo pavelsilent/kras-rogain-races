@@ -4,7 +4,7 @@ import { exists, parseLocalDateTime } from '../utils/utils';
 
 export class RaceAthleteCheckPointModel {
   id: number;
-  athleteBibNumber: number;
+  // athleteBibNumber: number;
   time?: LocalDateTime;
   raceTime?: LocalDateTime;
   prevCheckPointDiffDuration?: string;
@@ -29,7 +29,7 @@ export class RaceAthleteCheckPointModel {
   toDTO(): RaceAthleteCheckPointDTO {
     return {
       id: this.id,
-      athleteBibNumber: this.athleteBibNumber,
+      // athleteBibNumber: this.athleteBibNumber,
       // @ts-ignore
       time: this.time,
       // @ts-ignore
