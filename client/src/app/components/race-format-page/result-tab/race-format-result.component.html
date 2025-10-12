@@ -5,14 +5,20 @@
         + ' / '
         + raceFormat.state.name
       }}</span>
-    <div *ngIf="page.canEdit() | async as canEdit">
+    <div>
       <!--      <button *ngIf="raceFormat.state != states.STARTED && raceFormat.state != states.FINISHED"-->
-      <button *ngIf="raceFormat.state != raceStates.STARTED"
+      <button *ngIf="raceFormat.state != raceStates.STARTED && (page.canEdit() | async)"
               mat-flat-button
               color="primary"
               (click)="onSetRaceState(raceStates.STARTED)">Начать гонку
       </button>
-      <button *ngIf="raceFormat.state == raceStates.STARTED"
+      <button *ngIf="raceFormat.state == raceStates.STARTED && (page.canEdit() | async)"
+              class="race-action"
+              mat-flat-button
+              color="primary"
+              (click)="onSetRaceState(raceStates.STARTED)">Изменить время начала
+      </button>
+      <button *ngIf="raceFormat.state == raceStates.STARTED && (page.canEdit() | async)"
               mat-flat-button
               color="primary"
               (click)="onSetRaceState(raceStates.FINISHED)">Завершить гонку
