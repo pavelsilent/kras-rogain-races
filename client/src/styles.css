@@ -28,3 +28,22 @@ mat-dialog-actions {
   gap: 12px;
   margin-top: 16px;
 }
+
+.small-dialog .mat-mdc-dialog-container {
+  width: 250px !important;
+  max-width: 250px !important;
+  min-width: 200px !important;
+  margin: 0 auto !important;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.center {
+  text-align: center;
+}

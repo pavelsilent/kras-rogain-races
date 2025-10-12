@@ -21,12 +21,11 @@ import {
   MatTableDataSource,
 } from '@angular/material/table';
 import { MatTooltip } from '@angular/material/tooltip';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDateTime } from '@js-joda/core';
 import { Option } from 'funfix-core';
 import {
   combineLatest,
-  filter,
   firstValueFrom,
   lastValueFrom,
   map,
@@ -44,14 +43,15 @@ import {
 import {
   SetAthleteStateDialogComponent,
 } from '../../../dialogs/set-athlete-state-dialog/set-athlete-state-dialog.component';
+import { SetRaceStateDialogComponent } from '../../../dialogs/set-race-state/set-race-state-dialog.component';
 import { RaceState } from '../../../models/enums/race-state.enum';
 import { RaceAthleteModel } from '../../../models/race-athlete.model';
 import { RaceCheckPointModel } from '../../../models/race-check-point.model';
 import { RaceFormatResultModel } from '../../../models/race-format-result.model';
+import { RaceFormatModel } from '../../../models/race-format.model';
 import { CosmicTimePipe } from '../../../utils/cosmic-time.pipe';
 import { RussianDateTimePipe } from '../../../utils/russian-date-time.pipe';
 import { RussianTimePipe } from '../../../utils/russian-time.pipe';
-import { exists, hasLength } from '../../../utils/utils';
 import { FileService } from '../../core/file.service';
 import { RaceService } from '../../race/race.service';
 import { RaceFormatPageService } from '../race-format-page.service';
@@ -94,13 +94,13 @@ import { RaceFormatPageService } from '../race-format-page.service';
 export class RaceFormatResultCompactComponent {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  format$: Observable<RaceFormatResultModel>;
+  result$: Observable<RaceFormatResultModel>;
   startDateTime$: Observable<LocalDateTime>;
   raceState$: Observable<RaceState>;
-  leaderFinishDuration$: Observable<string>;
-  attitudeProfile$: Observable<string>;
-  distanceSchema$: Observable<string>;
   checkPoints$: Observable<RaceCheckPointModel[]>;
+  protected readonly raceStates = RaceState;
+  @Input()
+  format: RaceFormatModel;
 
   @Input()
   showAttitude: boolean;
@@ -108,151 +108,39 @@ export class RaceFormatResultCompactComponent {
   @Input()
   showDistanceSchema: boolean;
 
-  topHeaderDef: string[] = [
-    'paramsHeader',
-    'timeDetailHeader',
-    'checkPointsHeader',
-    'placesHeader',
-  ];
-
-  checkPointsHeaderDef: string[] = [];
-  raceDistanceHeaderDef: string[] = [];
-  raceCheckTimeHeaderDef: string[] = [];
-  raceLeaderHeaderDef: string[] = [];
-  raceLeaderDiffTimeHeaderDef: string[] = [];
-  dataTableHeaderDef: string[] = [
-    'bibHeader',
-    'nameHeader',
-    // 'athletesTimeHeader',
-    // 'absolutePlaceHeader',
-    // 'groupPlaceHeader',
-  ];
-
-  dataTableBodyDef: string[] = [];
-  dataTableDiffDef: string[] = [];
+  dataTableBodyDef: string[] = ['name'];
 
   membersDataSource = new MatTableDataSource<RaceAthleteModel>();
 
   constructor(private route: ActivatedRoute, private service: RaceService, private dialog: MatDialog,
               public page: RaceFormatPageService, private fileService: FileService,
+              private router: Router,
   ) {
-    this.format$ = this.page.refresh$.pipe(
+    this.result$ = this.page.refresh$.pipe(
       startWith(null),
       switchMap(data => combineLatest([this.page.getRaceId(), this.page.getRaceFormatId()])),
       switchMap(([raceId, raceFormatId]) => this.service.getRaceFormatResult(raceId, raceFormatId)),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
 
-    this.startDateTime$ = this.format$.pipe(map(value => value.startDateTime!));
-    this.raceState$ = this.format$.pipe(map(value => value.state));
-    this.attitudeProfile$ = this.format$.pipe(
-      map(value => value.attitudeProfileFileId),
-      filter(value => exists(value)),
-      switchMap(id => this.fileService.download(id)),
-    );
-    this.distanceSchema$ = this.format$.pipe(
-      map(value => value.distanceSchemaFileId),
-      filter(value => exists(value)),
-      switchMap(id => this.fileService.download(id)),
-    );
+    this.startDateTime$ = this.result$.pipe(map(value => value.startDateTime!));
+    this.raceState$ = this.result$.pipe(map(value => value.state));
 
-    this.checkPoints$ = this.format$.pipe(map(format => {
-      const checkPoints = Option.of(format.checkPoints).getOrElse([]);
-      this.checkPointsHeaderDef = [
-        ...checkPoints.map(checkPoint => 'checkPointHeader' + checkPoint.id),
-      ];
-
-      this.raceDistanceHeaderDef = [
-        'distanceHeader',
-        'emptyHeader',
-        ...checkPoints.map(checkPoint => 'checkPointDistance' + checkPoint.id),
-        'emptyHeaderRowSpan4',
-        'emptyHeaderRowSpan4',
-      ];
-      // КВ
-      this.raceCheckTimeHeaderDef = [
-        'checkTimeHeader',
-        'checkTimeDetailHeader',
-        ...checkPoints.map(checkPoint => 'checkPointTime' + checkPoint.id),
-      ];
-
-      this.raceLeaderHeaderDef = [
-        'leaderTimeHeader',
-        'leaderTimeDetailHeader',
-        ...checkPoints.map(
-          checkPoint => 'leaderCheckPointTime' + checkPoint.id),
-      ];
-
-      this.raceLeaderDiffTimeHeaderDef = [
-        'leaderDiffTimeHeader',
-        ...checkPoints.map(
-          checkPoint => 'leaderCheckPointDiffTime' + checkPoint.id),
-      ];
-
-      this.dataTableBodyDef = [
-        'bib',
-        'name',
-
-      ];
-
-      this.dataTableDiffDef = [
-        // 'time-diff-detail',
-        // ...checkPoints.map(checkPoint => 'athleteCheckPointDiffTime' + checkPoint.id),
-      ];
-      return checkPoints;
-    }), shareReplay({ bufferSize: 1, refCount: true }));
-
-    this.leaderFinishDuration$ = this.format$.pipe(
-      map(format => format.checkPoints.filter(value => value.isFinish)),
-      filter(value => hasLength(value)),
-      map(value => value.at(0)),
-      map(value => value?.leaderDuration!),
-    );
-
-    this.format$.pipe(map(format => format.athletes))
+    this.result$.pipe(map(format => format.athletes))
         .subscribe(data => {
           this.membersDataSource.data = data;
           this.membersDataSource.paginator = this.paginator;
         });
+
+    this.checkPoints$ = this.result$.pipe(map(result => Option.of(result.checkPoints).getOrElse([])));
   }
 
-  getCheckPointRaceTime(member: RaceAthleteModel | undefined, checkPointId: number): LocalDateTime | undefined {
-    if (member === undefined) {
-      return undefined;
-    }
-    return member.checkPoints?.find(value => value.id === checkPointId)?.raceTime;
-  }
-
-  getCheckPointTime(member: RaceAthleteModel | undefined, checkPointId: number): LocalDateTime | undefined {
-    if (member === undefined) {
-      return undefined;
-    }
-    return member.checkPoints?.find(value => value.id === checkPointId)?.time;
-  }
-
-  getCheckPointDiffTime(member: RaceAthleteModel | undefined, checkPointId: number): string | undefined {
-    if (member === undefined) {
-      return undefined;
-    }
-    return member.checkPoints?.find(value => value.id === checkPointId)?.prevCheckPointDiffDuration;
-  }
-
-  getCheckPointTimeExpired(member: RaceAthleteModel | undefined, checkPointId: number): boolean {
-    if (member === undefined) {
+  getCheckPointTimeExpired(athlete: RaceAthleteModel | undefined): boolean {
+    if (athlete === undefined) {
       return false;
     }
-    return member.checkPoints?.find(value => value.id === checkPointId)?.checkTimeExpired ?? false;
+    return athlete.lastRaceAthleteCheckPoint.checkTimeExpired;
   }
-
-  // getLastCheckPointData(member: RaceAthleteModel | undefined): string {
-  //   if (member === undefined || member.lastCheckPoint === undefined) {
-  //     return '-';
-  //   }
-  //
-  //   member?.lastCheckPoint?.id
-
-  // return member.checkPoints?.find(value => value.id === checkPointId)?.checkTimeExpired ?? false;
-  // }
 
   onShowAthleteDetailInfo(row: RaceAthleteModel) {
     firstValueFrom(this.checkPoints$)
@@ -265,8 +153,9 @@ export class RaceFormatResultCompactComponent {
             athleteInfo: row,
 
           },
-          width: '180px',       // 80% ширины окна
-          maxWidth: '200px',   // не больше всей ширины
+          width: '150px',       // 80% ширины окна
+          panelClass: 'small-dialog',
+          maxWidth: '150px',   // не больше всей ширины
           height: 'auto',
           maxHeight: '90vh',   // ограничим по высоте экрана
         },
@@ -292,6 +181,7 @@ export class RaceFormatResultCompactComponent {
             athleteBibNumber: row.bibNumber,
           },
           width: '400px',
+          panelClass: 'small-dialog',
         },
       ))
       .then(dialogRef => lastValueFrom(dialogRef.afterClosed()))
@@ -308,10 +198,34 @@ export class RaceFormatResultCompactComponent {
           athleteBibNumber: row.bibNumber,
         },
         width: '400px',
+        panelClass: 'small-dialog',
       }))
       .then(dialogRef => lastValueFrom(dialogRef.afterClosed()))
       .then(value => this.page.refresh$.next());
   }
 
-  protected readonly RaceState = RaceState;
+
+  onSetRaceState(state: RaceState) {
+    firstValueFrom(combineLatest([this.page.getRaceId(), this.page.getRaceFormatId(), this.page.getRaceFormat()]))
+      .then(([raceId, raceFormatId, raceFormat]) =>
+              this.dialog.open(SetRaceStateDialogComponent, {
+                data: {
+                  raceId: raceId,
+                  raceFormatId: raceFormatId,
+                  state: state,
+                  stateDateTime: raceFormat.startDateTime,
+                },
+                width: '400px',
+                panelClass: 'small-dialog',
+                disableClose: true,
+              }))
+      .then(dialogRef => lastValueFrom(dialogRef.afterClosed()))
+      .then(value => {
+        const currentUrl = this.router.url;
+        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+          this.router.navigateByUrl(currentUrl);
+        });
+      });
+  }
+
 }

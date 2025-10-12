@@ -20,7 +20,7 @@ import {
   MatHeaderCell,
   MatHeaderCellDef,
   MatHeaderRow,
-  MatHeaderRowDef,
+  MatHeaderRowDef, MatRow,
   MatRowDef,
   MatTable,
 } from '@angular/material/table';
@@ -64,6 +64,7 @@ export interface RaceAthleteDetailInfoDialogConfig {
                NgIf,
                RussianTimePipe,
                MatHeaderCellDef,
+               MatRow,
              ],
              templateUrl: './race-athlete-detail-info-dialog.component.html',
              styleUrl: './race-athlete-detail-info-dialog.component.css',

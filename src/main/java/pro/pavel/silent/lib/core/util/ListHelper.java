@@ -33,4 +33,11 @@ public class ListHelper {
         return !collection.isEmpty();
     }
 
+    public static <T> List<T> merge(List<T> list1, List<T> list2) {
+        var result = new ArrayList<T>();
+        result.addAll(list1);
+        result.addAll(list2);
+        return result;
+    }
+
 }

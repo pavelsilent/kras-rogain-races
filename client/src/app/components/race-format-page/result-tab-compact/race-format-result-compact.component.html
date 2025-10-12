@@ -1,88 +1,67 @@
-<div *ngIf="raceState$ | async as raceState" class="protocol-table-wrapper">
-  <div *ngIf="showAttitude" class="img-container">
-    <img *ngIf="attitudeProfile$ | async as attitudeProfileSrc"
-         [src]="attitudeProfileSrc"
-         alt="Профиль высоты"
-         class="img">
+<h3 class="header" *ngIf="format as raceFormat">
+  <div class="header-container">
+    <span>{{ raceFormat.raceName }}</span>
+    <br>
+    <span>{{ raceFormat.name }}</span>
+    <br>
+    <span>{{ (raceFormat.startDateTime | toRusDateTime) }}</span>
+    <br><span>{{ raceFormat.state.name }}</span>
+    <div class="race-action" *ngIf="page.canEdit() | async as canEdit">
+      <!--      <button *ngIf="raceFormat.state != states.STARTED && raceFormat.state != states.FINISHED"-->
+      <button *ngIf="raceFormat.state != raceStates.STARTED"
+              mat-flat-button
+              color="primary"
+              (click)="onSetRaceState(raceStates.STARTED)">Начать гонку
+      </button>
+      <button *ngIf="raceFormat.state == raceStates.STARTED"
+              mat-flat-button
+              color="primary"
+              (click)="onSetRaceState(raceStates.FINISHED)">Завершить гонку
+      </button>
+    </div>
   </div>
-  <div *ngIf="showDistanceSchema" class="img-container">
-    <img *ngIf="distanceSchema$ | async as distanceSchemaSrc"
-         [src]="distanceSchemaSrc"
-         alt="Схема дистанции"
-         class="img">
-  </div>
-  <table mat-table matSort *ngIf="checkPoints$ | async as checkPoints"
-         [dataSource]="membersDataSource" class="protocol-table">
+</h3>
 
-    <!-- Номер участника -->
-    <ng-container matColumnDef="bib">
-      <th *matHeaderCellDef mat-header-cell class="center bold">№</th>
-      <td *matCellDef="let row" class="athlete-bib-column center" mat-cell>
-        <ng-container>
-          <div *ngIf="page.canEdit() | async" class="name-column">
-            <div>{{ row.bibNumber }}</div>
-            <button mat-icon-button
-                    *ngIf="raceState === RaceState.STARTED"
-                    color="primary"
-                    matTooltip="Добавить отсечку"
-                    class="action-button"
-                    (click)="onAddAthleteCheckPoint(row)">
-              <mat-icon>add</mat-icon>
-            </button>
-            <button mat-icon-button
-                    *ngIf="raceState === RaceState.STARTED"
-                    color="primary"
-                    matTooltip="Установить статус"
-                    class="action-button"
-                    (click)="onSetAthleteState(row)">
-              <mat-icon class="action-edit-button">edit</mat-icon>
-            </button>
-          </div>
-
-        </ng-container>
-      </td>
-    </ng-container>
-
-    <!-- Name -->
+<div class="table-wrapper">
+  <table mat-table [dataSource]="membersDataSource" class="protocol-table">
     <ng-container matColumnDef="name">
-      <th *matHeaderCellDef mat-header-cell class="athlete-name-column center bold">Атлет</th>
-      <td *matCellDef="let row" mat-cell class="athlete-name-column" (click)="onShowAthleteDetailInfo(row)">
-        <ng-container>
-          <div class="athlete-data-container">
-            <div class="athlete-data">
-              <span>{{ row.athlete.getFIO() }} </span>
+      <th mat-header-cell *matHeaderCellDef class="center bold">Участник</th>
+      <td mat-cell *matCellDef="let row" (click)="onShowAthleteDetailInfo(row)"
+          [ngClass]="{'finished': row.isFinished(), 'disqualified': row.isDisqualified() }">
+        <div class="athlete-data-container">
+          <div class="athlete-data-time bold">
+            <span class="athlete-data-name">{{ row.athlete.getShortFIO() }}
+              <mat-icon *ngIf="page.canEdit() | async" (click)="$event.stopPropagation(); onAddAthleteCheckPoint(row)">add</mat-icon>
+              <mat-icon *ngIf="page.canEdit() | async"
+                        (click)="$event.stopPropagation(); onSetAthleteState(row)">edit</mat-icon>
+            </span>
+            <span>{{ 'Номер: ' + row.bibNumber }}</span>
+          </div>
+          <div class="athlete-data-time">
+            <div>
+                <span *ngIf="row?.lastRaceAthleteCheckPoint" class="bold"
+                      [ngClass]="{'check-time-expired': getCheckPointTimeExpired(row)}">
+                  {{ row?.lastRaceAthleteCheckPoint.raceTime | toRusTime }}
+                </span>
               <br>
-              <span class="underline">{{ '(' + row.state.name + ')' }}</span>
-              <br>
-              <span style="font-style: italic; font-size: 11px">{{ row.athlete.club }}</span>
-              <br>
+              <span style="font-style: italic; font-size: 11px">
+                  {{ 'КП: ' + row?.lastCheckPoint.orderNumber + ' (' + row?.lastCheckPoint.name + ')' }}
+                </span>
             </div>
-            <div class="athlete-data-time">
-              <div>
-                <span *ngIf="row?.lastRaceAthleteCheckPoint"
-                      class="bold">{{ row?.lastRaceAthleteCheckPoint.raceTime | toRusTime }}</span>
-                <br>
-                <span style="font-style: italic; font-size: 11px">{{
-                    'КП: ' + row?.lastCheckPoint.orderNumber + ' (' + row?.lastCheckPoint.name + ')'
-                  }}</span>
-                <br>
-              </div>
-              <div class="place-cell">
-                <span >{{ 'Aбс: ' + row?.absolutePlace }}</span>
-                <br>
-                <span *ngFor="let group of row.groupPlaces" [ngStyle]="{'color': group.group.sex.color}">{{
-                    group.group.name + ': ' + group.place
-                  }}<br></span>
-              </div>
+            <div class="place-cell" *ngIf="row?.absolutePlace">
+              <span>{{ 'Aбс: ' + row?.absolutePlace }}</span>
+              <br>
+              <span *ngFor="let group of row.groupPlaces" [ngStyle]="{'color': group.group.sex.color}">
+                  {{ group.group.name + ': ' + group.place }}<br>
+                </span>
             </div>
           </div>
-        </ng-container>
+        </div>
       </td>
     </ng-container>
 
-    <!-- ===== Header rows ===== -->
-    <tr mat-header-row class="zero-line-row header-row" *matHeaderRowDef="dataTableBodyDef"></tr>
-    <tr mat-header-row class="one-line-row" *matRowDef="let row; columns: dataTableBodyDef"></tr>
+    <!-- Header и Body -->
+    <tr mat-header-row *matHeaderRowDef="dataTableBodyDef" class="sticky-header"></tr>
+    <tr mat-row *matRowDef="let row; columns: dataTableBodyDef;"></tr>
   </table>
 </div>
-

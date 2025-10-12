@@ -1,3 +1,18 @@
+.header {
+  padding-left: 30px;
+  padding-right: 30px
+}
+
+.header-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  & > div > button {
+    margin-left: 10px;
+  }
+}
+
 .protocol-table-wrapper {
   height: 500px;
   padding-left: 30px;
@@ -161,4 +176,12 @@
 .img {
   width: 90%;
   height: auto;
+}
+
+.athlete-data {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-self: start;
 }

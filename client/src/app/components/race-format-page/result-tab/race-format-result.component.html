@@ -1,9 +1,52 @@
+<h3 class="header" *ngIf="format as raceFormat">
+  <div class="header-container">
+    <span>{{
+        raceFormat.raceName + ' / ' + raceFormat.name + ' (' + (raceFormat.startDateTime | toRusDateTime) + ')'
+        + ' / '
+        + raceFormat.state.name
+      }}</span>
+    <div *ngIf="page.canEdit() | async as canEdit">
+      <!--      <button *ngIf="raceFormat.state != states.STARTED && raceFormat.state != states.FINISHED"-->
+      <button *ngIf="raceFormat.state != raceStates.STARTED"
+              mat-flat-button
+              color="primary"
+              (click)="onSetRaceState(raceStates.STARTED)">Начать гонку
+      </button>
+      <button *ngIf="raceFormat.state == raceStates.STARTED"
+              mat-flat-button
+              color="primary"
+              (click)="onSetRaceState(raceStates.FINISHED)">Завершить гонку
+      </button>
+      <button *ngIf="!showAttitude" mat-flat-button color="primary"
+              (click)="onToggleAttitudeProfileVisibility()">Показать профиль высоты
+      </button>
+      <button *ngIf="showAttitude" mat-flat-button color="primary"
+              (click)="onToggleAttitudeProfileVisibility()">Спрятать профиль высоты
+      </button>
+      <button *ngIf="!showDistanceSchema" mat-flat-button color="primary"
+              (click)="onToggleDistanceSchemaVisibility()">Показать схему дистанции
+      </button>
+      <button *ngIf="showDistanceSchema" mat-flat-button color="primary"
+              (click)="onToggleDistanceSchemaVisibility()">Спрятать схему дистанции
+      </button>
+    </div>
+
+  </div>
+
+</h3>
+
 <div *ngIf="raceState$ | async as raceState" class="protocol-table-wrapper">
   <div *ngIf="showAttitude" class="img-container">
-    <img *ngIf="attitudeProfile$ | async as attitudeProfileSrc" [src]="attitudeProfileSrc" alt="Профиль высоты" class="img">
+    <img *ngIf="attitudeProfile$ | async as attitudeProfileSrc"
+         [src]="attitudeProfileSrc"
+         alt="Профиль высоты"
+         class="img">
   </div>
   <div *ngIf="showDistanceSchema" class="img-container">
-    <img *ngIf="distanceSchema$ | async as distanceSchemaSrc" [src]="distanceSchemaSrc" alt="Схема дистанции" class="img">
+    <img *ngIf="distanceSchema$ | async as distanceSchemaSrc"
+         [src]="distanceSchemaSrc"
+         alt="Схема дистанции"
+         class="img">
   </div>
   <table mat-table matSort *ngIf="checkPoints$ | async as checkPoints"
          [dataSource]="membersDataSource" class="protocol-table" multiTemplateDataRows="true">
@@ -126,7 +169,7 @@
     </ng-container>
 
     <ng-container matColumnDef="nameHeader">
-      <th *matHeaderCellDef mat-header-cell class="athlete-name-column center bold">Ф.И.О. / клуб</th>
+      <th *matHeaderCellDef mat-header-cell class="athlete-name-column center bold">Участник</th>
     </ng-container>
 
     <ng-container matColumnDef="athletesTimeHeader">
@@ -163,13 +206,15 @@
         <ng-container>
           <div class="athlete-data-container">
             <div class="athlete-data">
-              <span>{{ row.athlete.getFIO() }} </span> <span class="underline">{{ '(' + row.state.name + ')' }}</span>
-              <br>
-              <span style="font-style: italic; font-size: 11px">{{ row.athlete.club }}</span>
+              <span>{{ row.athlete.getShortFIO() }} </span> <span class="underline">{{
+                '(' + row.state.name + ')'
+              }}</span>
+              <!--              <br>-->
+              <!--              <span style="font-style: italic; font-size: 11px">{{ row.athlete.club }}</span>-->
             </div>
             <div *ngIf="page.canEdit() | async" class="athlete-actions">
               <button mat-icon-button
-                      *ngIf="raceState === RaceState.STARTED"
+                      *ngIf="raceState === raceStates.STARTED"
                       color="primary"
                       matTooltip="Добавить отсечку"
                       class="action-button"
@@ -177,7 +222,7 @@
                 <mat-icon>add</mat-icon>
               </button>
               <button mat-icon-button
-                      *ngIf="raceState === RaceState.STARTED"
+                      *ngIf="raceState === raceStates.STARTED"
                       color="primary"
                       matTooltip="Установить статус"
                       class="action-button"
@@ -249,7 +294,7 @@
     <tr mat-header-row class="one-line-row header-row" *matHeaderRowDef="dataTableHeaderDef">
     <tr mat-header-row class="zero-line-row" *matHeaderRowDef="dataTableBodyDef"></tr>
     <tr mat-header-row class="one-line-row" *matRowDef="let row; columns: dataTableBodyDef"></tr>
-    <tr class="diff-time-row one-line-row" mat-row *matRowDef="let row; columns: dataTableDiffDef">
+    <tr mat-row class="diff-time-row one-line-row" *matRowDef="let row; columns: dataTableDiffDef">
   </table>
 </div>
 

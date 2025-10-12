@@ -1,11 +1,45 @@
 .dialog-content {
   padding: 0 5px;
+  max-height: 300px;
+  overflow: auto;
+}
+
+th {
+  padding: 5px;
+  text-align: center;
+  border-collapse: collapse;
+}
+
+td {
+  padding: 5px;
+  text-align: center;
+  border-collapse: collapse;
+}
+
+.header-row {
+  background: #ffe599;
 }
 
 .data-table {
-  overflow: scroll;
+  width: 100%;
+  border: 1px solid black;
+  max-height: 300px;
+  overflow-y: scroll;
+  display: block;
 }
 
-td, th {
-  padding: 5px;
+.actions {
+  padding: 5px 20px 5px 0;
 }
+
+.table-wrapper {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.sticky-header {
+  position: sticky;
+  top: 0;
+  background: #ffe599;
+}
+

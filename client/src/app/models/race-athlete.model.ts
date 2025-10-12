@@ -19,6 +19,14 @@ export class RaceAthleteModel {
   groupPlaces: RaceAthleteGroupModel[];
   absolutePlace: number;
 
+  isFinished() : boolean {
+    return this.state === AthleteState.FINISHED;
+  }
+
+  isDisqualified() : boolean {
+    return this.state === AthleteState.DISQUALIFIED;
+  }
+
   constructor(dto?: RaceAthleteDTO) {
     if (exists(dto)) {
       this.bibNumber = dto.bibNumber;

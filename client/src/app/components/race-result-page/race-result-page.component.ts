@@ -1,21 +1,22 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTab, MatTabGroup } from '@angular/material/tabs';
-import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
-import { combineLatest, firstValueFrom, lastValueFrom, Observable, startWith, switchMap, tap } from 'rxjs';
+import { ActivatedRoute, RouterOutlet } from '@angular/router';
+import { Observable, startWith, switchMap, tap } from 'rxjs';
 import { AppService } from '../../app.service';
-import { SetRaceStateDialogComponent } from '../../dialogs/set-race-state/set-race-state-dialog.component';
-import { RaceState } from '../../models/enums/race-state.enum';
 import { RaceFormatModel } from '../../models/race-format.model';
 import { RussianDateTimePipe } from '../../utils/russian-date-time.pipe';
 import { RaceFormatPageService } from '../race-format-page/race-format-page.service';
 import {
-  RaceFormatResultCompactComponent
+  RaceFormatResultCompactComponent,
 } from '../race-format-page/result-tab-compact/race-format-result-compact.component';
 import { RaceFormatResultComponent } from '../race-format-page/result-tab/race-format-result.component';
-import { RaceService } from '../race/race.service';
 
 @Component({
              selector: 'app-race-result-page',
@@ -30,26 +31,29 @@ import { RaceService } from '../race/race.service';
                RussianDateTimePipe,
                RaceFormatResultComponent,
                RaceFormatResultCompactComponent,
+               MatSlideToggle,
+               FormsModule,
+               MatIcon,
              ],
              templateUrl: './race-result-page.component.html',
              standalone: true,
              styleUrl: './race-result-page.component.css',
              providers: [RaceFormatPageService],
            })
-export class RaceResultPageComponent {
+export class RaceResultPageComponent
+  implements OnInit {
 
   raceFormat$: Observable<RaceFormatModel>;
-  states = RaceState;
-  protected readonly RaceState = RaceState;
   showAttitude: boolean;
   showDistanceSchema: boolean;
+  isMobile = false;
 
   constructor(
     private route: ActivatedRoute,
     protected page: RaceFormatPageService,
     private appService: AppService,
     private dialog: MatDialog,
-    private router: Router,
+    private breakpointObserver: BreakpointObserver,
   ) {
     this.appService.setEditUnavailable();
 
@@ -65,33 +69,11 @@ export class RaceResultPageComponent {
     );
   }
 
-  onSetRaceState(state: RaceState) {
-    firstValueFrom(combineLatest([this.page.getRaceId(), this.page.getRaceFormatId(), this.page.getRaceFormat()]))
-      .then(([raceId, raceFormatId, raceFormat]) =>
-              this.dialog.open(SetRaceStateDialogComponent, {
-                data: {
-                  raceId: raceId,
-                  raceFormatId: raceFormatId,
-                  state: state,
-                  stateDateTime: raceFormat.startDateTime,
-                },
-                width: '400px',
-                disableClose: true,
-              }))
-      .then(dialogRef => lastValueFrom(dialogRef.afterClosed()))
-      .then(value => {
-        const currentUrl = this.router.url;
-        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-          this.router.navigateByUrl(currentUrl);
+  ngOnInit() {
+    this.breakpointObserver.observe([Breakpoints.Handset])
+        .subscribe(result => {
+          this.isMobile = result.matches;
         });
-      });
   }
 
-  onToggleAttitudeProfileVisibility() {
-    this.showAttitude = !this.showAttitude;
-  }
-
-  onToggleDistanceSchemaVisibility() {
-    this.showDistanceSchema = !this.showDistanceSchema;
-  }
 }

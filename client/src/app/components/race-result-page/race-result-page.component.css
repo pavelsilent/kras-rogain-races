@@ -1,23 +1,16 @@
 .header {
-  /*padding-left: 30px;*/
-  /*padding-right: 30px;*/
+  padding-left: 30px;
+  padding-right: 30px;
   width: 100%;
 }
-
-.header-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+.toggle {
+  padding: 0;
+  margin: 0;
 }
 
-.actions {
-  display: flex;
-  flex-direction: row;
 
-  & > div,
-  & > button {
-    margin-left: 10px;
-  }
-
+.toggle-icons {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 8px;
 }

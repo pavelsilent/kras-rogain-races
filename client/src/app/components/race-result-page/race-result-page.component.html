@@ -1,41 +1,23 @@
-<h3 class="header" *ngIf="raceFormat$ | async as raceFormat">
-  <div class="header-container">
-    <span>{{
-        raceFormat.raceName + ' / ' + raceFormat.name + ' (' + (raceFormat.startDateTime | toRusDateTime) + ')' + ' / '
-        + raceFormat.state.name
-      }}</span>
-<!--    <div class="actions">-->
-<!--      <div *ngIf="page.canEdit() | async as canEdit">-->
-<!--        &lt;!&ndash;      <button *ngIf="raceFormat.state != states.STARTED && raceFormat.state != states.FINISHED"&ndash;&gt;-->
-<!--        <button *ngIf="raceFormat.state != states.STARTED"-->
-<!--                mat-flat-button-->
-<!--                color="primary"-->
-<!--                (click)="onSetRaceState(RaceState.STARTED)">Начать гонку-->
-<!--        </button>-->
-<!--        <button *ngIf="raceFormat.state == states.STARTED"-->
-<!--                mat-flat-button-->
-<!--                color="primary"-->
-<!--                (click)="onSetRaceState(RaceState.FINISHED)">Завершить гонку-->
-<!--        </button>-->
-<!--      </div>-->
-<!--      <div class="actions">-->
-<!--        <button *ngIf="!showAttitude" mat-flat-button color="primary"-->
-<!--                (click)="onToggleAttitudeProfileVisibility()">Показать профиль высоты-->
-<!--        </button>-->
-<!--        <button *ngIf="showAttitude" mat-flat-button color="primary"-->
-<!--                (click)="onToggleAttitudeProfileVisibility()">Спрятать профиль высоты-->
-<!--        </button>-->
-<!--        <button *ngIf="!showDistanceSchema" mat-flat-button color="primary"-->
-<!--                (click)="onToggleDistanceSchemaVisibility()">Показать схему дистанции-->
-<!--        </button>-->
-<!--        <button *ngIf="showDistanceSchema" mat-flat-button color="primary"-->
-<!--                (click)="onToggleDistanceSchemaVisibility()">Спрятать схему дистанции-->
-<!--        </button>-->
-<!--      </div>-->
+<ng-container *ngIf="isMobile; else desktopTemplate">
+  <mat-slide-toggle [(ngModel)]="isMobile">
+    <h3 class="toggle">
+      Результаты гонки (мобильная версия)
+    </h3>
+  </mat-slide-toggle>
+  <app-race-format-result-compact *ngIf="raceFormat$ | async as raceFormat"
+                                  [format]="raceFormat"
+                                  [showAttitude]="showAttitude"
+                                  [showDistanceSchema]="showDistanceSchema"></app-race-format-result-compact>
+</ng-container>
 
-<!--    </div>-->
-
-  </div>
-</h3>
-<app-race-format-result-compact [showAttitude]="showAttitude"
-                        [showDistanceSchema]="showDistanceSchema"></app-race-format-result-compact>
+<ng-template #desktopTemplate>
+  <mat-slide-toggle class="header" [(ngModel)]="isMobile">
+    <h3 class="toggle">
+      Результаты гонки (мобильная версия)
+    </h3>
+  </mat-slide-toggle>
+  <app-race-format-result *ngIf="raceFormat$ | async as raceFormat"
+                          [format]="raceFormat"
+                          [showAttitude]="showAttitude"
+                          [showDistanceSchema]="showDistanceSchema"></app-race-format-result>
+</ng-template>
