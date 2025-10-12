@@ -84,7 +84,7 @@
                 </span>
               <br>
               <span style="font-style: italic; font-size: 11px">
-                  {{ 'КП: ' + (row?.lastCheckPoint.orderNumber-1) + ' (' + row?.lastCheckPoint.name + ')' }}
+                  {{ 'КП: ' + (row?.lastCheckPoint?.orderNumber-1) + ' (' + row?.lastCheckPoint?.name + ')' }}
                 </span>
             </div>
             <div class="place-cell" *ngIf="row?.absolutePlace">

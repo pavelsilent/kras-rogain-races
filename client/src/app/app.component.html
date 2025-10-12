@@ -1,6 +1,6 @@
 <app-loader></app-loader>
 <div class="banner-wrapper">
-  <img src="assets/banner_kras_rogain_races.jpg" class="banner-image" alt="На главную"
+  <img src="./assets/banner_kras_rogain_races.jpg" class="banner-image" alt="На главную"
   (click)="onBannerClick()">
   <mat-slide-toggle [checked]="appService.isMobile() | async"
                     (change)="appService.onIsMobileChanged($event)"
