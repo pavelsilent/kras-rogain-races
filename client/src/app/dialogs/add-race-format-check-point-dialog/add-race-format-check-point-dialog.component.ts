@@ -22,12 +22,15 @@ import { LocalDateTime } from '@js-joda/core';
 import { DurationSplitFieldComponent } from '../../components/core/duration-split-field/duration-split-field.component';
 import { RaceService } from '../../components/race/race.service';
 import { RaceCheckPointSetupModel } from '../../models/race-check-point-setup.model';
+import { RaceCheckPointModel } from '../../models/race-check-point.model';
 import { RU_DATE_FORMATS } from '../../utils/mat-date-formats';
+import { exists } from '../../utils/utils';
 
 export interface AddRaceFormatCheckPointDialogConfig {
   raceId: number;
   raceFormatId: number;
   startDateTime: LocalDateTime;
+  checkPoint?: RaceCheckPointModel;
 }
 
 @Component({
@@ -76,21 +79,26 @@ export class AddRaceFormatCheckPointDialogComponent {
   ) {
     this.form = this.fb.group({
                                 orderNumber: new FormControl(
-                                  undefined,
+                                  exists(data.checkPoint) ? data.checkPoint.orderNumber : undefined,
                                   [
                                     Validators.required,
                                     Validators.min(1),
                                     Validators.pattern(/^\d+$/),
                                   ],
                                 ),
-                                name: new FormControl('', Validators.required),
-                                description: new FormControl(''),
+                                name: new FormControl(
+                                  exists(data.checkPoint) ? data.checkPoint.name : '',
+                                  Validators.required,
+                                ),
+                                description: new FormControl(exists(data.checkPoint)
+                                                             ? data.checkPoint.description
+                                                             : ''),
                                 distance: new FormControl(
-                                  undefined,
+                                  exists(data.checkPoint) ? data.checkPoint.totalDistance : undefined,
                                   [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)],
                                 ),
-                                controlDuration: [''],
-                                leaderDuration: [''],
+                                controlDuration: [exists(data.checkPoint) ? data.checkPoint.checkDuration : ''],
+                                leaderDuration: [exists(data.checkPoint) ? data.checkPoint.leaderDuration : ''],
                               });
   }
 
@@ -105,8 +113,13 @@ export class AddRaceFormatCheckPointDialogComponent {
       model.totalDistance = value.distance!;
       model.checkDuration = value.controlDuration!;
       model.leaderDuration = value.leaderDuration!;
-      this.service.addRaceCheckPoint(this.data.raceId, this.data.raceFormatId, model)
-          .then(value => this.dialogRef.close(value));
+      if (exists(this.data.checkPoint)) {
+        this.service.editRaceCheckPoint(this.data.raceId, this.data.raceFormatId, this.data.checkPoint.id, model)
+            .then(value => this.dialogRef.close(value));
+      } else {
+        this.service.addRaceCheckPoint(this.data.raceId, this.data.raceFormatId, model)
+            .then(value => this.dialogRef.close(value));
+      }
     }
   }
 

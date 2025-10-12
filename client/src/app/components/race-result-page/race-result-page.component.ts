@@ -1,6 +1,5 @@
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -40,8 +39,7 @@ import { RaceFormatResultComponent } from '../race-format-page/result-tab/race-f
              styleUrl: './race-result-page.component.css',
              providers: [RaceFormatPageService],
            })
-export class RaceResultPageComponent
-  implements OnInit {
+export class RaceResultPageComponent {
 
   raceFormat$: Observable<RaceFormatModel>;
   showAttitude: boolean;
@@ -51,9 +49,8 @@ export class RaceResultPageComponent
   constructor(
     private route: ActivatedRoute,
     protected page: RaceFormatPageService,
-    private appService: AppService,
+    protected appService: AppService,
     private dialog: MatDialog,
-    private breakpointObserver: BreakpointObserver,
   ) {
     this.appService.setEditUnavailable();
 
@@ -67,13 +64,6 @@ export class RaceResultPageComponent
       }),
       switchMap(value => this.page.getRaceFormat()),
     );
-  }
-
-  ngOnInit() {
-    this.breakpointObserver.observe([Breakpoints.Handset])
-        .subscribe(result => {
-          this.isMobile = result.matches;
-        });
   }
 
 }

@@ -25,7 +25,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDateTime } from '@js-joda/core';
 import { Option } from 'funfix-core';
 import {
-  combineLatest,
+  combineLatest, filter,
   firstValueFrom,
   lastValueFrom,
   map,
@@ -52,6 +52,7 @@ import { RaceFormatModel } from '../../../models/race-format.model';
 import { CosmicTimePipe } from '../../../utils/cosmic-time.pipe';
 import { RussianDateTimePipe } from '../../../utils/russian-date-time.pipe';
 import { RussianTimePipe } from '../../../utils/russian-time.pipe';
+import { exists } from '../../../utils/utils';
 import { FileService } from '../../core/file.service';
 import { RaceService } from '../../race/race.service';
 import { RaceFormatPageService } from '../race-format-page.service';
@@ -98,6 +99,8 @@ export class RaceFormatResultCompactComponent {
   startDateTime$: Observable<LocalDateTime>;
   raceState$: Observable<RaceState>;
   checkPoints$: Observable<RaceCheckPointModel[]>;
+  attitudeProfile$: Observable<string>;
+  distanceSchema$: Observable<string>;
   protected readonly raceStates = RaceState;
   @Input()
   format: RaceFormatModel;
@@ -133,6 +136,16 @@ export class RaceFormatResultCompactComponent {
         });
 
     this.checkPoints$ = this.result$.pipe(map(result => Option.of(result.checkPoints).getOrElse([])));
+    this.attitudeProfile$ = this.result$.pipe(
+      map(value => value.attitudeProfileFileId),
+      filter(value => exists(value)),
+      switchMap(id => this.fileService.download(id)),
+    );
+    this.distanceSchema$ = this.result$.pipe(
+      map(value => value.distanceSchemaFileId),
+      filter(value => exists(value)),
+      switchMap(id => this.fileService.download(id)),
+    );
   }
 
   getCheckPointTimeExpired(athlete: RaceAthleteModel | undefined): boolean {
@@ -226,6 +239,20 @@ export class RaceFormatResultCompactComponent {
           this.router.navigateByUrl(currentUrl);
         });
       });
+  }
+  onToggleAttitudeProfileVisibility() {
+    this.showAttitude = !this.showAttitude;
+  }
+
+  onToggleDistanceSchemaVisibility() {
+    this.showDistanceSchema = !this.showDistanceSchema;
+  }
+
+  openFullscreen(event: MouseEvent) {
+    const img = event.target as HTMLElement;
+    if (img.requestFullscreen) {
+      img.requestFullscreen();
+    }
   }
 
 }

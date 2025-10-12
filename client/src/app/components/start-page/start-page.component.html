@@ -1,0 +1,39 @@
+<div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 16px;">
+  <h2>Результаты</h2>
+</div>
+
+<div class="mat-elevation-z8">
+  <mat-form-field appearance="outline" style="width: 100%;">
+    <mat-label>Поиск</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Введите название">
+  </mat-form-field>
+
+  <table mat-table [dataSource]="dataSource" matSort class="full-width-table">
+
+    <ng-container matColumnDef="raceName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Название</th>
+      <td mat-cell *matCellDef="let link">{{ link.raceName }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="formatName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Название</th>
+      <td mat-cell *matCellDef="let link">
+        <a href="#" (click)="navigate(link.viewToken);$event.preventDefault();">{{ link.formatName }}</a>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="raceDate">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Дата</th>
+      <td mat-cell *matCellDef="let link"> {{ link.raceDate | toRusDate }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="state">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Состояние</th>
+      <td mat-cell *matCellDef="let link"> {{ link.state?.name }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+</div>

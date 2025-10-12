@@ -11,6 +11,7 @@ import { RaceAthleteSetupModel } from '../../models/race-athlete-setup.model';
 import { RaceAthleteModel } from '../../models/race-athlete.model';
 import { RaceCheckPointSetupModel } from '../../models/race-check-point-setup.model';
 import { RaceCheckPointModel } from '../../models/race-check-point.model';
+import { RaceFormatResultLinkModel } from '../../models/race-format-result-link.model';
 import { RaceFormatResultModel } from '../../models/race-format-result.model';
 import { RaceFormatTokenModel } from '../../models/race-format-token.model';
 import { RaceFormatModel } from '../../models/race-format.model';
@@ -67,6 +68,12 @@ export class RaceService {
     );
   }
 
+  getRaceFormatResults(): Observable<RaceFormatResultLinkModel[]> {
+    return this.backend.getActiveRaceFormatResults().pipe(
+      map(items => items.map(item => RaceFormatResultLinkModel.fromDTO(item))),
+    );
+  }
+
   getRaceFormatResult(id: number, formatId: number): Observable<RaceFormatResultModel> {
     return this.backend.getRaceFormatResultTable(id, formatId).pipe(
       map(item => RaceFormatResultModel.fromDTO(item)));
@@ -90,6 +97,10 @@ export class RaceService {
 
   addRaceCheckPoint(id: number, formatId: number, data: RaceCheckPointSetupModel) {
     return lastValueFrom(this.backend.addRaceFormatCheckPoint(id, formatId, data.toDTO()));
+  }
+
+  editRaceCheckPoint(id: number, formatId: number, checkPointId: number, data: RaceCheckPointSetupModel) {
+    return lastValueFrom(this.backend.editRaceFormatCheckPoint(id, formatId, checkPointId, data.toDTO()));
   }
 
   addRaceAthleteCheckPoint(

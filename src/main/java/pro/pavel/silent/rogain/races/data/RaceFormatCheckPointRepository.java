@@ -15,6 +15,13 @@ public interface RaceFormatCheckPointRepository extends EntityRepository<RaceFor
         Integer orderNumber
     );
 
+    List<RaceFormatCheckPoint> findAllByRaceFormatAndOrderNumberGreaterThanEqualAndOrderNumberLessThanEqual(
+        RaceFormat raceFormat,
+        Integer startNumber,
+        Integer finishNumber
+    );
+
+
     Optional<RaceFormatCheckPoint> findFirstByRaceFormatAndOrderNumber(
         RaceFormat raceFormat,
         Integer orderNumber

@@ -285,16 +285,16 @@
     </ng-container>
 
     <!-- ===== Header rows ===== -->
-    <tr mat-header-row class="one-line-row center" *matHeaderRowDef="topHeaderDef"></tr>
-    <tr mat-header-row *matHeaderRowDef="checkPointsHeaderDef"></tr>
-    <tr mat-header-row class="one-line-row header-row" *matHeaderRowDef="raceDistanceHeaderDef"></tr>
+    <tr mat-header-row class="one-line-row center athlete-row" *matHeaderRowDef="topHeaderDef"></tr>
+    <tr mat-header-row class="athlete-row" *matHeaderRowDef="checkPointsHeaderDef"></tr>
+    <tr mat-header-row class="one-line-row header-row " *matHeaderRowDef="raceDistanceHeaderDef"></tr>
     <tr mat-header-row class="two-line-row header-row control-row" *matHeaderRowDef="raceCheckTimeHeaderDef">
     <tr mat-header-row class="two-line-row leader-row" *matHeaderRowDef="raceLeaderHeaderDef">
     <tr mat-header-row class="one-line-row leader-row" *matHeaderRowDef="raceLeaderDiffTimeHeaderDef">
     <tr mat-header-row class="one-line-row header-row" *matHeaderRowDef="dataTableHeaderDef">
-    <tr mat-header-row class="zero-line-row" *matHeaderRowDef="dataTableBodyDef"></tr>
-    <tr mat-header-row class="one-line-row" *matRowDef="let row; columns: dataTableBodyDef"></tr>
-    <tr mat-row class="diff-time-row one-line-row" *matRowDef="let row; columns: dataTableDiffDef">
+    <tr mat-header-row class="zero-line-row athlete-row" *matHeaderRowDef="dataTableBodyDef"></tr>
+    <tr mat-header-row class="one-line-row athlete-row" *matRowDef="let row; columns: dataTableBodyDef"></tr>
+    <tr mat-row class="diff-time-row one-line-row athlete-row" *matRowDef="let row; columns: dataTableDiffDef">
   </table>
 </div>
 

@@ -222,6 +222,77 @@ public class RaceService {
         return newCheckPoint;
     }
 
+
+    @Transactional
+    public RaceFormatCheckPoint editRaceCheckPoint(
+        Long raceId,
+        Long raceFormatId,
+        Long checkPointId,
+        RaceFormatCheckPointSetupDTO checkPointDTO
+    ) {
+        RaceFormatCheckPoint checkPoint = raceQueryService.getRaceFormatCheckPoint(checkPointId);
+        RaceFormat raceFormat = checkPoint.getRaceFormat();
+
+        List<RaceFormatCheckPoint> prevCheckPoints =
+            raceQueryService.getRaceFormatCheckPoints(raceFormat, checkPoint.getOrderNumber(), checkPointDTO.getOrderNumber());
+
+        for (RaceFormatCheckPoint prevCheckPoint : prevCheckPoints) {
+            prevCheckPoint.setOrderNumber(prevCheckPoint.getOrderNumber() - 1);
+            if (prevCheckPoint.getIsFinish()) {
+                prevCheckPoint.setIsFinish(false);
+            }
+            raceFormatCheckPointRepository.save(prevCheckPoint);
+        }
+
+        List<RaceFormatCheckPoint> nextCheckPoints =
+            raceQueryService.getRaceFormatCheckPoints(raceFormat, checkPointDTO.getOrderNumber());
+
+        for (RaceFormatCheckPoint nextCheckPoint : nextCheckPoints) {
+            nextCheckPoint.setOrderNumber(nextCheckPoint.getOrderNumber() + 1);
+            if (nextCheckPoint.getIsStart()) {
+                nextCheckPoint.setIsStart(false);
+            }
+            raceFormatCheckPointRepository.save(nextCheckPoint);
+        }
+
+        boolean isItNewStart = checkPointDTO.getOrderNumber().equals(1);
+        boolean isItNewFinish = nextCheckPoints.isEmpty();
+
+        if (!isItNewStart && isItNewFinish) {
+            RaceFormatCheckPoint oldFinishCheckPoint = raceQueryService.getRaceFormatFinishCheckPoint(raceFormat);
+            oldFinishCheckPoint.setIsFinish(false);
+            raceFormatCheckPointRepository.save(oldFinishCheckPoint);
+        }
+
+        checkPoint.setRaceFormat(raceFormat);
+        checkPoint.setName(checkPointDTO.getName());
+        checkPoint.setDescription(checkPointDTO.getDescription());
+        checkPoint.setOrderNumber(checkPointDTO.getOrderNumber());
+        checkPoint.setIsStart(isItNewStart);
+        checkPoint.setIsFinish(isItNewFinish);
+        checkPoint.setTotalDistance(checkPointDTO.getTotalDistance());
+        checkPoint.setHasCheckTime(Objects.nonNull(checkPointDTO.getCheckDuration()));
+        checkPoint.setCheckDuration(DurationHelper.parse(checkPointDTO.getCheckDuration()));
+        checkPoint.setLeaderDuration(DurationHelper.parse(checkPointDTO.getLeaderDuration()));
+
+        raceFormatCheckPointRepository.save(checkPoint);
+
+        List<RaceFormatCheckPoint> raceFormatCheckPoints = raceQueryService.getRaceFormatCheckPoints(raceFormat);
+        for (int i = 0; i < raceFormatCheckPoints.size(); i++) {
+            RaceFormatCheckPoint raceFormatCheckPoint = raceFormatCheckPoints.get(i);
+            raceFormatCheckPoint.setOrderNumber(i + 1);
+            if (i == 0) {
+                raceFormatCheckPoint.setIsStart(true);
+            }
+            if (i == raceFormatCheckPoints.size() - 1) {
+                raceFormatCheckPoint.setIsFinish(true);
+            }
+            raceFormatCheckPointRepository.save(raceFormatCheckPoint);
+        }
+
+        return checkPoint;
+    }
+
     public void addRaceAthleteCheckPoint(
         Long raceId,
         Long raceFormatId,
@@ -301,9 +372,15 @@ public class RaceService {
     public void startRace(Long raceId, Long raceFormatId, StateDTO dto) {
         RaceState raceState = RaceState.valueOf(dto.getState());
         RaceFormat raceFormat = raceQueryService.getRaceFormatById(raceFormatId);
+        RaceState prevState = raceFormat.getState();
+
         raceFormat.setState(raceState);
         raceFormat.setStartTime(dto.getStateTime());
         raceFormatRepository.save(raceFormat);
+
+        if (prevState.equals(raceState)) {
+            return;
+        }
 
         raceAthleteCheckPointRepository.deleteAllByRaceFormatCheckPointRaceFormat(raceFormat);
 

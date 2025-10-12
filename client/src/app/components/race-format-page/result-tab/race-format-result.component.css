@@ -32,12 +32,6 @@
   border: 1px solid black;
 }
 
-
-.def-color {
-  background-color: #faf9fc;
-}
-
-
 .control-row {
   background: #ffe599;
   color: red;
@@ -49,6 +43,10 @@
 
 .header-row {
   background: #ffe599;
+}
+
+.athlete-row {
+  background: white;
 }
 
 .params-header {

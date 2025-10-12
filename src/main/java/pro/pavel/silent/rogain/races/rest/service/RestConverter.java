@@ -39,6 +39,7 @@ import pro.pavel.silent.rogain.races.rest.dto.RaceDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatCheckPointDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatResultDTO;
+import pro.pavel.silent.rogain.races.rest.dto.RaceFormatResultLinkDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatTokenDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceTypeDTO;
 import pro.pavel.silent.rogain.races.service.RaceFormatFileService;
@@ -291,6 +292,21 @@ public class RestConverter {
                                  .token(model.getToken())
                                  .tokenType(model.getTokenType().name())
                                  .build();
+    }
+
+    public RaceFormatResultLinkDTO toLinkDTO(RaceFormat raceFormat) {
+        if (raceFormat == null) {
+            return null;
+        }
+        return RaceFormatResultLinkDTO.builder()
+                                      .id(raceFormat.getId())
+                                      .raceName(raceFormat.getRace().getName())
+                                      .formatName(raceFormat.getName())
+                                      .raceType(OptionalHelper.map(raceFormat.getRace().getRaceType(), this::toDTO))
+                                      .raceDate(raceFormat.getRace().getDate())
+                                      .state(raceFormat.getState().name())
+                                      .viewToken(raceFormat.getViewToken())
+                                      .build();
     }
 
     public RaceFormatDTO toDTO(RaceFormat raceFormat) {

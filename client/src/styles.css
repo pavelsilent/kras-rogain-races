@@ -47,3 +47,18 @@ mat-dialog-actions {
 .center {
   text-align: center;
 }
+
+html, body {
+  background-color: #ffffff;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background-color: #ffffff !important;
+}
+
+.mat-mdc-table {
+  background-color: white !important;
+}

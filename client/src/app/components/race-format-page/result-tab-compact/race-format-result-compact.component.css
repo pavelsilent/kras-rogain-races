@@ -4,19 +4,49 @@
 }
 
 .disqualified {
-  background: #ffdbdb;
+  background: #fff5f5 !important;;
 }
 
 .finished {
-  background: #c0f1c0;
+  background: #f1fff1 !important;
+}
+
+.registered {
+  background: white;
 }
 
 .check-time-expired {
   color: red;
 }
 
+.header-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  & > div > button {
+    margin-left: 10px;
+  }
+}
+
+.race-name-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.race-actions-container {
+  display: flex;
+  flex-direction: column;
+}
+
 .race-action {
-  padding-top: 5px;
+    margin-top: 2px;
+    padding: 2px 8px;
+    font-size: 10px;
+    min-width: 64px;
+    line-height: 28px;
+    height: 28px;
+  white-space: nowrap;
 }
 
 .athlete-data-container {

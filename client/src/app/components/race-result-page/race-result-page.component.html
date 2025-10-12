@@ -1,9 +1,4 @@
-<ng-container *ngIf="isMobile; else desktopTemplate">
-  <mat-slide-toggle [(ngModel)]="isMobile">
-    <h3 class="toggle">
-      Результаты гонки (мобильная версия)
-    </h3>
-  </mat-slide-toggle>
+<ng-container *ngIf="appService.isMobile() | async; else desktopTemplate">
   <app-race-format-result-compact *ngIf="raceFormat$ | async as raceFormat"
                                   [format]="raceFormat"
                                   [showAttitude]="showAttitude"
@@ -11,11 +6,6 @@
 </ng-container>
 
 <ng-template #desktopTemplate>
-  <mat-slide-toggle class="header" [(ngModel)]="isMobile">
-    <h3 class="toggle">
-      Результаты гонки (мобильная версия)
-    </h3>
-  </mat-slide-toggle>
   <app-race-format-result *ngIf="raceFormat$ | async as raceFormat"
                           [format]="raceFormat"
                           [showAttitude]="showAttitude"

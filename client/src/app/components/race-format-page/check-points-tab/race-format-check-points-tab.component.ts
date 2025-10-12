@@ -132,4 +132,22 @@ export class RaceFormatCheckPointsTabComponent
       .then(value => lastValueFrom(value))
       .then(value => this.refresh$.next());
   }
+
+  onEditCheckPoint(checkPoint: RaceCheckPointModel) {
+    firstValueFrom(this.page.getRaceFormat())
+      .then(raceFormat =>
+              this.dialog.open(AddRaceFormatCheckPointDialogComponent, {
+                width: '600px',
+                disableClose: true,
+                data: {
+                  raceId: this.id,
+                  raceFormatId: this.formatId,
+                  startDateTime: raceFormat.startDateTime,
+                  checkPoint: checkPoint,
+                },
+              }))
+      .then(value => value.afterClosed())
+      .then(value => lastValueFrom(value))
+      .then(value => this.refresh$.next());
+  }
 }

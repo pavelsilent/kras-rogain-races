@@ -22,6 +22,7 @@ import pro.pavel.silent.rogain.races.data.RaceFormatCheckPointRepository;
 import pro.pavel.silent.rogain.races.data.RaceFormatRepository;
 import pro.pavel.silent.rogain.races.data.RaceRepository;
 import pro.pavel.silent.rogain.races.domain.enumeration.RaceAthleteState;
+import pro.pavel.silent.rogain.races.domain.enumeration.RaceState;
 import pro.pavel.silent.rogain.races.domain.model.RaceFormatTokenModel;
 import pro.pavel.silent.rogain.races.entity.Athlete;
 import pro.pavel.silent.rogain.races.entity.AthleteGroup;
@@ -58,6 +59,11 @@ public class RaceQueryService {
     public RaceFormat getRaceFormatById(Long id) {
         return raceFormatRepository.findById(id)
                                    .orElseThrow(() -> new RuntimeException("Not found race format with id: " + id));
+    }
+
+    public List<RaceFormat> getActiveRaceFormats() {
+        return raceFormatRepository.findAllByStateNotInOrderByRaceDateAscRaceIdAsc(
+            List.of(RaceState.DRAFT, RaceState.CANCELED, RaceState.PLANNED));
     }
 
     public List<RaceFormat> getRaceFormats(Long id) {
@@ -103,6 +109,18 @@ public class RaceQueryService {
         return raceFormatCheckPointRepository.findAllByRaceFormatAndOrderNumberGreaterThanEqual(
             raceFormat,
             startedOrderNumber
+        );
+    }
+
+    public List<RaceFormatCheckPoint> getRaceFormatCheckPoints(
+        RaceFormat raceFormat,
+        Integer startedOrderNumber,
+        Integer finishedOrderNumber
+    ) {
+        return raceFormatCheckPointRepository.findAllByRaceFormatAndOrderNumberGreaterThanEqualAndOrderNumberLessThanEqual(
+            raceFormat,
+            startedOrderNumber,
+            finishedOrderNumber
         );
     }
 

@@ -14,9 +14,10 @@ import { RaceFormatResultComponent } from './components/race-format-page/result-
 import { RaceListComponent } from './components/race-list/race-list.component';
 import { RaceResultPageComponent } from './components/race-result-page/race-result-page.component';
 import { RaceComponent } from './components/race/race.component';
+import { StartPageComponent } from './components/start-page/start-page.component';
 
 export const routes: Routes = [
-  { path: '', component: NotFoundComponent },
+  { path: '', component: StartPageComponent },
   { path: 'races', component: RaceListComponent },
   { path: 'races/:id', component: RaceComponent },
   {

@@ -1,5 +1,8 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, HostListener, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTab, MatTabGroup } from '@angular/material/tabs';
 import {
   NavigationCancel,
@@ -19,22 +22,20 @@ import { LoaderService } from './components/core/loader/loader.service';
              selector: 'app-root',
              imports: [
                RouterOutlet, MatTab, MatTabGroup, NgForOf, NgIf, AsyncPipe, LoaderComponent,
-               ErrorDialogComponent,
+               ErrorDialogComponent, MatSlideToggle, FormsModule,
              ],
              templateUrl: './app.component.html',
              standalone: true,
              styleUrl: './app.component.css',
            })
-export class AppComponent {
+export class AppComponent
+  implements OnInit {
   protected readonly title = signal('krsk-rogain-results-front');
   needShowTabs$: Observable<boolean>;
 
-  tabs = [
-    { label: 'Соревнования', route: '/races' },
-    { label: 'Атлеты', route: '/athletes' },
-  ];
-
-  constructor(private router: Router, private appService: AppService, loader: LoaderService) {
+  constructor(private router: Router, public appService: AppService, loader: LoaderService,
+              private breakpointObserver: BreakpointObserver,
+  ) {
     this.needShowTabs$ = appService.canEdit();
 
     this.router.events.subscribe((event) => {
@@ -48,8 +49,27 @@ export class AppComponent {
 
   }
 
-  onTabChange(index: number) {
-    this.router.navigate([this.tabs[index].route]);
+  ngOnInit() {
+    this.breakpointObserver.observe([Breakpoints.Handset])
+        .subscribe(result => {
+          this.appService.setIsMobile(result.matches);
+        });
+    this.onResize();
   }
 
+  get toggleScale(): number {
+    const minScale = 0.6;
+    const maxScale = 1;
+    const scale = window.innerWidth / 1200; // 1200px — базовая ширина баннера
+    return Math.max(minScale, Math.min(scale, maxScale));
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    document.documentElement.style.setProperty('--toggle-scale', this.toggleScale.toString());
+  }
+
+  onBannerClick() {
+    this.router.navigate(['/']);
+  }
 }

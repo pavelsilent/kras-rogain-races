@@ -1,32 +1,71 @@
 <h3 class="header" *ngIf="format as raceFormat">
   <div class="header-container">
-    <span>{{ raceFormat.raceName }}</span>
-    <br>
-    <span>{{ raceFormat.name }}</span>
-    <br>
-    <span>{{ (raceFormat.startDateTime | toRusDateTime) }}</span>
-    <br><span>{{ raceFormat.state.name }}</span>
-    <div class="race-action" *ngIf="page.canEdit() | async as canEdit">
+    <div class="race-name-container">
+      <span>{{ raceFormat.raceName }}</span>
+      <span>{{ raceFormat.name }}</span>
+      <span>{{ (raceFormat.startDateTime | toRusDateTime) + ' / ' + raceFormat.state.name}}</span>
+    </div>
+
+    <div class="race-actions-container">
       <!--      <button *ngIf="raceFormat.state != states.STARTED && raceFormat.state != states.FINISHED"-->
-      <button *ngIf="raceFormat.state != raceStates.STARTED"
+      <button *ngIf="raceFormat.state != raceStates.STARTED && (page.canEdit() | async)"
+              class="race-action"
               mat-flat-button
               color="primary"
               (click)="onSetRaceState(raceStates.STARTED)">Начать гонку
       </button>
-      <button *ngIf="raceFormat.state == raceStates.STARTED"
+      <button *ngIf="raceFormat.state == raceStates.STARTED && (page.canEdit() | async)"
+              class="race-action"
+              mat-flat-button
+              color="primary"
+              (click)="onSetRaceState(raceStates.STARTED)">Изменить время начала
+      </button>
+      <button *ngIf="raceFormat.state == raceStates.STARTED && (page.canEdit() | async)"
+              class="race-action"
               mat-flat-button
               color="primary"
               (click)="onSetRaceState(raceStates.FINISHED)">Завершить гонку
+      </button>
+      <button *ngIf="!showAttitude" mat-flat-button color="primary"
+              class="race-action"
+              (click)="onToggleAttitudeProfileVisibility()">Показать профиль высоты
+      </button>
+      <button *ngIf="showAttitude" mat-flat-button color="primary"
+              class="race-action"
+              (click)="onToggleAttitudeProfileVisibility()">Спрятать профиль высоты
+      </button>
+      <button *ngIf="!showDistanceSchema" mat-flat-button color="primary"
+              class="race-action"
+              (click)="onToggleDistanceSchemaVisibility()">Показать схему дистанции
+      </button>
+      <button *ngIf="showDistanceSchema" mat-flat-button color="primary"
+              class="race-action"
+              (click)="onToggleDistanceSchemaVisibility()">Спрятать схему дистанции
       </button>
     </div>
   </div>
 </h3>
 
 <div class="table-wrapper">
+  <div *ngIf="showAttitude" class="img-container">
+    <img *ngIf="attitudeProfile$ | async as attitudeProfileSrc"
+         [src]="attitudeProfileSrc"
+         (click)="openFullscreen($event)"
+         alt="Профиль высоты"
+         class="img">
+  </div>
+  <div *ngIf="showDistanceSchema" class="img-container">
+    <img *ngIf="distanceSchema$ | async as distanceSchemaSrc"
+         [src]="distanceSchemaSrc"
+         (click)="openFullscreen($event)"
+         alt="Схема дистанции"
+         class="img">
+  </div>
   <table mat-table [dataSource]="membersDataSource" class="protocol-table">
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef class="center bold">Участник</th>
       <td mat-cell *matCellDef="let row" (click)="onShowAthleteDetailInfo(row)"
+          class="registered"
           [ngClass]="{'finished': row.isFinished(), 'disqualified': row.isDisqualified() }">
         <div class="athlete-data-container">
           <div class="athlete-data-time bold">
@@ -41,11 +80,11 @@
             <div>
                 <span *ngIf="row?.lastRaceAthleteCheckPoint" class="bold"
                       [ngClass]="{'check-time-expired': getCheckPointTimeExpired(row)}">
-                  {{ row?.lastRaceAthleteCheckPoint.raceTime | toRusTime }}
+                  {{ (row?.lastRaceAthleteCheckPoint.raceTime | toRusTime) + ' / ' + row.state.name }}
                 </span>
               <br>
               <span style="font-style: italic; font-size: 11px">
-                  {{ 'КП: ' + row?.lastCheckPoint.orderNumber + ' (' + row?.lastCheckPoint.name + ')' }}
+                  {{ 'КП: ' + (row?.lastCheckPoint.orderNumber-1) + ' (' + row?.lastCheckPoint.name + ')' }}
                 </span>
             </div>
             <div class="place-cell" *ngIf="row?.absolutePlace">
@@ -60,7 +99,6 @@
       </td>
     </ng-container>
 
-    <!-- Header и Body -->
     <tr mat-header-row *matHeaderRowDef="dataTableBodyDef" class="sticky-header"></tr>
     <tr mat-row *matRowDef="let row; columns: dataTableBodyDef;"></tr>
   </table>

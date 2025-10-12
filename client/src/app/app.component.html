@@ -1,8 +1,15 @@
 <app-loader></app-loader>
+<div class="banner-wrapper">
+  <img src="assets/banner_kras_rogain_races.jpg" class="banner-image" alt="На главную"
+  (click)="onBannerClick()">
+  <mat-slide-toggle [checked]="appService.isMobile() | async"
+                    (change)="appService.onIsMobileChanged($event)"
+                    class="banner-toggle">
+    <h5 class="toggle-label">Мобильная версия</h5>
+  </mat-slide-toggle>
+</div>
+
 <div class="main">
-  <mat-tab-group *ngIf="needShowTabs$ | async" class="tab-group" (selectedIndexChange)="onTabChange($event)">
-    <mat-tab *ngFor="let tab of tabs" [label]="tab.label"></mat-tab>
-  </mat-tab-group>
   <router-outlet></router-outlet>
   <app-error-dialog></app-error-dialog>
 </div>

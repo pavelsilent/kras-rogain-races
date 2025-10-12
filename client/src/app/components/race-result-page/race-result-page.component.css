@@ -3,14 +3,3 @@
   padding-right: 30px;
   width: 100%;
 }
-.toggle {
-  padding: 0;
-  margin: 0;
-}
-
-
-.toggle-icons {
-  display: inline-flex;
-  align-items: center;
-  margin-right: 8px;
-}

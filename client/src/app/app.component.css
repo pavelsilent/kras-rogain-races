@@ -1,6 +1,41 @@
 .main {
   margin: 10px;
 }
-.tab-group {
-  padding-bottom: 30px;
+
+.banner-wrapper {
+  position: relative;
+  width: 100%;
+  max-height: 230px;          /* максимальная высота баннера */
+  overflow: hidden;
+  display: flex;
+  justify-content: center;    /* центрирование баннера */
+  align-items: center;        /* вертикальное центрирование */
+}
+
+.banner-image {
+  width: 100%;
+  height: auto;
+  max-height: 230px;
+  display: block;
+  object-fit: contain;        /* картинка полностью помещается в контейнер */
+}
+
+/* Toggle в правом нижнем углу */
+.banner-toggle {
+  position: absolute;
+  bottom: 10px;               /* отступ снизу */
+  right: 10px;                /* отступ справа */
+  transform-origin: right bottom;
+  transform: scale(var(--toggle-scale, 1)); /* масштабируем toggle */
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 4px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.toggle-label {
+  margin: 0;
+  font-size: 1em;
 }
