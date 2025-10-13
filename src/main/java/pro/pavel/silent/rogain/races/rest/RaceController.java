@@ -183,12 +183,12 @@ public class RaceController {
         @PathVariable Long formatId
     ) {
         RaceFormatResultDTO resultDTO = restConverter.toResultDTO(raceQueryService.getRaceFormatById(formatId));
-        resultDTO.setAthletes(
+//        resultDTO.setAthletes(resultDTO
 
-            ListHelper.merge(
-                ListHelper.merge(resultDTO.getAthletes(), resultDTO.getAthletes()),
-                ListHelper.merge(resultDTO.getAthletes(), resultDTO.getAthletes())
-            ));
+//            ListHelper.merge(
+//                ListHelper.merge(resultDTO.getAthletes(), resultDTO.getAthletes()),
+//                ListHelper.merge(resultDTO.getAthletes(), resultDTO.getAthletes())
+//            ));
         return ResponseEntity.ok(resultDTO);
     }
 
