@@ -90,12 +90,12 @@ export class RaceAthleteDetailInfoDialogComponent {
     return this.data.athleteInfo.checkPoints?.find(value => value.id === checkPointId)?.prevCheckPointDiffDuration;
   }
 
-  getCheckPointLeaderTime(checkPointId: number): LocalDateTime | undefined {
-    return this.data.checkPoints.find(value => value.id === checkPointId)?.leaderTime
+  getCheckPointLeaderTime(checkPointId: number): string | undefined {
+    return this.data.checkPoints.find(value => value.id === checkPointId)?.leaderDuration
   }
 
-  getCheckPointCheckTime(checkPointId: number): LocalDateTime | undefined {
-    return this.data.checkPoints.find(value => value.id === checkPointId)?.checkTime
+  getCheckPointCheckTime(checkPointId: number): string | undefined {
+    return this.data.checkPoints.find(value => value.id === checkPointId)?.checkDuration
   }
 
   cancel() {

@@ -309,8 +309,14 @@
         class="one-line-row leader-row sticky-header-6"
         *matHeaderRowDef="raceLeaderDiffTimeHeaderDef"></tr>
     <tr mat-header-row class="one-line-row header-row sticky-header-7" *matHeaderRowDef="dataTableHeaderDef"></tr>
-    <tr mat-header-row class="one-line-row athlete-row" *matRowDef="let row; columns: dataTableBodyDef"></tr>
-    <tr mat-row class="diff-time-row one-line-row athlete-row" *matRowDef="let row; columns: dataTableDiffDef"></tr>
+    <tr mat-header-row
+        class="one-line-row athlete-row"
+        [ngClass]="{'finished': row.isFinished(), 'disqualified': row.isDisqualified() }"
+        *matRowDef="let row; columns: dataTableBodyDef"></tr>
+    <tr mat-row
+        class="diff-time-row one-line-row athlete-row"
+        [ngClass]="{'finished': row.isFinished(), 'disqualified': row.isDisqualified() }"
+        *matRowDef="let row; columns: dataTableDiffDef"></tr>
   </table>
 </div>
 <br>

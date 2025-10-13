@@ -266,3 +266,11 @@ th, td {
   background: #ffe599;
   z-index: 4;
 }
+
+.disqualified {
+  background: #fff5f5 !important;
+}
+
+.finished {
+  background: #f1fff1 !important;
+}
