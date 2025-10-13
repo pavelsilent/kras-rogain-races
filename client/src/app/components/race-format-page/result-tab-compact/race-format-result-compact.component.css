@@ -4,7 +4,7 @@
 }
 
 .disqualified {
-  background: #fff5f5 !important;;
+  background: #fff5f5 !important;
 }
 
 .finished {
@@ -105,10 +105,12 @@
 th {
   padding: 5px;
   text-align: center;
+  border: 1px dotted black;
 }
 
 td {
   padding: 5px;
+  border: 1px dotted black;
 }
 
 .place-cell {
@@ -118,7 +120,7 @@ td {
 
 .table-wrapper {
   max-height: 350px;
-  border: 1px solid black;
+  border: 1px dotted black;
   border-collapse: collapse;
   overflow-y: auto;
 }

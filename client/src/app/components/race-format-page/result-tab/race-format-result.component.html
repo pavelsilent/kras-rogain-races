@@ -35,13 +35,21 @@
       <button *ngIf="showDistanceSchema" mat-flat-button color="primary"
               (click)="onToggleDistanceSchemaVisibility()">Спрятать схему дистанции
       </button>
+      <button *ngIf="!fixedTable" mat-flat-button color="primary"
+              (click)="onToggleFixedTable()">Зафиксировать заголовок
+      </button>
+      <button *ngIf="fixedTable" mat-flat-button color="primary"
+              (click)="onToggleFixedTable()">Не фиксировать заголовок
+      </button>
     </div>
 
   </div>
 
 </h3>
 
-<div *ngIf="raceState$ | async as raceState" class="protocol-table-wrapper">
+<div *ngIf="raceState$ | async as raceState"
+     class="protocol-table-wrapper"
+     [ngClass]="{'fixed-table' : fixedTable, 'not-fixed-table': !fixedTable}">
   <div *ngIf="showAttitude" class="img-container">
     <img *ngIf="attitudeProfile$ | async as attitudeProfileSrc"
          [src]="attitudeProfileSrc"
@@ -291,16 +299,19 @@
     </ng-container>
 
     <!-- ===== Header rows ===== -->
-    <tr mat-header-row class="one-line-row center athlete-row" *matHeaderRowDef="topHeaderDef"></tr>
-    <tr mat-header-row class="athlete-row" *matHeaderRowDef="checkPointsHeaderDef"></tr>
-    <tr mat-header-row class="one-line-row header-row " *matHeaderRowDef="raceDistanceHeaderDef"></tr>
-    <tr mat-header-row class="two-line-row header-row control-row" *matHeaderRowDef="raceCheckTimeHeaderDef">
-    <tr mat-header-row class="two-line-row leader-row" *matHeaderRowDef="raceLeaderHeaderDef">
-    <tr mat-header-row class="one-line-row leader-row" *matHeaderRowDef="raceLeaderDiffTimeHeaderDef">
-    <tr mat-header-row class="one-line-row header-row" *matHeaderRowDef="dataTableHeaderDef">
-    <tr mat-header-row class="zero-line-row athlete-row" *matHeaderRowDef="dataTableBodyDef"></tr>
+    <tr mat-header-row class="one-line-row center athlete-row sticky-header" *matHeaderRowDef="topHeaderDef"></tr>
+    <tr mat-header-row class="athlete-row  sticky-header-2" *matHeaderRowDef="checkPointsHeaderDef"></tr>
+    <tr mat-header-row class="one-line-row header-row sticky-header-3" *matHeaderRowDef="raceDistanceHeaderDef"></tr>
+    <tr mat-header-row
+        class="two-line-row header-row control-row sticky-header-4"
+        *matHeaderRowDef="raceCheckTimeHeaderDef"></tr>
+    <tr mat-header-row class="two-line-row leader-row sticky-header-5" *matHeaderRowDef="raceLeaderHeaderDef"></tr>
+    <tr mat-header-row
+        class="one-line-row leader-row sticky-header-6"
+        *matHeaderRowDef="raceLeaderDiffTimeHeaderDef"></tr>
+    <tr mat-header-row class="one-line-row header-row sticky-header-7" *matHeaderRowDef="dataTableHeaderDef"></tr>
     <tr mat-header-row class="one-line-row athlete-row" *matRowDef="let row; columns: dataTableBodyDef"></tr>
-    <tr mat-row class="diff-time-row one-line-row athlete-row" *matRowDef="let row; columns: dataTableDiffDef">
+    <tr mat-row class="diff-time-row one-line-row athlete-row" *matRowDef="let row; columns: dataTableDiffDef"></tr>
   </table>
 </div>
-
+<br>

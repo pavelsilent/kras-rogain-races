@@ -110,6 +110,8 @@ export class RaceFormatResultComponent {
   @Input()
   showDistanceSchema: boolean;
 
+  fixedTable: boolean = false;
+
   topHeaderDef: string[] = [
     'paramsHeader',
     'timeDetailHeader',
@@ -320,5 +322,9 @@ export class RaceFormatResultComponent {
 
   onToggleDistanceSchemaVisibility() {
     this.showDistanceSchema = !this.showDistanceSchema;
+  }
+
+  onToggleFixedTable() {
+    this.fixedTable = !this.fixedTable;
   }
 }
