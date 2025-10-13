@@ -15,20 +15,35 @@
 
         <ng-container matColumnDef="raceTime">
           <th mat-header-cell *matHeaderCellDef>Чистое время</th>
-          <td mat-cell *matCellDef="let row">{{ getCheckPointRaceTime(row.id) | toRusTime }}</td>
+          <td mat-cell *matCellDef="let row" class="bold"
+              [ngClass]="{'check-time-expired': getCheckPointCheckTimeExpired(row.id)}">{{
+              getCheckPointRaceTime(row.id) | toRusTime
+            }}
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="prevCheckPointDiff">
           <th mat-header-cell *matHeaderCellDef>Время между КТ</th>
-          <td mat-cell *matCellDef="let row">{{ getCheckPointDiffTime(row.id) }}</td>
+          <td mat-cell *matCellDef="let row">{{ getCheckPointDiffTime(row.id) }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="checkPointCheckTime">
+          <th mat-header-cell *matHeaderCellDef>Контрольное время</th>
+          <td mat-cell *matCellDef="let row">{{ getCheckPointCheckTime(row.id) | toRusTime }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="checkPointLeaderTime">
+          <th mat-header-cell *matHeaderCellDef>Время лидера</th>
+          <td mat-cell *matCellDef="let row">{{ getCheckPointLeaderTime(row.id) | toRusTime }}</td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="dataTableBodyDef" class="sticky-header"></tr>
-        <tr mat-row *matRowDef="let row; columns: dataTableBodyDef;"></tr>
+        <tr mat-row [ngClass]="{'disqualified': getCheckPointCheckTimeExpired(row.id)}"
+            *matRowDef="let row; columns: dataTableBodyDef;"></tr>
       </table>
     </div>
   </mat-dialog-content>
-
 
   <mat-dialog-actions align="end" class="actions">
     <button mat-button type="button" (click)="cancel()">Закрыть</button>

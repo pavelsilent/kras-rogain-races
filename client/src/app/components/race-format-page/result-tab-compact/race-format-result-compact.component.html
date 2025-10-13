@@ -1,8 +1,7 @@
 <h3 class="header" *ngIf="format as raceFormat">
   <div class="header-container">
     <div class="race-name-container">
-      <span>{{ raceFormat.raceName }}</span>
-      <span>{{ raceFormat.name }}</span>
+      <span>{{ raceFormat.raceName + ' / ' + raceFormat.name }}</span>
       <span>{{ (raceFormat.startDateTime | toRusDateTime) + ' / ' + raceFormat.state.name}}</span>
     </div>
 
@@ -18,29 +17,29 @@
               class="race-action"
               mat-flat-button
               color="primary"
-              (click)="onSetRaceState(raceStates.STARTED)">Изменить время начала
+              (click)="onSetRaceState(raceStates.STARTED)">Изменить<br>время начала
       </button>
       <button *ngIf="raceFormat.state == raceStates.STARTED && (page.canEdit() | async)"
               class="race-action"
               mat-flat-button
               color="primary"
-              (click)="onSetRaceState(raceStates.FINISHED)">Завершить гонку
+              (click)="onSetRaceState(raceStates.FINISHED)">Завершить<br>гонку
       </button>
       <button *ngIf="!showAttitude" mat-flat-button color="primary"
               class="race-action"
-              (click)="onToggleAttitudeProfileVisibility()">Показать профиль высоты
+              (click)="onToggleAttitudeProfileVisibility()">Показать<br>профиль высоты
       </button>
       <button *ngIf="showAttitude" mat-flat-button color="primary"
               class="race-action"
-              (click)="onToggleAttitudeProfileVisibility()">Спрятать профиль высоты
+              (click)="onToggleAttitudeProfileVisibility()">Спрятать<br>профиль высоты
       </button>
       <button *ngIf="!showDistanceSchema" mat-flat-button color="primary"
               class="race-action"
-              (click)="onToggleDistanceSchemaVisibility()">Показать схему дистанции
+              (click)="onToggleDistanceSchemaVisibility()">Показать<br>схему дистанции
       </button>
       <button *ngIf="showDistanceSchema" mat-flat-button color="primary"
               class="race-action"
-              (click)="onToggleDistanceSchemaVisibility()">Спрятать схему дистанции
+              (click)="onToggleDistanceSchemaVisibility()">Спрятать<br>схему дистанции
       </button>
     </div>
   </div>
@@ -84,7 +83,7 @@
                 </span>
               <br>
               <span style="font-style: italic; font-size: 11px">
-                  {{ 'КП: ' + (row?.lastCheckPoint?.orderNumber-1) + ' (' + row?.lastCheckPoint?.name + ')' }}
+                  {{ 'КТ: ' + (row?.lastCheckPoint?.orderNumber) + ' (' + row?.lastCheckPoint?.name + ')' }}
                 </span>
             </div>
             <div class="place-cell" *ngIf="row?.absolutePlace">

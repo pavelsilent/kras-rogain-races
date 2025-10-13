@@ -30,9 +30,9 @@ mat-dialog-actions {
 }
 
 .small-dialog .mat-mdc-dialog-container {
-  width: 250px !important;
-  max-width: 250px !important;
-  min-width: 200px !important;
+  width: 400px !important;
+  max-width: 400px !important;
+  min-width: 300px !important;
   margin: 0 auto !important;
 }
 

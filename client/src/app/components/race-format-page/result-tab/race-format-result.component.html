@@ -35,16 +35,8 @@
       <button *ngIf="showDistanceSchema" mat-flat-button color="primary"
               (click)="onToggleDistanceSchemaVisibility()">Спрятать схему дистанции
       </button>
-      <button *ngIf="!fixedTable" mat-flat-button color="primary"
-              (click)="onToggleFixedTable()">Зафиксировать заголовок
-      </button>
-      <button *ngIf="fixedTable" mat-flat-button color="primary"
-              (click)="onToggleFixedTable()">Не фиксировать заголовок
-      </button>
     </div>
-
   </div>
-
 </h3>
 
 <div *ngIf="raceState$ | async as raceState"
@@ -67,7 +59,14 @@
     <!-- Первая строка заголовка-->
     <!-- Параметры -->
     <ng-container matColumnDef="paramsHeader">
-      <th *matHeaderCellDef mat-header-cell class="params-header center bold" colspan="2" rowspan="2">Параметры</th>
+      <th *matHeaderCellDef mat-header-cell class="params-header center bold" colspan="2" rowspan="2">Параметры
+        <button *ngIf="!fixedTable" class="fix-button" mat-flat-button
+                (click)="onToggleFixedTable()">Зафиксировать заголовок
+        </button>
+        <button *ngIf="fixedTable" class="fix-button" mat-flat-button
+                (click)="onToggleFixedTable()">Не фиксировать заголовок
+        </button>
+      </th>
     </ng-container>
 
     <!-- Временные параметры, отсечки между КТ-->

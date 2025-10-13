@@ -19,11 +19,17 @@
   color: red;
 }
 
+.header {
+  padding: 0;
+  margin: 0;
+}
+
 .header-container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
   align-items: center;
+
   & > div > button {
     margin-left: 10px;
   }
@@ -32,21 +38,26 @@
 .race-name-container {
   display: flex;
   flex-direction: column;
+  align-self: start;
 }
 
 .race-actions-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-self: start;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .race-action {
-    margin-top: 2px;
-    padding: 2px 8px;
-    font-size: 10px;
-    min-width: 64px;
-    line-height: 28px;
-    height: 28px;
-  white-space: nowrap;
+  margin-top: 2px;
+  padding: 2px 8px;
+  font-size: 12px;
+  min-width: 40px;
+  line-height: 15px;
+  height: 38px;
+  white-space: wrap;
 }
 
 .athlete-data-container {
@@ -119,7 +130,7 @@ td {
 }
 
 .table-wrapper {
-  max-height: 350px;
+  max-height: 70vh;
   border: 1px dotted black;
   border-collapse: collapse;
   overflow-y: auto;

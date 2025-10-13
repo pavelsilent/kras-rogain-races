@@ -166,9 +166,9 @@ export class RaceFormatResultCompactComponent {
             athleteInfo: row,
 
           },
-          width: '150px',       // 80% ширины окна
+          width: '400px',       // 80% ширины окна
           panelClass: 'small-dialog',
-          maxWidth: '150px',   // не больше всей ширины
+          maxWidth: '400px',   // не больше всей ширины
           height: 'auto',
           maxHeight: '90vh',   // ограничим по высоте экрана
         },

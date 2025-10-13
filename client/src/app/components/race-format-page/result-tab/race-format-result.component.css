@@ -14,6 +14,22 @@
 
 }
 
+.fix-button {
+  margin-top: 2px;
+  padding: 2px 8px;
+  font-size: 10px;
+  min-width: 64px;
+  line-height: 28px;
+  height: 28px;
+  white-space: nowrap;
+
+  position: absolute;
+  top: 5px;  /* отступ от нижнего края */
+  right: 5px;   /* отступ от правого края */
+  z-index: 100;  /* чтобы быть поверх контента */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
 .protocol-table {
   width: 100%;
   height: 100%;
@@ -62,6 +78,7 @@ th, td {
 
 .params-header {
   width: 100px;
+  position: relative;
 }
 .abs-place-column {
   width: 80px;
