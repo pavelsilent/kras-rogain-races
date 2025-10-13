@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { combineLatest, Observable, ReplaySubject, Subject, switchMap } from 'rxjs';
+import { combineLatest, map, Observable, ReplaySubject, shareReplay, Subject, switchMap } from 'rxjs';
 import { AppService } from '../../app.service';
 import { TokenType } from '../../models/enums/token-type.enum';
 import { RaceFormatModel } from '../../models/race-format.model';
@@ -13,21 +13,33 @@ export class RaceFormatPageService {
   private raceId$: ReplaySubject<number> = new ReplaySubject<number>();
   private raceFormatId$: ReplaySubject<number> = new ReplaySubject<number>();
   private raceFormat$: Observable<RaceFormatModel>;
-  private canEdit$: ReplaySubject<boolean> = new ReplaySubject<boolean>();
+  private canEditByToken$: ReplaySubject<boolean> = new ReplaySubject<boolean>();
+  private needTokens$: ReplaySubject<boolean> = new ReplaySubject<boolean>();
+  private canEdit$: Observable<boolean>;
   refresh$: Subject<void> = new Subject<void>();
 
   constructor(private raceService: RaceService, private appService: AppService) {
-    this.raceFormat$ = combineLatest([this.raceId$, this.raceFormatId$])
-      .pipe(switchMap(([raceId, raceFormatId]) => this.raceService.getRaceFormatById(raceId, raceFormatId)));
+    this.raceFormat$ = this.getData()
+                           .pipe(switchMap(([raceId, raceFormatId, needTokens]) =>
+                                             this.raceService.getRaceFormatById(
+                                               raceId,
+                                               raceFormatId,
+                                               needTokens,
+                                             )));
+    this.canEdit$ = combineLatest([this.raceFormat$, this.appService.canEdit(), this.canEditByToken$.pipe()]).pipe(
+      map(([raceFormat, canEditGlobal, canEditByToken]) => raceFormat.canEdit! && canEditGlobal && canEditByToken),
+      shareReplay({ bufferSize: 1, refCount: true }),
+    );
   }
 
-  setData(raceId: number, raceFormatId: number) {
+  setData(raceId: number, raceFormatId: number, needTokens: boolean) {
     this.raceId$.next(raceId);
     this.raceFormatId$.next(raceFormatId);
+    this.needTokens$.next(needTokens);
   }
 
   getData() {
-    return combineLatest([this.raceId$, this.raceFormatId$]);
+    return combineLatest([this.raceId$, this.raceFormatId$, this.needTokens$]);
   }
 
   getTokenData(token: string) {
@@ -47,14 +59,14 @@ export class RaceFormatPageService {
   }
 
   public canEdit() {
-    return this.canEdit$.pipe();
+    return this.canEdit$;
   }
 
   public setToken(mode: TokenType) {
-    return this.setCanEdit(mode === TokenType.EDIT);
+    return this.setCanEditByToken(mode === TokenType.EDIT);
   }
 
-  public setCanEdit(canEdit: boolean) {
-    return this.canEdit$.next(canEdit);
+  public setCanEditByToken(value: boolean) {
+    this.canEditByToken$.next(value)
   }
 }

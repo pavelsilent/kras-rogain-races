@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.pavel.silent.lib.core.util.ListHelper;
 import pro.pavel.silent.rogain.races.domain.enumeration.RaceState;
@@ -92,12 +93,18 @@ public class RaceController {
     }
 
     @GetMapping("/{id}/formats/{formatId}")
-    @Operation(summary = "Получить стартовый лист")
+    @Operation(summary = "Получить данные о формате")
     public ResponseEntity<RaceFormatDTO> getRaceFormat(
         @PathVariable Long id,
-        @PathVariable Long formatId
+        @PathVariable Long formatId,
+        @RequestParam(required = false, defaultValue = "true") Boolean fullData
     ) {
-        return ResponseEntity.ok(restConverter.toDTO(raceQueryService.getRaceFormatById(formatId)));
+        RaceFormatDTO dto = restConverter.toDTO(raceQueryService.getRaceFormatById(formatId));
+        if (!fullData) {
+            dto.setViewToken(null);
+            dto.setEditToken(null);
+        }
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/{id}/formats/{formatId}/athletes")

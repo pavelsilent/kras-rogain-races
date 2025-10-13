@@ -69,7 +69,7 @@
           [ngClass]="{'finished': row.isFinished(), 'disqualified': row.isDisqualified() }">
         <div class="athlete-data-container">
           <div class="athlete-data-time bold">
-            <span class="athlete-data-name">{{ row.athlete.getShortFIO() }}
+            <span class="athlete-data-name">{{ getShortFIO(row) }}
               <mat-icon *ngIf="page.canEdit() | async" (click)="$event.stopPropagation(); onAddAthleteCheckPoint(row)">add</mat-icon>
               <mat-icon *ngIf="page.canEdit() | async"
                         (click)="$event.stopPropagation(); onSetAthleteState(row)">edit</mat-icon>

@@ -49,7 +49,7 @@ export class RaceFormatMainTabComponent {
     this.formatId = Number(this.route.parent?.snapshot.paramMap.get('formatId'));
     this.raceFormat$ = this.refresh$.pipe(
       startWith(null),
-      switchMap(value => this.service.getRaceFormatById(this.id, this.formatId)),
+      switchMap(value => this.service.getRaceFormatById(this.id, this.formatId, true)),
     );
     this.athleteGroups$ = this.raceFormat$.pipe(
       map(data =>

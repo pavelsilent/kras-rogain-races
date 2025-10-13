@@ -52,4 +52,10 @@ public class RaceFormatDTO {
     @Schema(description = "Токен страницы редактирования результата")
     private String editToken;
 
+    @Schema(description = "Можно редактировать")
+    private Boolean canEdit;
+
+    @Schema(description = "Полная информация")
+    private Boolean showFullInfo;
+
 }

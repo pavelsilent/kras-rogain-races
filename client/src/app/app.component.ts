@@ -12,7 +12,6 @@ import {
   Router,
   RouterOutlet,
 } from '@angular/router';
-import { Observable } from 'rxjs';
 import { AppService } from './app.service';
 import { ErrorDialogComponent } from './components/core/error-dialog/error-dialog.component';
 import { LoaderComponent } from './components/core/loader/loader.component';
@@ -31,13 +30,10 @@ import { LoaderService } from './components/core/loader/loader.service';
 export class AppComponent
   implements OnInit {
   protected readonly title = signal('krsk-rogain-results-front');
-  needShowTabs$: Observable<boolean>;
 
   constructor(private router: Router, public appService: AppService, loader: LoaderService,
               private breakpointObserver: BreakpointObserver,
   ) {
-    this.needShowTabs$ = appService.canEdit();
-
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         loader.show();

@@ -52,14 +52,12 @@ export class RaceResultPageComponent {
     protected appService: AppService,
     private dialog: MatDialog,
   ) {
-    this.appService.setEditUnavailable();
-
     let token = this.route.snapshot.paramMap.get('token')!;
     this.raceFormat$ = this.page.refresh$.pipe(
       startWith(null),
       switchMap(() => this.page.getTokenData(token)),
       tap(value => {
-        this.page.setData(value.raceId, value.raceFormatId);
+        this.page.setData(value.raceId, value.raceFormatId, false);
         this.page.setToken(value.tokenType);
       }),
       switchMap(value => this.page.getRaceFormat()),

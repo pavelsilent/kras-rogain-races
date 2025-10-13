@@ -83,7 +83,7 @@ export class AddRaceAthleteDialogComponent {
     // @ts-ignore
     this.athleteGroups$ = this.athleteGroupsRefresh$.pipe(
       startWith(null),
-      switchMap(value => service.getRaceFormatById(data.raceId, data.formatId)),
+      switchMap(value => service.getRaceFormatById(data.raceId, data.formatId, true)),
       map(data => data.athleteGroups),
     );
 

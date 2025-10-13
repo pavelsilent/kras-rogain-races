@@ -217,6 +217,12 @@ export class RaceFormatResultCompactComponent {
       .then(value => this.page.refresh$.next());
   }
 
+  getShortFIO(row: RaceAthleteModel) {
+    if (this.format.isAnon) {
+      return "Неизвестный атлет (" + row.athlete.sex?.short + ')'
+    }
+    return row.athlete.getShortFIO();
+  }
 
   onSetRaceState(state: RaceState) {
     firstValueFrom(combineLatest([this.page.getRaceId(), this.page.getRaceFormatId(), this.page.getRaceFormat()]))

@@ -44,8 +44,8 @@ export class RaceService {
     );
   }
 
-  getRaceFormatById(id: number, formatId: number): Observable<RaceFormatModel> {
-    return this.backend.getRaceFormat(id, formatId).pipe(
+  getRaceFormatById(id: number, formatId: number, needTokens: boolean): Observable<RaceFormatModel> {
+    return this.backend.getRaceFormat(id, formatId, needTokens).pipe(
       map(item => RaceFormatModel.fromDTO(item)),
     );
   }

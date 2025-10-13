@@ -35,7 +35,6 @@ export class RaceListComponent
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(private raceService: RaceService, private dialog: MatDialog, private appService: AppService) {
-    this.appService.setEditAvailable();
     this.refresh$.subscribe(
       data => this.raceService.getRaces()
                   .subscribe(data => this.dataSource.data = data));

@@ -1,25 +1,28 @@
 import { Injectable } from '@angular/core';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, map, Observable } from 'rxjs';
+import { AppSettingsControllerService } from './api/index';
 
 @Injectable({
               providedIn: 'root',
             })
 export class AppService {
 
-  private canEdit$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  constructor(private settingService: AppSettingsControllerService) {
+    this.canSetup$ = settingService.getSettings().pipe(map(setting => setting.setupEnabled!));
+    this.canEdit$ = settingService.getSettings().pipe(map(setting => setting.editEnabled!));
+  }
+
+  private canSetup$: Observable<boolean>;
+  private canEdit$: Observable<boolean>;
   private isMobile$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-
-  setEditAvailable() {
-    this.canEdit$.next(true);
-  }
-
-  setEditUnavailable() {
-    this.canEdit$.next(false);
-  }
 
   canEdit() {
     return this.canEdit$.pipe();
+  }
+
+  canSetup() {
+    return this.canSetup$.pipe();
   }
 
   setIsMobile(isMobile: boolean) {

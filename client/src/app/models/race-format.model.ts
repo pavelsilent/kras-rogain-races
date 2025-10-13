@@ -18,6 +18,8 @@ export class RaceFormatModel {
   startDateTime?: LocalDateTime;
   finishDateTime?: LocalDateTime;
   athleteGroups?: AthleteGroupModel[];
+  canEdit?: boolean;
+  isAnon?: boolean;
 
   constructor(dto?: RaceFormatDTO) {
     if (exists(dto)) {
@@ -27,6 +29,8 @@ export class RaceFormatModel {
       this.raceName = dto.raceName;
       this.viewToken = dto.viewToken;
       this.editToken = dto.editToken;
+      this.canEdit = dto.canEdit;
+      this.isAnon = !dto.showFullInfo;
       this.type = resolveEnumOrDefault(dto.type, RaceFormatType.store, RaceFormatType.PERSONAL);
       this.state = resolveEnum(dto.state, RaceState.store);
       this.startDateTime = parseLocalDateTime(dto.startTime);

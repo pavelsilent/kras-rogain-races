@@ -42,6 +42,7 @@ import pro.pavel.silent.rogain.races.rest.dto.RaceFormatResultDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatResultLinkDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatTokenDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceTypeDTO;
+import pro.pavel.silent.rogain.races.service.AppSettingsService;
 import pro.pavel.silent.rogain.races.service.RaceFormatFileService;
 import pro.pavel.silent.rogain.races.service.RaceQueryService;
 
@@ -51,6 +52,7 @@ public class RestConverter {
 
     private final RaceQueryService raceQueryService;
     private final RaceFormatFileService raceFormatFileService;
+    private final AppSettingsService appSettingsService;
 
     public RaceFormatResultDTO toResultDTO(RaceFormat raceFormat) {
         if (raceFormat == null) {
@@ -178,13 +180,17 @@ public class RestConverter {
                        .orElse(null);
 
         return RaceAthleteDTO.builder()
-                             .athlete(toDTO(raceAthlete.getAthlete()))
+                             .athlete(toDTO(raceAthlete.getAthlete(), isAnonMode(raceAthlete.getRaceFormat())))
                              .bibNumber(raceAthlete.getBibNumber())
                              .state(raceAthlete.getState().name())
                              .type(raceAthlete.getType().name())
                              .checkPoints(ListHelper.map(checkPoints, this::toDTO))
                              .lastCheckPoint(OptionalHelper.map(lastCheckPoint, this::toDTO))
                              .build();
+    }
+
+    private boolean isAnonMode(RaceFormat raceFormat) {
+        return appSettingsService.isAnonMode() || raceFormat.isAnonMode();
     }
 
     public RaceAthleteDTO toDTO(RaceAthlete raceAthlete, Integer absPlace, Map<AthleteGroup, Integer> placesMap) {
@@ -202,17 +208,22 @@ public class RestConverter {
         return dto;
     }
 
+
     public AthleteDTO toDTO(Athlete athlete) {
+        return toDTO(athlete, false);
+    }
+
+    public AthleteDTO toDTO(Athlete athlete, boolean isAnonMode) {
         if (athlete == null) {
             return null;
         }
         return AthleteDTO.builder()
                          .id(athlete.getId())
-                         .firstName(athlete.getFirstName())
-                         .lastName(athlete.getLastName())
-                         .middleName(athlete.getMiddleName())
+                         .firstName(!isAnonMode ? athlete.getFirstName() : "атлет")
+                         .lastName(!isAnonMode ? athlete.getLastName() : "Неизвестный")
+                         .middleName(!isAnonMode ? athlete.getMiddleName() : "")
                          .sex(athlete.getSex().name())
-                         .birthDate(athlete.getBirthDate())
+                         .birthDate(!isAnonMode ? athlete.getBirthDate() : null)
                          .city(Optional.ofNullable(athlete.getCity()).map(this::toDTO).orElse(null))
                          .club(Optional.ofNullable(athlete.getClub()).map(Club::getName).orElse(null))
                          .build();
@@ -321,6 +332,8 @@ public class RestConverter {
                             .type(raceFormat.getType().name())
                             .viewToken(raceFormat.getViewToken())
                             .editToken(raceFormat.getEditToken())
+                            .canEdit(appSettingsService.canEdit() && raceFormat.isCanEdit())
+                            .showFullInfo(!appSettingsService.isAnonMode() && !raceFormat.isAnonMode())
                             .startTime(raceFormat.getStartTime())
                             .finishTime(raceFormat.getFinishTime())
                             .state(raceFormat.getState().name())

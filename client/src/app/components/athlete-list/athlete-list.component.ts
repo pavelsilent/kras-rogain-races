@@ -79,7 +79,6 @@ export class AthleteListComponent
   onSelectRow = new EventEmitter<AthleteModel>();
 
   constructor(private service: AthletesService, private dialog: MatDialog, private appService: AppService) {
-    this.appService.setEditAvailable();
     this.refresh$.subscribe(
       value => this.service.getAthletes()
                    .pipe(map(athletes => athletes.filter(athlete => !hasLength(this.selectedIds) ||

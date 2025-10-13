@@ -35,9 +35,8 @@ export class RaceFormatPageComponent {
   ) {
     let raceId = Number(this.route.snapshot.paramMap.get('id'));
     let formatId = Number(this.route.snapshot.paramMap.get('formatId'));
-    this.page.setData(raceId, formatId);
-    this.page.setCanEdit(true);
-    this.appService.setEditAvailable();
+    this.page.setData(raceId, formatId, true);
+    this.page.setCanEditByToken(true);
   }
 
   onTabChange(index: number) {

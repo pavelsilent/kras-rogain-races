@@ -327,4 +327,11 @@ export class RaceFormatResultComponent {
   onToggleFixedTable() {
     this.fixedTable = !this.fixedTable;
   }
+
+  getShortFIO(row: RaceAthleteModel) {
+    if (this.format.isAnon) {
+      return "Неизвестный атлет (" + row.athlete.sex?.short + ')'
+    }
+    return row.athlete.getShortFIO();
+  }
 }

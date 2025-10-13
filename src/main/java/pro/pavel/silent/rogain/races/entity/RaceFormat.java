@@ -81,4 +81,11 @@ public class RaceFormat {
     @Schema(description = "Токен редактирования")
     private String editToken;
 
+    @Column(name = "is_anon_mode", nullable = false)
+    @Schema(description = "Анонимный режим")
+    private boolean isAnonMode;
+
+    @Column(name = "can_edit", nullable = false)
+    @Schema(description = "Редактирование разрешено")
+    private boolean canEdit;
 }
