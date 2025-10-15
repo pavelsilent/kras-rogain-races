@@ -25,7 +25,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDateTime } from '@js-joda/core';
 import { Option } from 'funfix-core';
 import {
-  combineLatest, filter,
+  combineLatest,
+  filter,
   firstValueFrom,
   lastValueFrom,
   map,
@@ -52,7 +53,7 @@ import { RaceFormatModel } from '../../../models/race-format.model';
 import { CosmicTimePipe } from '../../../utils/cosmic-time.pipe';
 import { RussianDateTimePipe } from '../../../utils/russian-date-time.pipe';
 import { RussianTimePipe } from '../../../utils/russian-time.pipe';
-import { exists } from '../../../utils/utils';
+import { exists, parseLocalDateTimeToRussianTime } from '../../../utils/utils';
 import { FileService } from '../../core/file.service';
 import { RaceService } from '../../race/race.service';
 import { RaceFormatPageService } from '../race-format-page.service';
@@ -97,7 +98,6 @@ export class RaceFormatResultCompactComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   result$: Observable<RaceFormatResultModel>;
   startDateTime$: Observable<LocalDateTime>;
-  raceState$: Observable<RaceState>;
   checkPoints$: Observable<RaceCheckPointModel[]>;
   attitudeProfile$: Observable<string>;
   distanceSchema$: Observable<string>;
@@ -127,7 +127,6 @@ export class RaceFormatResultCompactComponent {
     );
 
     this.startDateTime$ = this.result$.pipe(map(value => value.startDateTime!));
-    this.raceState$ = this.result$.pipe(map(value => value.state));
 
     this.result$.pipe(map(format => format.athletes))
         .subscribe(data => {
@@ -149,7 +148,7 @@ export class RaceFormatResultCompactComponent {
   }
 
   getCheckPointTimeExpired(athlete: RaceAthleteModel | undefined): boolean {
-    if (athlete === undefined) {
+    if (!exists(athlete) || !exists(athlete.lastRaceAthleteCheckPoint)) {
       return false;
     }
     return athlete.lastRaceAthleteCheckPoint.checkTimeExpired;
@@ -219,9 +218,23 @@ export class RaceFormatResultCompactComponent {
 
   getShortFIO(row: RaceAthleteModel) {
     if (this.format.isAnon) {
-      return "Неизвестный атлет (" + row.athlete.sex?.short + ')'
+      return 'Неизвестный атлет (' + row.athlete.sex?.short + ')';
     }
     return row.athlete.getShortFIO();
+  }
+
+  getLastCheckPoint(row: RaceAthleteModel) {
+    if (exists(row.lastCheckPoint)) {
+      return 'KT: ' + row.lastCheckPoint.name;
+    }
+    return 'КТ: -';
+  }
+
+  getLastCheckPointTime(row: RaceAthleteModel) {
+    if (exists(row.lastRaceAthleteCheckPoint)) {
+      return parseLocalDateTimeToRussianTime(row?.lastRaceAthleteCheckPoint.raceTime!) + ' / ' + row.state.name;
+    }
+    return '00:00:00 / ' + row.state.name;
   }
 
   onSetRaceState(state: RaceState) {
@@ -246,6 +259,7 @@ export class RaceFormatResultCompactComponent {
         });
       });
   }
+
   onToggleAttitudeProfileVisibility() {
     this.showAttitude = !this.showAttitude;
   }

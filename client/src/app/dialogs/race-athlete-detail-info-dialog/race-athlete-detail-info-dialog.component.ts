@@ -73,7 +73,7 @@ export interface RaceAthleteDetailInfoDialogConfig {
            })
 export class RaceAthleteDetailInfoDialogComponent {
   dialogRef = inject(MatDialogRef<RaceAthleteDetailInfoDialogComponent>);
-  dataTableBodyDef: string[] = ['checkPoint', 'distance', 'raceTime', 'prevCheckPointDiff', 'checkPointCheckTime', 'checkPointLeaderTime'];
+  dataTableBodyDef: string[] = ['checkPoint', 'distance', 'raceTime', 'checkPointCheckTime', 'checkPointLeaderTime'];
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: RaceAthleteDetailInfoDialogConfig) {
   }
@@ -92,6 +92,10 @@ export class RaceAthleteDetailInfoDialogComponent {
 
   getCheckPointLeaderTime(checkPointId: number): string | undefined {
     return this.data.checkPoints.find(value => value.id === checkPointId)?.leaderDuration
+  }
+
+  getCheckPointLeaderDiffTime(checkPointId: number): string | undefined {
+    return this.data.checkPoints.find(value => value.id === checkPointId)?.leaderDiffDuration
   }
 
   getCheckPointCheckTime(checkPointId: number): string | undefined {

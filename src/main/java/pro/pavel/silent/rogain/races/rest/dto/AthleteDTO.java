@@ -33,7 +33,7 @@ public class AthleteDTO {
     @Schema(description = "Пол", requiredMode = REQUIRED)
     private String sex;
 
-    @Schema(description = "Дата рождения", requiredMode = REQUIRED)
+    @Schema(description = "Дата рождения")
     private LocalDate birthDate;
 
     @Schema(description = "Город")

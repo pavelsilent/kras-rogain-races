@@ -64,8 +64,8 @@ export class AddAthleteDialogComponent {
   form = this.fb.group({
                          lastName: ['', Validators.required],
                          firstName: ['', Validators.required],
-                         middleName: ['', Validators.required],
-                         birthDate: [undefined, Validators.required],
+                         middleName: [''],
+                         birthDate: [undefined],
                          sex: [undefined, Validators.required],
                          city: this.cityControl,
                          club: [''],

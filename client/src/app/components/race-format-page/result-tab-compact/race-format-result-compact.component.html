@@ -2,7 +2,7 @@
   <div class="header-container">
     <div class="race-name-container">
       <span>{{ raceFormat.raceName + ' / ' + raceFormat.name }}</span>
-      <span>{{ (raceFormat.startDateTime | toRusDateTime) + ' / ' + raceFormat.state.name}}</span>
+      <span>{{ (raceFormat.startDateTime | toRusDateTime) + ' / ' + raceFormat.state.name }}</span>
     </div>
 
     <div class="race-actions-container">
@@ -77,13 +77,13 @@
           </div>
           <div class="athlete-data-time">
             <div>
-                <span *ngIf="row?.lastRaceAthleteCheckPoint" class="bold"
+                <span class="bold"
                       [ngClass]="{'check-time-expired': getCheckPointTimeExpired(row)}">
-                  {{ (row?.lastRaceAthleteCheckPoint.raceTime | toRusTime) + ' / ' + row.state.name }}
+                  {{ getLastCheckPointTime(row) }}
                 </span>
               <br>
               <span style="font-style: italic; font-size: 11px">
-                  {{ 'КТ: ' + (row?.lastCheckPoint?.orderNumber) + ' (' + row?.lastCheckPoint?.name + ')' }}
+                  {{ getLastCheckPoint(row) }}
                 </span>
             </div>
             <div class="place-cell" *ngIf="row?.absolutePlace">

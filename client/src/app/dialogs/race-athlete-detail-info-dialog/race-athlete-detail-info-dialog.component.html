@@ -1,11 +1,12 @@
-<h3 mat-dialog-title>Время участника</h3>
+<h2 mat-dialog-title>Время участника {{ '# ' + data.athleteInfo.bibNumber + ' ('+ data.athleteInfo.athlete.getShortFIO()+ ')'}} </h2>
+
 <form>
   <mat-dialog-content class="dialog-content">
     <div class="table-wrapper">
       <table mat-table [dataSource]="data.checkPoints" class="data-table">
         <ng-container matColumnDef="checkPoint">
           <th mat-header-cell *matHeaderCellDef>КТ</th>
-          <td mat-cell *matCellDef="let row">{{ row.orderNumber }}</td>
+          <td mat-cell class="bold" *matCellDef="let row">{{ row.name }}</td>
         </ng-container>
 
         <ng-container matColumnDef="distance">
@@ -14,28 +15,29 @@
         </ng-container>
 
         <ng-container matColumnDef="raceTime">
-          <th mat-header-cell *matHeaderCellDef>Чистое время</th>
-          <td mat-cell *matCellDef="let row" class="bold"
-              [ngClass]="{'check-time-expired': getCheckPointCheckTimeExpired(row.id)}">{{
-              getCheckPointRaceTime(row.id) | toRusTime
-            }}
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="prevCheckPointDiff">
-          <th mat-header-cell *matHeaderCellDef>Время между КТ</th>
-          <td mat-cell *matCellDef="let row">{{ getCheckPointDiffTime(row.id) }}
+          <th mat-header-cell *matHeaderCellDef style="width: 113px;">Чистое время<br>Время между КТ</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="bold"
+                  [ngClass]="{'check-time-expired': getCheckPointCheckTimeExpired(row.id)}">{{
+                getCheckPointRaceTime(row.id) | toRusTime
+              }}</span>
+            <br>
+            <span class="diff-time" >{{ getCheckPointDiffTime(row.id) }}</span>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="checkPointCheckTime">
           <th mat-header-cell *matHeaderCellDef>Контрольное время</th>
-          <td mat-cell *matCellDef="let row">{{ getCheckPointCheckTime(row.id) }}</td>
+          <td mat-cell *matCellDef="let row" class="control-time">{{ getCheckPointCheckTime(row.id) }}</td>
         </ng-container>
 
         <ng-container matColumnDef="checkPointLeaderTime">
-          <th mat-header-cell *matHeaderCellDef>Время лидера</th>
-          <td mat-cell *matCellDef="let row">{{ getCheckPointLeaderTime(row.id) }}</td>
+          <th mat-header-cell *matHeaderCellDef style="width: 113px;">Время лидера<br>Время между КТ</th>
+          <td mat-cell *matCellDef="let row">
+            <span>{{ getCheckPointLeaderTime(row.id) }}</span>
+            <br>
+            <span class="diff-time">{{ getCheckPointLeaderDiffTime(row.id) }}</span>
+          </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="dataTableBodyDef" class="sticky-header"></tr>

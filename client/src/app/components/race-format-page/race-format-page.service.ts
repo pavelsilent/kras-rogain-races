@@ -20,12 +20,15 @@ export class RaceFormatPageService {
 
   constructor(private raceService: RaceService, private appService: AppService) {
     this.raceFormat$ = this.getData()
-                           .pipe(switchMap(([raceId, raceFormatId, needTokens]) =>
-                                             this.raceService.getRaceFormatById(
-                                               raceId,
-                                               raceFormatId,
-                                               needTokens,
-                                             )));
+                           .pipe(
+                             switchMap(([raceId, raceFormatId, needTokens]) =>
+                                         this.raceService.getRaceFormatById(
+                                           raceId,
+                                           raceFormatId,
+                                           needTokens,
+                                         )),
+                             shareReplay({ bufferSize: 1, refCount: true }),
+                           );
     this.canEdit$ = combineLatest([this.raceFormat$, this.appService.canEdit(), this.canEditByToken$.pipe()]).pipe(
       map(([raceFormat, canEditGlobal, canEditByToken]) => raceFormat.canEdit! && canEditGlobal && canEditByToken),
       shareReplay({ bufferSize: 1, refCount: true }),
@@ -67,6 +70,6 @@ export class RaceFormatPageService {
   }
 
   public setCanEditByToken(value: boolean) {
-    this.canEditByToken$.next(value)
+    this.canEditByToken$.next(value);
   }
 }

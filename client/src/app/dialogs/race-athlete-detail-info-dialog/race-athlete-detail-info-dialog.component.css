@@ -5,15 +5,17 @@
 }
 
 th {
-  padding: 5px;
+  padding: 2px;
   text-align: center;
   border-collapse: collapse;
+  font-size: 13px;
 }
 
 td {
-  padding: 5px;
+  padding: 2px;
   text-align: center;
   border-collapse: collapse;
+  font-size: 16px;
 }
 
 .header-row {
@@ -48,5 +50,13 @@ td {
 }
 
 .check-time-expired {
+  color: red;
+}
+
+.diff-time {
+  color: #1976d2;
+}
+
+.control-time {
   color: red;
 }
