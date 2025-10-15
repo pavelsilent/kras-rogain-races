@@ -1,6 +1,7 @@
 import { Option } from 'funfix-core';
 import { RaceAthleteDTO } from '../api/index';
 import { exists, resolveEnumOrDefault } from '../utils/utils';
+import { AthleteGroupModel } from './athlete-group.model';
 import { AthleteModel } from './athlete.model';
 import { AthleteState } from './enums/athlete-state.enum';
 import { AthleteType } from './enums/athlete-type.enum';
@@ -18,6 +19,7 @@ export class RaceAthleteModel {
   lastRaceAthleteCheckPoint: RaceAthleteCheckPointModel;
   groupPlaces: RaceAthleteGroupModel[];
   absolutePlace: number;
+  groups: AthleteGroupModel[];
 
   isFinished() : boolean {
     return this.state === AthleteState.FINISHED;
@@ -25,6 +27,10 @@ export class RaceAthleteModel {
 
   isDisqualified() : boolean {
     return this.state === AthleteState.DISQUALIFIED;
+  }
+
+  getGroups() : string {
+    return this.groups.map(value => value.name).join(", ");
   }
 
   constructor(dto?: RaceAthleteDTO) {
@@ -46,6 +52,9 @@ export class RaceAthleteModel {
       this.absolutePlace = dto.absPlace!;
       this.groupPlaces = Option.of(dto.places)
                                .map(data => data.map(dto => RaceAthleteGroupModel.fromDTO(dto)))
+                               .getOrElse([]);
+      this.groups = Option.of(dto.groups)
+                               .map(data => data.map(dto => AthleteGroupModel.fromDTO(dto)))
                                .getOrElse([]);
     }
   }

@@ -186,6 +186,10 @@ public class RestConverter {
                              .type(raceAthlete.getType().name())
                              .checkPoints(ListHelper.map(checkPoints, this::toDTO))
                              .lastCheckPoint(OptionalHelper.map(lastCheckPoint, this::toDTO))
+                             .groups(raceQueryService.getRaceAthleteGroups(raceAthlete)
+                                                     .stream()
+                                                     .map(raceAthleteGroup -> toDTO(raceAthleteGroup.getAthleteGroup()))
+                                                     .toList())
                              .build();
     }
 

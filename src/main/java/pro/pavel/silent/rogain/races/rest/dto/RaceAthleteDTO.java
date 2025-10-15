@@ -41,4 +41,7 @@ public class RaceAthleteDTO {
 
     @Schema(description = "Места в группах")
     private List<RaceAthleteGroupDTO> places;
+
+    @Schema(description = "Группы")
+    private List<AthleteGroupDTO> groups;
 }

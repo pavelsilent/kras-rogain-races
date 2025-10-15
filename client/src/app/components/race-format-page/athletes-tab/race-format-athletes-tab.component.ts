@@ -71,7 +71,7 @@ export class RaceFormatAthletesTabComponent
   implements AfterViewInit {
   id: number;
   formatId: number;
-  displayedColumns: string[] = ['bib', 'fio', 'birthDate', 'sex', 'city', 'club', 'state'];
+  displayedColumns: string[] = ['bib', 'fio', 'birthDate', 'sex', 'city', 'club', 'groups', 'state'];
   dataSource = new MatTableDataSource<RaceAthleteModel>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
