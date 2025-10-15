@@ -19,7 +19,7 @@
         </ng-container>
 
         <ng-container matColumnDef="raceTime">
-          <th mat-header-cell *matHeaderCellDef style="width: 113px;">Чистое время<br>Время между КТ</th>
+          <th mat-header-cell *matHeaderCellDef style="width: 113px;">Чистое время /<br>Время между КТ</th>
           <td mat-cell *matCellDef="let row">
             <span class="bold"
                   [ngClass]="{'check-time-expired': getCheckPointCheckTimeExpired(row.id)}">{{
@@ -36,7 +36,7 @@
         </ng-container>
 
         <ng-container matColumnDef="checkPointLeaderTime">
-          <th mat-header-cell *matHeaderCellDef style="width: 113px;">Время лидера<br>Время между КТ</th>
+          <th mat-header-cell *matHeaderCellDef style="width: 113px;">Прогнозирумое время лидера /<br>Время между КТ</th>
           <td mat-cell *matCellDef="let row">
             <span>{{ getCheckPointLeaderTime(row.id) }}</span>
             <br>
