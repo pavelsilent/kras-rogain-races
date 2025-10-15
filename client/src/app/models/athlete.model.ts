@@ -28,7 +28,7 @@ export class AthleteModel {
   }
 
   public getShortFIO() {
-    return this.lastName + ' ' + this.firstName?.charAt(0) + '. ';
+    return this.lastName + ' ' + this.firstName?.charAt(0) + '.';
   }
 
   public getFIO() {
