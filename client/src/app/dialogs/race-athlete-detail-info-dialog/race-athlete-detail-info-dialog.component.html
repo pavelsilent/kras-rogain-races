@@ -1,4 +1,8 @@
-<h2 mat-dialog-title>Время участника {{ '# ' + data.athleteInfo.bibNumber + ' ('+ data.athleteInfo.athlete.getShortFIO()+ ')'}} </h2>
+<h2 mat-dialog-title>
+  <span>{{ 'Время участника #' + data.athleteInfo.bibNumber }}</span>
+  <br>
+  <span>{{ '(' + data.athleteInfo.athlete.getShortFIO() + ')' }}</span>
+</h2>
 
 <form>
   <mat-dialog-content class="dialog-content">
@@ -22,7 +26,7 @@
                 getCheckPointRaceTime(row.id) | toRusTime
               }}</span>
             <br>
-            <span class="diff-time" >{{ getCheckPointDiffTime(row.id) }}</span>
+            <span class="diff-time">{{ getCheckPointDiffTime(row.id) }}</span>
           </td>
         </ng-container>
 
