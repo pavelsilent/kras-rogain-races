@@ -78,8 +78,8 @@ export class RaceAthleteDetailInfoDialogComponent {
   constructor(@Inject(MAT_DIALOG_DATA) public data: RaceAthleteDetailInfoDialogConfig) {
   }
 
-  getCheckPointRaceTime(checkPointId: number): LocalDateTime | undefined {
-    return this.data.athleteInfo.checkPoints?.find(value => value.id === checkPointId)?.raceTime;
+  getCheckPointRaceDuration(checkPointId: number): string | undefined {
+    return this.data.athleteInfo.checkPoints?.find(value => value.id === checkPointId)?.raceDuration;
   }
 
   getCheckPointCheckTimeExpired(checkPointId: number): boolean | undefined {

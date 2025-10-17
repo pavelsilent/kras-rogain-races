@@ -23,7 +23,7 @@
           <td mat-cell *matCellDef="let row">
             <span class="bold"
                   [ngClass]="{'check-time-expired': getCheckPointCheckTimeExpired(row.id)}">{{
-                getCheckPointRaceTime(row.id) | toRusTime
+                getCheckPointRaceDuration(row.id)
               }}</span>
             <br>
             <span class="diff-time">{{ getCheckPointDiffTime(row.id) }}</span>

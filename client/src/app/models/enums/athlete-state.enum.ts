@@ -8,7 +8,7 @@ export class AthleteState
   static REGISTERED = new AthleteState('REGISTERED', 'Зарегистрирован');
   static STARTED = new AthleteState('STARTED', 'Стартовал');
   static FINISHED = new AthleteState('FINISHED', 'Финишировал');
-  static DISQUALIFIED = new AthleteState('DISQUALIFIED', 'Дисквалифицирован');
+  static DISQUALIFIED = new AthleteState('DISQUALIFIED', 'Снят');
   static DID_NOT_START = new AthleteState('DID_NOT_START', 'Не стартовал');
   static DID_NOT_FINISH = new AthleteState('DID_NOT_FINISH', 'Не финишировал');
   static NOT_DATA = new AthleteState('NOT_DATA', 'Нет данных');
