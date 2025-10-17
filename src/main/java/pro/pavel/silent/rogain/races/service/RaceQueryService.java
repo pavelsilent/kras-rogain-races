@@ -305,12 +305,14 @@ public class RaceQueryService {
         Integer lastCheckPointOrderNumber = raceAthlete.getLastCheckPointOrderNumber();
         Integer nextCheckPointOrderNumber = lastCheckPointOrderNumber + 1;
 
-        RaceFormatCheckPoint lastCheckPoint = getRaceFormatCheckPoint(
-            raceFormat,
-            raceAthlete.getLastCheckPointOrderNumber()
-        );
-        if (lastCheckPoint.getIsFinish()) {
-            return lastCheckPoint;
+        if (lastCheckPointOrderNumber > 0) {
+            RaceFormatCheckPoint lastCheckPoint = getRaceFormatCheckPoint(
+                raceFormat,
+                raceAthlete.getLastCheckPointOrderNumber()
+            );
+            if (lastCheckPoint.getIsFinish()) {
+                return lastCheckPoint;
+            }
         }
 
         return getRaceFormatCheckPoint(raceFormat, nextCheckPointOrderNumber);

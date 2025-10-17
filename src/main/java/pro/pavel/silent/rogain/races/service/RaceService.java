@@ -136,6 +136,7 @@ public class RaceService {
         return raceFormatAthleteGroupRepository.save(group);
     }
 
+    @Transactional
     public RaceAthlete addRaceAthlete(Long raceId, Long raceFormatId, RaceAthleteSetupDTO raceAthleteDTO) {
         RaceFormat raceFormat = raceQueryService.getRaceFormatById(raceFormatId);
         Optional<RaceAthlete> raceAthleteBibNumber = raceQueryService.findRaceAthleteByBibNumber(
@@ -234,7 +235,11 @@ public class RaceService {
         RaceFormat raceFormat = checkPoint.getRaceFormat();
 
         List<RaceFormatCheckPoint> prevCheckPoints =
-            raceQueryService.getRaceFormatCheckPoints(raceFormat, checkPoint.getOrderNumber(), checkPointDTO.getOrderNumber());
+            raceQueryService.getRaceFormatCheckPoints(
+                raceFormat,
+                checkPoint.getOrderNumber(),
+                checkPointDTO.getOrderNumber()
+            );
 
         for (RaceFormatCheckPoint prevCheckPoint : prevCheckPoints) {
             prevCheckPoint.setOrderNumber(prevCheckPoint.getOrderNumber() - 1);
@@ -278,17 +283,18 @@ public class RaceService {
         return checkPoint;
     }
 
+    @Transactional
     public void addRaceAthleteCheckPoint(
         Long raceId,
         Long raceFormatId,
         Integer athleteBibNumber,
-        RaceAthleteCheckPointDTO checkPoint
+        RaceAthleteCheckPointDTO dto
     ) {
         RaceFormat raceFormat = raceQueryService.getRaceFormatById(raceFormatId);
         RaceAthlete raceAthlete = raceQueryService.getRaceAthleteByBibNumber(raceFormat, athleteBibNumber);
-        RaceFormatCheckPoint raceFormatCheckPoint = raceQueryService.getRaceFormatCheckPoint(checkPoint.getId());
+        RaceFormatCheckPoint raceFormatCheckPoint = raceQueryService.getRaceFormatCheckPoint(dto.getId());
 
-        LocalDateTime realTime = checkPoint.getTime();
+        LocalDateTime realTime = dto.getTime();
 
         RaceAthleteCheckPoint raceAthleteCheckPoint =
             raceQueryService.findRaceAthleteCheckPoint(raceAthlete, raceFormatCheckPoint)
@@ -297,25 +303,74 @@ public class RaceService {
         raceAthleteCheckPoint.setRaceAthlete(raceAthlete);
         raceAthleteCheckPoint.setRaceFormatCheckPoint(raceFormatCheckPoint);
         raceAthleteCheckPoint.setTime(realTime);
-        raceAthleteCheckPoint.setPassed(checkPoint.getPassed());
+        raceAthleteCheckPoint.setPassed(dto.getPassed());
 
         raceAthleteCheckPointRepository.save(raceAthleteCheckPoint);
 
-        calcDiffs(raceAthlete);
-    }
+        if (!raceFormatCheckPoint.getIsStart() && raceAthleteCheckPoint.isPassed()) {
+            ensureRaceAthleteStartPointPassed(raceAthlete);
+        }
 
-    private void calcDiffs(RaceAthlete raceAthlete) {
-        ensureRaceAthleteStartPoint(raceAthlete);
         raceQueryService
             .findLastPassedCheckPoint(raceAthlete)
-            .ifPresent(lastCheckPoint -> {
+            .ifPresentOrElse(lastCheckPoint -> {
                 raceAthlete.setLastCheckPointOrderNumber(lastCheckPoint.getRaceFormatCheckPoint().getOrderNumber());
                 raceAthlete.setLastCheckPointTime(lastCheckPoint.getTime());
                 raceAthleteRepository.save(raceAthlete);
+            }, () -> {
+                raceAthlete.setLastCheckPointOrderNumber(0);
+                raceAthlete.setLastCheckPointTime(null);
+                raceAthleteRepository.save(raceAthlete);
             });
+
+        List<RaceAthleteCheckPoint> allPassedCheckPoints = raceAthleteCheckPointRepository
+            .findAllByRaceAthlete(raceAthlete)
+            .stream()
+            .filter(RaceAthleteCheckPoint::isPassed)
+            .toList();
+
+        boolean started = allPassedCheckPoints
+            .stream()
+            .anyMatch(checkPoint -> checkPoint.getRaceFormatCheckPoint().getIsStart()) ||
+            !allPassedCheckPoints.isEmpty();
+        boolean finished = allPassedCheckPoints.stream()
+                                               .anyMatch(checkPoint -> checkPoint.getRaceFormatCheckPoint()
+                                                                                 .getIsFinish());
+
+        boolean expired = allPassedCheckPoints.stream().anyMatch(this::checkPointTimeExpired);
+
+        RaceAthleteState currentState = raceAthlete.getState();
+        RaceAthleteState actualState;
+        if (!expired) {
+            if (!started) {
+                actualState = RaceAthleteState.REGISTERED;
+            } else if (!finished) {
+                actualState = RaceAthleteState.STARTED;
+            } else {
+                actualState = RaceAthleteState.FINISHED;
+            }
+        } else {
+            actualState = RaceAthleteState.DISQUALIFIED;
+        }
+
+        if (!currentState.equals(actualState)) {
+            setRaceAthleteState(raceId, raceFormatId, athleteBibNumber, actualState.name());
+        }
     }
 
-    public RaceAthleteCheckPoint ensureRaceAthleteStartPoint(RaceAthlete raceAthlete) {
+    private boolean checkPointTimeExpired(RaceAthleteCheckPoint raceAthleteCheckPoint) {
+        LocalDateTime raceAthleteCheckPointTime = raceAthleteCheckPoint.getTime();
+        RaceFormatCheckPoint raceFormatCheckPoint = raceAthleteCheckPoint.getRaceFormatCheckPoint();
+        LocalDateTime startTime = raceFormatCheckPoint.getRaceFormat().getStartTime();
+        Duration checkPointDuration = raceFormatCheckPoint.getCheckDuration();
+        if (Objects.nonNull(checkPointDuration) && Objects.nonNull(raceAthleteCheckPointTime)) {
+            LocalDateTime checkPointCheckTime = startTime.plus(checkPointDuration);
+            return raceAthleteCheckPointTime.isAfter(checkPointCheckTime);
+        }
+        return false;
+    }
+
+    public RaceAthleteCheckPoint ensureRaceAthleteStartPointPassed(RaceAthlete raceAthlete) {
         RaceFormat raceFormat = raceAthlete.getRaceFormat();
         RaceFormatCheckPoint startCheckPoint = raceQueryService.getRaceFormatStartCheckPoint(raceFormat);
         RaceAthleteCheckPoint raceAthleteStartPoint =
@@ -376,7 +431,7 @@ public class RaceService {
 
         raceAthletes.forEach(
             raceAthlete -> {
-                RaceAthleteCheckPoint startPoint = ensureRaceAthleteStartPoint(raceAthlete);
+                RaceAthleteCheckPoint startPoint = ensureRaceAthleteStartPointPassed(raceAthlete);
                 raceAthlete.setState(RaceAthleteState.STARTED);
                 raceAthlete.setLastCheckPointOrderNumber(startPoint.getRaceFormatCheckPoint().getOrderNumber());
                 raceAthlete.setLastCheckPointTime(startPoint.getTime());
@@ -406,11 +461,30 @@ public class RaceService {
                         });
     }
 
+    @Transactional
     public void setRaceAthleteState(Long raceId, Long raceFormatId, Integer athleteBibNumber, String state) {
         RaceFormat raceFormat = raceQueryService.getRaceFormatById(raceFormatId);
         RaceAthlete raceAthlete = raceQueryService.getRaceAthleteByBibNumber(raceFormat, athleteBibNumber);
         raceAthlete.setState(RaceAthleteState.valueOf(state));
         raceAthleteRepository.save(raceAthlete);
+    }
+
+    @Transactional
+    public void deleteRaceAthlete(Long raceId, Long raceFormatId, Integer bibNumber) {
+        RaceFormat raceFormat = raceQueryService.getRaceFormatById(raceFormatId);
+        Optional<RaceAthlete> raceAthleteOpt = raceQueryService.findRaceAthleteByBibNumber(
+            raceFormat,
+            bibNumber
+        );
+
+        if (raceAthleteOpt.isEmpty()) {
+            throw new RuntimeException("Race athlete with bib number '%s' not exists.".formatted(bibNumber));
+        }
+        RaceAthlete raceAthlete = raceAthleteOpt.get();
+
+        raceAthleteGroupRepository.deleteAllByRaceAthlete(raceAthlete);
+        raceAthleteCheckPointRepository.deleteAllByRaceAthlete(raceAthlete);
+        raceAthleteRepository.delete(raceAthlete);
     }
 
 }

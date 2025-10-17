@@ -8,8 +8,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pro.pavel.silent.lib.core.util.ListHelper;
 import pro.pavel.silent.rogain.races.domain.enumeration.RaceState;
 import pro.pavel.silent.rogain.races.entity.Race;
 import pro.pavel.silent.rogain.races.entity.RaceAthlete;
@@ -138,6 +139,17 @@ public class RaceController {
         return ResponseEntity.ok(raceAthlete.getId());
     }
 
+    @DeleteMapping("/{id}/formats/{formatId}/athlete/{athleteBibNumber}")
+    @Operation(summary = "Удалить атлета из стартового листа")
+    public ResponseEntity<Void> deleteRaceFormatAthlete(
+        @PathVariable Long id,
+        @PathVariable Long formatId,
+        @PathVariable Integer athleteBibNumber
+    ) {
+        raceService.deleteRaceAthlete(id, formatId, athleteBibNumber);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("/{id}/formats/{formatId}/checkpoints")
     @Operation(summary = "Получить список контрольных точек")
     public ResponseEntity<List<RaceFormatCheckPointDTO>> getRaceFormatCheckPoints(
@@ -183,12 +195,12 @@ public class RaceController {
         @PathVariable Long formatId
     ) {
         RaceFormatResultDTO resultDTO = restConverter.toResultDTO(raceQueryService.getRaceFormatById(formatId));
-//        resultDTO.setAthletes(resultDTO
+        //        resultDTO.setAthletes(resultDTO
 
-//            ListHelper.merge(
-//                ListHelper.merge(resultDTO.getAthletes(), resultDTO.getAthletes()),
-//                ListHelper.merge(resultDTO.getAthletes(), resultDTO.getAthletes())
-//            ));
+        //            ListHelper.merge(
+        //                ListHelper.merge(resultDTO.getAthletes(), resultDTO.getAthletes()),
+        //                ListHelper.merge(resultDTO.getAthletes(), resultDTO.getAthletes())
+        //            ));
         return ResponseEntity.ok(resultDTO);
     }
 

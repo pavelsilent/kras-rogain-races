@@ -265,7 +265,7 @@ public class RestConverter {
             prevCheckPointDiff = Duration.between(prevCheckPoint.getTime(), checkPoint.getTime());
         }
 
-        if (raceFormatCheckPoint.getIsStart()) {
+        if (raceFormatCheckPoint.getIsStart() && checkPoint.isPassed()) {
             prevCheckPointDiff = Duration.ofMillis(0);
         }
 

@@ -170,4 +170,8 @@ export class RaceService {
       .then(value => RaceFormatResultModel.fromDTO(value));
   }
 
+  deleteRaceAthlete(id: number, formatId: number, data: RaceAthleteModel) {
+    return lastValueFrom(this.backend.deleteRaceFormatAthlete(id, formatId, data.bibNumber));
+  }
+
 }

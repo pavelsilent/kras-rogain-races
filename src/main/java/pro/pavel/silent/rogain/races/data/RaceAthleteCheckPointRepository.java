@@ -37,4 +37,6 @@ public interface RaceAthleteCheckPointRepository extends EntityRepository<RaceAt
 
     void deleteAllByRaceFormatCheckPointRaceFormat(RaceFormat raceFormat);
 
+    void deleteAllByRaceAthlete(RaceAthlete raceAthlete);
+
 }

@@ -41,11 +41,24 @@
               class="race-action"
               (click)="onToggleDistanceSchemaVisibility()">Спрятать<br>схему дистанции
       </button>
+
+      <button *ngIf="localTime === 0" mat-flat-button color="primary"
+              class="race-action"
+              (click)="onToggleLocalTime()">Чистое время
+      </button>
+      <button *ngIf="localTime === 1" mat-flat-button color="primary"
+              class="race-action"
+              (click)="onToggleLocalTime()">Местное время
+      </button>
+      <button *ngIf="localTime === 2" mat-flat-button color="primary"
+              class="race-action"
+              (click)="onToggleLocalTime()">Полное время
+      </button>
     </div>
   </div>
 </h3>
 
-<div class="table-wrapper">
+<div class="table-wrapper" *ngIf="format as raceFormat">
   <div *ngIf="showAttitude" class="img-container">
     <img *ngIf="attitudeProfile$ | async as attitudeProfileSrc"
          [src]="attitudeProfileSrc"
@@ -79,7 +92,7 @@
             <div>
                 <span class="bold"
                       [ngClass]="{'check-time-expired': getCheckPointTimeExpired(row)}">
-                  {{ getLastCheckPointTime(row) }}
+                  {{ getLastCheckPointTime(row, raceFormat.startDateTime!) }}
                 </span>
               <br>
               <span style="font-style: italic; font-size: 11px">

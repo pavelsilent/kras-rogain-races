@@ -6,6 +6,7 @@ import { MatFormField } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import {
   MatCell,
@@ -88,6 +89,7 @@ import { RaceFormatPageService } from '../race-format-page.service';
                MatTooltip,
                MatIconButton,
                MatButton,
+               MatSlideToggle,
              ],
              templateUrl: './race-format-result-compact.component.html',
              standalone: true,
@@ -110,6 +112,8 @@ export class RaceFormatResultCompactComponent {
 
   @Input()
   showDistanceSchema: boolean;
+
+  localTime: 0 | 1 | 2 = 0;
 
   dataTableBodyDef: string[] = ['name'];
 
@@ -230,11 +234,29 @@ export class RaceFormatResultCompactComponent {
     return 'КТ: -';
   }
 
-  getLastCheckPointTime(row: RaceAthleteModel) {
+  getLastCheckPointTime(row: RaceAthleteModel, startDateTime: LocalDateTime) {
+    let result = '';
     if (exists(row.lastRaceAthleteCheckPoint)) {
-      return parseLocalDateTimeToRussianTime(row?.lastRaceAthleteCheckPoint.raceTime!) + ' / ' + row.state.name;
+      if (this.localTime === 0) {
+        result = parseLocalDateTimeToRussianTime(row?.lastRaceAthleteCheckPoint.raceTime!) + ' / ';
+      } else if (this.localTime === 1) {
+        result = parseLocalDateTimeToRussianTime(row?.lastRaceAthleteCheckPoint.time!) + ' / ';
+      } else {
+        result = parseLocalDateTimeToRussianTime(row?.lastRaceAthleteCheckPoint.raceTime!) + ' / ' +
+          parseLocalDateTimeToRussianTime(row?.lastRaceAthleteCheckPoint.time!) + ' / ';
+      }
     }
-    return '00:00:00 / ' + row.state.name;
+    // else {
+    //   if (this.localTime === 0) {
+    //     result = '00:00:00';
+    //   } else if (this.localTime === 1) {
+    //     result = parseLocalDateTimeToRussianTime(startDateTime);
+    //   } else {
+    //     result = '00:00:00 / ' + parseLocalDateTimeToRussianTime(startDateTime);
+    //   }
+    // }
+
+    return result + row.state.name;
   }
 
   onSetRaceState(state: RaceState) {
@@ -266,6 +288,16 @@ export class RaceFormatResultCompactComponent {
 
   onToggleDistanceSchemaVisibility() {
     this.showDistanceSchema = !this.showDistanceSchema;
+  }
+
+  onToggleLocalTime() {
+    if (this.localTime === 0) {
+      this.localTime = 1;
+    } else if (this.localTime === 1) {
+      this.localTime = 2;
+    } else {
+      this.localTime = 0;
+    }
   }
 
   openFullscreen(event: MouseEvent) {

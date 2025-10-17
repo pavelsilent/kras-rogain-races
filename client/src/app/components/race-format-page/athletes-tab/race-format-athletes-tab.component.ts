@@ -3,6 +3,7 @@ import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
 import { MatInput, MatInputModule, MatLabel } from '@angular/material/input';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortHeader, MatSortModule } from '@angular/material/sort';
@@ -62,6 +63,7 @@ import { RaceService } from '../../race/race.service';
                EnumPipe,
                MatButton,
                MatDivider,
+               MatIcon,
              ],
              templateUrl: './race-format-athletes-tab.component.html',
              standalone: true,
@@ -71,7 +73,7 @@ export class RaceFormatAthletesTabComponent
   implements AfterViewInit {
   id: number;
   formatId: number;
-  displayedColumns: string[] = ['bib', 'fio', 'birthDate', 'sex', 'city', 'club', 'groups', 'state'];
+  displayedColumns: string[] = ['bib', 'fio', 'birthDate', 'sex', 'city', 'club', 'groups', 'state', 'delete'];
   dataSource = new MatTableDataSource<RaceAthleteModel>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -111,6 +113,10 @@ export class RaceFormatAthletesTabComponent
 
     lastValueFrom(dialogRef.afterClosed())
       .then(value => this.refresh$.next());
+  }
 
+  onDelete(row: RaceAthleteModel) {
+    this.service.deleteRaceAthlete(this.id, this.formatId, row)
+        .then(value => this.refresh$.next());
   }
 }
