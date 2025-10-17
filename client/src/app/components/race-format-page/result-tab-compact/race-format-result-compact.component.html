@@ -52,6 +52,10 @@
       </button>
       <button *ngIf="localTime === 2" mat-flat-button color="primary"
               class="race-action"
+              (click)="onToggleLocalTime()">Местное<br>дата-время
+      </button>
+      <button *ngIf="localTime === 3" mat-flat-button color="primary"
+              class="race-action"
               (click)="onToggleLocalTime()">Полное время
       </button>
     </div>

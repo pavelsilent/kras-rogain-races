@@ -27,6 +27,9 @@ public class RaceAthleteCheckPointDTO {
     @Schema(description = "Время прохождения")
     private LocalDateTime raceTime;
 
+    @Schema(description = "Длительность прохождения")
+    private String raceDuration;
+
     @Schema(description = "Разница по времени с предыдущей контрольной точкой")
     private String prevCheckPointDiffDuration;
 

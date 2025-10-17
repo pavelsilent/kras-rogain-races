@@ -128,7 +128,7 @@
       <th *matHeaderCellDef mat-header-cell class="time-detail-column action-button-container">
         <span class="underline">Время гонки {{ '0:00:00' }}</span>
         <br>
-        <span *ngIf="startDateTime$ | async as startDateTime">Местн. время (старт в <span [matTooltip]="startDateTime | toRusTime">{{ ((startDateTime)! | toCosmicTime:false) }}</span>)</span>
+        <span *ngIf="startDateTime$ | async as startDateTime">Местн. время (старт в <span [matTooltip]="startDateTime | toRusDateTime">{{ ((startDateTime)! | toCosmicTime:false) }}</span>)</span>
       </th>
     </ng-container>
 
@@ -136,7 +136,7 @@
       <th *matHeaderCellDef mat-header-cell class="center">
         <span class="underline">{{ cp.checkDuration }}</span>
         <br>
-        <span [matTooltip]="cp.checkTime | toRusTime">{{ cp.checkTime | toCosmicTime }}</span>
+        <span [matTooltip]="cp.checkTime | toRusDateTime">{{ cp.checkTime | toCosmicTime }}</span>
       </th>
     </ng-container>
 
@@ -159,7 +159,7 @@
       <th *matHeaderCellDef mat-header-cell class="center">
         <span class="underline">{{ cp.leaderDuration }}</span>
         <br>
-        <span [matTooltip]="cp.leaderTime | toRusTime">{{ cp.leaderTime | toCosmicTime }}</span>
+        <span [matTooltip]="cp.leaderTime | toRusDateTime">{{ cp.leaderTime | toCosmicTime }}</span>
       </th>
     </ng-container>
 
@@ -261,8 +261,8 @@
       <th *matHeaderCellDef mat-header-cell></th>
       <td *matCellDef="let row" mat-cell class="checkpoint-column center"
           [ngClass]="{'check-time-expired': getCheckPointTimeExpired(row, cp.id)}">
-        <span [matTooltip]=" getCheckPointTime(row, cp.id) | toRusTime ">{{
-            getCheckPointRaceTime(row, cp.id) | toRusTime
+        <span [matTooltip]=" getCheckPointTime(row, cp.id) | toRusDateTime ">{{
+            getCheckPointRaceTime(row, cp.id)
           }} </span>
       </td>
     </ng-container>

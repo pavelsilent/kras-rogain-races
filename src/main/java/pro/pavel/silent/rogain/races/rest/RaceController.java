@@ -273,6 +273,7 @@ public class RaceController {
                                                                      .id(checkpointId)
                                                                      .passed(false)
                                                                      .raceTime(null)
+                                                                     .raceDuration(null)
                                                                      .time(null)
                                                                      .prevCheckPointDiffDuration(null)
                                                                      .checkTimeExpired(false)

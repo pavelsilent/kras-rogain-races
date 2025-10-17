@@ -54,7 +54,7 @@ import { RaceFormatModel } from '../../../models/race-format.model';
 import { CosmicTimePipe } from '../../../utils/cosmic-time.pipe';
 import { RussianDateTimePipe } from '../../../utils/russian-date-time.pipe';
 import { RussianTimePipe } from '../../../utils/russian-time.pipe';
-import { exists, parseLocalDateTimeToRussianTime } from '../../../utils/utils';
+import { exists, parseLocalDateTimeToRussianDateTime, parseLocalDateTimeToRussianTime } from '../../../utils/utils';
 import { FileService } from '../../core/file.service';
 import { RaceService } from '../../race/race.service';
 import { RaceFormatPageService } from '../race-format-page.service';
@@ -113,7 +113,7 @@ export class RaceFormatResultCompactComponent {
   @Input()
   showDistanceSchema: boolean;
 
-  localTime: 0 | 1 | 2 = 0;
+  localTime: 0 | 1 | 2 | 3 = 0;
 
   dataTableBodyDef: string[] = ['name'];
 
@@ -238,23 +238,16 @@ export class RaceFormatResultCompactComponent {
     let result = '';
     if (exists(row.lastRaceAthleteCheckPoint)) {
       if (this.localTime === 0) {
-        result = parseLocalDateTimeToRussianTime(row?.lastRaceAthleteCheckPoint.raceTime!) + ' / ';
+        result = row?.lastRaceAthleteCheckPoint.raceDuration! + ' / ';
       } else if (this.localTime === 1) {
         result = parseLocalDateTimeToRussianTime(row?.lastRaceAthleteCheckPoint.time!) + ' / ';
+      } else if (this.localTime === 2) {
+        result = parseLocalDateTimeToRussianDateTime(row?.lastRaceAthleteCheckPoint.time!) + ' / ';
       } else {
-        result = parseLocalDateTimeToRussianTime(row?.lastRaceAthleteCheckPoint.raceTime!) + ' / ' +
-          parseLocalDateTimeToRussianTime(row?.lastRaceAthleteCheckPoint.time!) + ' / ';
+        result = row?.lastRaceAthleteCheckPoint.raceDuration! + ' / ' +
+          parseLocalDateTimeToRussianDateTime(row?.lastRaceAthleteCheckPoint.time!) + ' / ';
       }
     }
-    // else {
-    //   if (this.localTime === 0) {
-    //     result = '00:00:00';
-    //   } else if (this.localTime === 1) {
-    //     result = parseLocalDateTimeToRussianTime(startDateTime);
-    //   } else {
-    //     result = '00:00:00 / ' + parseLocalDateTimeToRussianTime(startDateTime);
-    //   }
-    // }
 
     return result + row.state.name;
   }
@@ -295,6 +288,8 @@ export class RaceFormatResultCompactComponent {
       this.localTime = 1;
     } else if (this.localTime === 1) {
       this.localTime = 2;
+    } else if (this.localTime === 2) {
+      this.localTime = 3;
     } else {
       this.localTime = 0;
     }

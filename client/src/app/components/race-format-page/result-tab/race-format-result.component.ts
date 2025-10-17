@@ -226,11 +226,11 @@ export class RaceFormatResultComponent {
         });
   }
 
-  getCheckPointRaceTime(member: RaceAthleteModel | undefined, checkPointId: number): LocalDateTime | undefined {
+  getCheckPointRaceTime(member: RaceAthleteModel | undefined, checkPointId: number): string | undefined {
     if (member === undefined) {
       return undefined;
     }
-    return member.checkPoints?.find(value => value.id === checkPointId)?.raceTime;
+    return member.checkPoints?.find(value => value.id === checkPointId)?.raceDuration;
   }
 
   getCheckPointTime(member: RaceAthleteModel | undefined, checkPointId: number): LocalDateTime | undefined {
