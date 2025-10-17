@@ -32,6 +32,11 @@ export function parseLocalDateTimeToRussianDateTime(value: LocalDateTime): strin
   return format(value, 'dd.MM.yyyy HH:mm:ss');
 }
 
+export function parseLocalDateTimeToRussianDateTimeShort(value: LocalDateTime): string {
+  return format(value, 'dd.MM.yy HH:mm:ss');
+}
+
+
 export function parseLocalDateTimeToRussianTime(value: LocalDateTime): string {
   return format(value, 'HH:mm:ss');
 }

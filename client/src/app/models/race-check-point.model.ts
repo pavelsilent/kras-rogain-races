@@ -16,6 +16,7 @@ export class RaceCheckPointModel {
   isStart: boolean;
   isFinish: boolean;
   hasCheckTime: boolean;
+  open: boolean = false;
 
   constructor(dto?: RaceFormatCheckPointDTO) {
     if (exists(dto)) {

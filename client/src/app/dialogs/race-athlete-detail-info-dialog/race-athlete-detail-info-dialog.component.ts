@@ -28,6 +28,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { LocalDateTime } from '@js-joda/core';
 import { RaceAthleteModel } from '../../models/race-athlete.model';
 import { RaceCheckPointModel } from '../../models/race-check-point.model';
+import { RussianDateTimePipe } from '../../utils/russian-date-time.pipe';
 import { RussianTimePipe } from '../../utils/russian-time.pipe';
 
 export interface RaceAthleteDetailInfoDialogConfig {
@@ -66,6 +67,7 @@ export interface RaceAthleteDetailInfoDialogConfig {
                MatHeaderCellDef,
                MatRow,
                NgClass,
+               RussianDateTimePipe,
              ],
              templateUrl: './race-athlete-detail-info-dialog.component.html',
              styleUrl: './race-athlete-detail-info-dialog.component.css',
@@ -74,12 +76,20 @@ export interface RaceAthleteDetailInfoDialogConfig {
 export class RaceAthleteDetailInfoDialogComponent {
   dialogRef = inject(MatDialogRef<RaceAthleteDetailInfoDialogComponent>);
   dataTableBodyDef: string[] = ['checkPoint', 'distance', 'raceTime', 'checkPointCheckTime', 'checkPointLeaderTime'];
-
+  localTime = false;
   constructor(@Inject(MAT_DIALOG_DATA) public data: RaceAthleteDetailInfoDialogConfig) {
+  }
+
+  onToggleLocalTime() {
+    this.localTime = !this.localTime;
   }
 
   getCheckPointRaceDuration(checkPointId: number): string | undefined {
     return this.data.athleteInfo.checkPoints?.find(value => value.id === checkPointId)?.raceDuration;
+  }
+
+  getCheckPointRaceDateTime(checkPointId: number): LocalDateTime | undefined {
+    return this.data.athleteInfo.checkPoints?.find(value => value.id === checkPointId)?.time;
   }
 
   getCheckPointCheckTimeExpired(checkPointId: number): boolean | undefined {
@@ -94,12 +104,20 @@ export class RaceAthleteDetailInfoDialogComponent {
     return this.data.checkPoints.find(value => value.id === checkPointId)?.leaderDuration
   }
 
+  getCheckPointLeaderDateTime(checkPointId: number): LocalDateTime | undefined {
+    return this.data.checkPoints.find(value => value.id === checkPointId)?.leaderTime;
+  }
+
   getCheckPointLeaderDiffTime(checkPointId: number): string | undefined {
     return this.data.checkPoints.find(value => value.id === checkPointId)?.leaderDiffDuration
   }
 
   getCheckPointCheckTime(checkPointId: number): string | undefined {
     return this.data.checkPoints.find(value => value.id === checkPointId)?.checkDuration
+  }
+
+  getCheckPointCheckDateTime(checkPointId: number): LocalDateTime | undefined {
+    return this.data.checkPoints.find(value => value.id === checkPointId)?.checkTime
   }
 
   cancel() {
