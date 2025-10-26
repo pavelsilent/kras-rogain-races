@@ -83,8 +83,16 @@ export class RaceService {
     return lastValueFrom(this.backend.createRace(data.toDTO()));
   }
 
+  editRace(id: number, data: RaceSetupModel): Promise<number> {
+    return lastValueFrom(this.backend.editRace(id, data.toDTO()));
+  }
+
   createRaceFormat(id: number, data: RaceFormatModel): Promise<number> {
     return lastValueFrom(this.backend.addRaceFormat(id, data.toDTO()));
+  }
+
+  editRaceFormat(id: number, data: RaceFormatModel): Promise<number> {
+    return lastValueFrom(this.backend.editRaceFormat(id, data.id, data.toDTO()));
   }
 
   addRaceAthleteGroups(id: number, formatId: number, data: AthleteGroupModel[]) {
@@ -93,6 +101,10 @@ export class RaceService {
 
   addRaceAthlete(id: number, formatId: number, data: RaceAthleteSetupModel) {
     return lastValueFrom(this.backend.addRaceFormatAthlete(id, formatId, data.toDTO()));
+  }
+
+  editRaceAthlete(id: number, formatId: number, data: RaceAthleteSetupModel) {
+    return lastValueFrom(this.backend.editRaceFormatAthlete(id, formatId, data.toDTO()));
   }
 
   addRaceCheckPoint(id: number, formatId: number, data: RaceCheckPointSetupModel) {

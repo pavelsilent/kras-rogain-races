@@ -18,4 +18,6 @@ public interface RaceAthleteGroupRepository extends EntityRepository<RaceAthlete
 
     void deleteAllByRaceAthlete(RaceAthlete raceAthlete);
 
+    void deleteAllByAthleteGroup(AthleteGroup athleteGroup);
+
 }

@@ -1,7 +1,13 @@
-import { LocalDateTime } from '@js-joda/core';
+import { LocalDate, LocalDateTime } from '@js-joda/core';
 import { Option } from 'funfix-core';
 import { RaceFormatDTO } from '../api/index';
-import { exists, parseLocalDateTime, resolveEnum, resolveEnumOrDefault } from '../utils/utils';
+import {
+  exists,
+  parseLocalDateTime,
+  parseLocalDateTimeToRussianTime,
+  resolveEnum,
+  resolveEnumOrDefault,
+} from '../utils/utils';
 import { AthleteGroupModel } from './athlete-group.model';
 import { RaceFormatType } from './enums/race-format-type.enum';
 import { RaceState } from './enums/race-state.enum';
@@ -43,6 +49,22 @@ export class RaceFormatModel {
 
   static fromDTO(dto?: RaceFormatDTO) {
     return new RaceFormatModel(dto);
+  }
+
+  getStartDate(): LocalDate | undefined {
+    return exists(this.startDateTime) ? this.startDateTime.toLocalDate() : undefined;
+  }
+
+  getStartTime(): string {
+    return parseLocalDateTimeToRussianTime(this.startDateTime!);
+  }
+
+  getFinishDate(): LocalDate | undefined {
+    return exists(this.finishDateTime) ? this.finishDateTime.toLocalDate() : undefined;
+  }
+
+  getFinishTime(): string {
+    return parseLocalDateTimeToRussianTime(this.finishDateTime!);
   }
 
   toDTO(): RaceFormatDTO {

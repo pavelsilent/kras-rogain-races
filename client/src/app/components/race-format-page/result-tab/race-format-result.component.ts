@@ -1,5 +1,5 @@
 import { AsyncPipe, NgClass, NgForOf, NgIf, NgStyle } from '@angular/common';
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormField } from '@angular/material/form-field';
@@ -31,6 +31,7 @@ import {
   lastValueFrom,
   map,
   Observable,
+  of,
   shareReplay,
   startWith,
   switchMap,
@@ -90,7 +91,8 @@ import { RaceFormatPageService } from '../race-format-page.service';
              standalone: true,
              styleUrl: './race-format-result.component.css',
            })
-export class RaceFormatResultComponent {
+export class RaceFormatResultComponent
+  implements OnInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   result$: Observable<RaceFormatResultModel>;
@@ -104,11 +106,13 @@ export class RaceFormatResultComponent {
   @Input()
   format: RaceFormatModel;
 
-  @Input()
-  showAttitude: boolean;
+  format$: Observable<RaceFormatModel>;
 
   @Input()
-  showDistanceSchema: boolean;
+  showAttitude: boolean = false;
+
+  @Input()
+  showDistanceSchema: boolean = false;
 
   fixedTable: boolean = false;
 
@@ -226,6 +230,14 @@ export class RaceFormatResultComponent {
         });
   }
 
+  ngOnInit(): void {
+    if (!exists(this.format)) {
+      this.format$ = this.page.getRaceFormat();
+    } else {
+      this.format$ = of(this.format);
+    }
+  }
+
   getCheckPointRaceTime(member: RaceAthleteModel | undefined, checkPointId: number): string | undefined {
     if (member === undefined) {
       return undefined;
@@ -328,9 +340,9 @@ export class RaceFormatResultComponent {
     this.fixedTable = !this.fixedTable;
   }
 
-  getShortFIO(row: RaceAthleteModel) {
-    if (this.format.isAnon) {
-      return "Неизвестный атлет (" + row.athlete.sex?.short + ')'
+  getShortFIO(row: RaceAthleteModel, isAnon: boolean) {
+    if (isAnon) {
+      return 'Неизвестный атлет (' + row.athlete.sex?.short + ')';
     }
     return row.athlete.getShortFIO();
   }

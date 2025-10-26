@@ -22,9 +22,8 @@ export class AthletesService {
     return lastValueFrom(this.backend.createAthlete(model.toDTO()));
   }
 
-  updateAthlete(model: AthleteModel): Promise<AthleteModel> {
-    return lastValueFrom(this.backend.updateAthlete(model.toDTO()).pipe(
-      map(item => AthleteModel.fromDTO(item))));
+  editAthlete(model: AthleteModel): Promise<number> {
+    return lastValueFrom(this.backend.updateAthlete(model.id!, model.toDTO()));
   }
 
   getAthleteById(id: number): Observable<AthleteModel> {

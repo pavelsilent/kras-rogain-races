@@ -2,16 +2,6 @@
   <span>{{ 'Время участника #' + data.athleteInfo.bibNumber }}</span>
   <br>
   <span>{{ '(' + data.athleteInfo.athlete.getShortFIO() + ')' }}</span>
-
-  <button *ngIf="!localTime" mat-flat-button color="primary"
-          class="race-action"
-          (click)="onToggleLocalTime()">Чистое время
-  </button>
-  <button *ngIf="localTime" mat-flat-button color="primary"
-          class="race-action"
-          (click)="onToggleLocalTime()">Местное время
-  </button>
-
 </h2>
 
 <form>
@@ -20,38 +10,63 @@
       <table mat-table [dataSource]="data.checkPoints" class="data-table">
         <ng-container matColumnDef="checkPoint">
           <th mat-header-cell *matHeaderCellDef>КТ</th>
-          <td mat-cell class="bold" *matCellDef="let row">{{ row.name }}</td>
+          <td mat-cell *matCellDef="let row">
+            <div class="cell-wrapper">
+              <div class="cell">
+<!--                <br>-->
+                <div class="bold">{{ row.name }}</div>
+              </div>
+              <br>
+              <div class="cell" *ngIf="row.open">
+                <span >Местное<br>время</span>
+              </div>
+            </div>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="distance">
           <th mat-header-cell *matHeaderCellDef>КМ</th>
-          <td mat-cell *matCellDef="let row">{{ row.totalDistance }}</td>
+          <td mat-cell *matCellDef="let row">
+            <div class="cell-wrapper">
+              <div class="cell">
+<!--                <br>-->
+                <div>{{ row.totalDistance }}</div>
+              </div>
+              <br>
+              <div class="cell" *ngIf="row.open">
+                <span><br><br></span>
+              </div>
+            </div>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="raceTime">
-          <th mat-header-cell *matHeaderCellDef style="width: 113px;"><span *ngIf="!localTime">Чистое время</span><span
-            *ngIf="localTime">Местное время</span>
-            <br>Время между КТ
-          </th>
+          <th mat-header-cell *matHeaderCellDef style="width: 113px;">Чистое время /<br>Время между КТ</th>
           <td mat-cell *matCellDef="let row">
-            <span *ngIf="!localTime" class="bold"
-                  [ngClass]="{'check-time-expired': getCheckPointCheckTimeExpired(row.id)}">{{
-                getCheckPointRaceDuration(row.id)
-              }}</span>
-            <span *ngIf="localTime" class="bold"
-                  [ngClass]="{'check-time-expired': getCheckPointCheckTimeExpired(row.id)}">{{
-                getCheckPointRaceDateTime(row.id) | toRusDateTime
-              }}</span>
-            <br>
-            <span class="diff-time">{{ getCheckPointDiffTime(row.id) }}</span>
+
+            <div class="cell-wrapper">
+              <div class="cell">
+ <span class="bold"
+       [ngClass]="{'check-time-expired': getCheckPointCheckTimeExpired(row.id)}">{{
+     getCheckPointRaceDuration(row.id)
+   }}</span>
+                <span class="diff-time">{{ getCheckPointDiffTime(row.id) }}</span>
+              </div>
+              <br>
+              <div class="cell" *ngIf="row.open">
+                <span *ngIf="row.open">{{ getCheckPointRaceDateTime(row.id) | toRusDateTime }}</span>
+                <br>
+              </div>
+            </div>
+
           </td>
         </ng-container>
 
         <ng-container matColumnDef="checkPointCheckTime">
           <th mat-header-cell *matHeaderCellDef>Контрольное время</th>
           <td mat-cell *matCellDef="let row" class="control-time">
-            <span *ngIf="!localTime">{{ getCheckPointCheckTime(row.id) }}</span>
-            <span *ngIf="localTime">{{ getCheckPointCheckDateTime(row.id) | toRusDateTime }}</span>
+            <span>{{ getCheckPointCheckTime(row.id) }}</span><br>
+            <span *ngIf="row.open"><br><br>{{ getCheckPointCheckDateTime(row.id) | toRusDateTime }}</span>
           </td>
         </ng-container>
 
@@ -59,16 +74,28 @@
           <th mat-header-cell *matHeaderCellDef style="width: 113px;">Прогнозирумое время лидера /<br>Время между КТ
           </th>
           <td mat-cell *matCellDef="let row">
-            <span *ngIf="!localTime">{{ getCheckPointLeaderTime(row.id) }}</span>
-            <span *ngIf="localTime">{{ getCheckPointLeaderDateTime(row.id) | toRusDateTime }}</span>
-            <br>
-            <span class="diff-time">{{ getCheckPointLeaderDiffTime(row.id) }}</span>
+
+
+            <div class="cell-wrapper">
+              <div class="cell">
+                <span>{{ getCheckPointLeaderTime(row.id) }}</span>
+                <span class="diff-time">{{ getCheckPointLeaderDiffTime(row.id) }}</span>
+              </div>
+              <br>
+              <div class="cell">
+                <span *ngIf="row.open">{{ getCheckPointLeaderDateTime(row.id) | toRusDateTime }}</span>
+              </div><br>
+            </div>
+
+
+
           </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="dataTableBodyDef" class="sticky-header"></tr>
         <tr mat-row [ngClass]="{'disqualified': getCheckPointCheckTimeExpired(row.id)}"
-            *matRowDef="let row; columns: dataTableBodyDef;"></tr>
+            *matRowDef="let row; columns: dataTableBodyDef;"
+            (click)="row.open = !row.open"></tr>
       </table>
     </div>
   </mat-dialog-content>

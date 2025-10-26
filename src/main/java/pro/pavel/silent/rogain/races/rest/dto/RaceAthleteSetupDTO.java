@@ -17,6 +17,9 @@ import lombok.Setter;
 @Schema(description = "Участник соревнования")
 public class RaceAthleteSetupDTO {
 
+    @Schema(description = "Идентификатор", requiredMode = REQUIRED)
+    private Long id;
+
     @Schema(description = "Участник", requiredMode = REQUIRED)
     private Long athleteId;
 

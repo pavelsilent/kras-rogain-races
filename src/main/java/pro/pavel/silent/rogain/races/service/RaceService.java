@@ -17,7 +17,6 @@ import pro.pavel.silent.rogain.races.data.RaceAthleteGroupRepository;
 import pro.pavel.silent.rogain.races.data.RaceAthleteRepository;
 import pro.pavel.silent.rogain.races.data.RaceFormatAthleteGroupRepository;
 import pro.pavel.silent.rogain.races.data.RaceFormatCheckPointRepository;
-import pro.pavel.silent.rogain.races.data.RaceFormatFileRepository;
 import pro.pavel.silent.rogain.races.data.RaceFormatRepository;
 import pro.pavel.silent.rogain.races.data.RaceRepository;
 import pro.pavel.silent.rogain.races.domain.enumeration.RaceAthleteState;
@@ -56,8 +55,6 @@ public class RaceService {
     private final RaceFormatAthleteGroupRepository raceFormatAthleteGroupRepository;
     private final RaceAthleteGroupRepository raceAthleteGroupRepository;
     private final RaceFormatCheckPointRepository raceFormatCheckPointRepository;
-    private final FileService fileService;
-    private final RaceFormatFileRepository raceFormatFileRepository;
 
     public Race createRace(RaceSetupDTO dto) {
         Race race = new Race();
@@ -66,8 +63,8 @@ public class RaceService {
         return raceRepository.save(race);
     }
 
-    public Race updateRace(RaceSetupDTO dto) {
-        Race race = raceQueryService.getRaceById(dto.getId());
+    public Race updateRace(Long raceId, RaceSetupDTO dto) {
+        Race race = raceQueryService.getRaceById(raceId);
         fillRace(race, dto);
         return raceRepository.save(race);
     }
@@ -83,13 +80,65 @@ public class RaceService {
     public RaceFormat addRaceFormat(Long raceId, RaceFormatDTO dto) {
         Race race = raceQueryService.getRaceById(raceId);
         RaceFormat raceFormat = new RaceFormat();
-        raceFormat.setState(RaceState.DRAFT);
-        raceFormat.setViewToken(UUID.randomUUID().toString());
-        raceFormat.setEditToken(UUID.randomUUID().toString());
         fillRaceFormat(raceFormat, race, dto);
+        return raceFormat;
+    }
+
+    public RaceFormat editRaceFormat(Long raceId, Long raceFormatId, RaceFormatDTO dto) {
+        RaceFormat raceFormat = raceQueryService.getRaceFormatById(raceFormatId);
+        fillRaceFormat(raceFormat, raceFormat.getRace(), dto);
+        return raceFormat;
+    }
+
+    public RaceFormat fillRaceFormat(RaceFormat raceFormat, Race race, RaceFormatDTO dto) {
+        boolean isItNewRaceFormat = Objects.isNull(raceFormat.getId());
+
+        if (isItNewRaceFormat) {
+            raceFormat.setRace(race);
+            raceFormat.setState(RaceState.DRAFT);
+            raceFormat.setViewToken(UUID.randomUUID().toString());
+            raceFormat.setEditToken(UUID.randomUUID().toString());
+        }
+
+        raceFormat.setName(dto.getName());
+        raceFormat.setDescription(dto.getDescription());
+        raceFormat.setType(RaceFormatType.valueOf(dto.getType()));
+        raceFormat.setStartTime(dto.getStartTime());
+        raceFormat.setFinishTime(dto.getFinishTime());
         raceFormatRepository.save(raceFormat);
 
-        addRaceFormatAthleteGroups(raceFormat, dto.getAthleteGroups());
+        if (!isItNewRaceFormat) {
+            List<AthleteGroup> actual = dto.getAthleteGroups().stream()
+                                           .map(AthleteGroupDTO::getId)
+                                           .map(athleteQueryService::getAthleteGroupById)
+                                           .toList();
+
+            List<AthleteGroup> existed = raceQueryService.getRaceFormatAthleteGroups(
+                raceFormat).stream().map(RaceFormatAthleteGroup::getAthleteGroup).toList();
+
+            List<AthleteGroup> newGroups =
+                actual.stream()
+                      .filter(
+                          actualGroup -> existed.stream()
+                                                .filter(existedGroup -> existedGroup.getId()
+                                                                                    .equals(actualGroup.getId()))
+                                                .findFirst().isEmpty())
+                      .toList();
+
+            List<AthleteGroup> oldGroups =
+                existed.stream()
+                       .filter(
+                           existedGroup -> actual.stream()
+                                                 .filter(actualGroup -> actualGroup.getId()
+                                                                                   .equals(existedGroup.getId()))
+                                                 .findFirst().isEmpty())
+                       .toList();
+
+            addRaceFormatAthleteGroups(raceFormat, newGroups);
+            deleteRaceFormatAthleteGroups(raceFormat, oldGroups);
+        } else {
+            addRaceFormatAthleteGroupsDTOs(raceFormat, dto.getAthleteGroups());
+        }
 
         return raceFormat;
     }
@@ -100,10 +149,10 @@ public class RaceService {
         List<AthleteGroupDTO> athleteGroups
     ) {
         RaceFormat raceFormat = raceQueryService.getRaceFormatById(raceFormatId);
-        return addRaceFormatAthleteGroups(raceFormat, athleteGroups);
+        return addRaceFormatAthleteGroupsDTOs(raceFormat, athleteGroups);
     }
 
-    public List<RaceFormatAthleteGroup> addRaceFormatAthleteGroups(
+    public List<RaceFormatAthleteGroup> addRaceFormatAthleteGroupsDTOs(
         RaceFormat raceFormat,
         List<AthleteGroupDTO> athleteGroups
     ) {
@@ -114,17 +163,34 @@ public class RaceService {
                        .orElseGet(Collections::emptyList);
     }
 
-    private void fillRaceFormat(RaceFormat raceFormat, Race race, RaceFormatDTO dto) {
-        raceFormat.setRace(race);
-        raceFormat.setName(dto.getName());
-        raceFormat.setDescription(dto.getDescription());
-        raceFormat.setType(RaceFormatType.valueOf(dto.getType()));
-        raceFormat.setStartTime(dto.getStartTime());
-        raceFormat.setFinishTime(dto.getFinishTime());
+    public List<RaceFormatAthleteGroup> addRaceFormatAthleteGroups(
+        RaceFormat raceFormat,
+        List<AthleteGroup> athleteGroups
+    ) {
+        return Optional.ofNullable(athleteGroups)
+                       .map(list -> list.stream()
+                                        .map(athleteGroupDTO -> ensureRaceAthleteGroup(raceFormat, athleteGroupDTO))
+                                        .toList())
+                       .orElseGet(Collections::emptyList);
+    }
+
+    public void deleteRaceFormatAthleteGroups(
+        RaceFormat raceFormat,
+        List<AthleteGroup> athleteGroups
+    ) {
+        athleteGroups.forEach(raceAthleteGroupRepository::deleteAllByAthleteGroup);
+        athleteGroups.forEach(athleteGroup -> raceFormatAthleteGroupRepository.deleteAllByRaceFormatAndAthleteGroup(
+            raceFormat,
+            athleteGroup
+        ));
     }
 
     private RaceFormatAthleteGroup ensureRaceAthleteGroup(RaceFormat raceFormat, AthleteGroupDTO dto) {
         AthleteGroup athleteGroup = athleteQueryService.getAthleteGroupById(dto.getId());
+        return ensureRaceAthleteGroup(raceFormat, athleteGroup);
+    }
+
+    private RaceFormatAthleteGroup ensureRaceAthleteGroup(RaceFormat raceFormat, AthleteGroup athleteGroup) {
         return raceQueryService.findRaceFormatAthleteGroup(raceFormat, athleteGroup)
                                .orElseGet(() -> createRaceAthleteGroup(raceFormat, athleteGroup));
     }
@@ -169,6 +235,44 @@ public class RaceService {
         raceAthleteGroupRepository.save(raceAthleteGroup);
 
         return newRaceAthlete;
+    }
+
+    @Transactional
+    public RaceAthlete editRaceAthlete(Long raceId, Long raceFormatId, RaceAthleteSetupDTO dto) {
+        RaceFormat raceFormat = raceQueryService.getRaceFormatById(raceFormatId);
+        Optional<RaceAthlete> raceAthleteBibNumber =
+            raceQueryService.findRaceAthleteByBibNumber(raceFormat, dto.getBibNumber())
+                            .filter(raceAthlete -> !raceAthlete.getId().equals(dto.getId()));
+        if (raceAthleteBibNumber.isPresent()) {
+            throw new RuntimeException("Race athlete with bib number '%s' already exists.".formatted(dto.getBibNumber()));
+        }
+        Athlete athlete = athleteQueryService.getById(dto.getAthleteId());
+        Optional<RaceAthlete> raceAthleteAthlete =
+            raceQueryService.findRaceAthlete(raceFormat, athlete)
+                            .filter(raceAthlete -> !raceAthlete.getId().equals(dto.getId()));
+
+        if (raceAthleteAthlete.isPresent()) {
+            throw new RuntimeException("Race athlete with id '%s' already exists.".formatted(athlete.getId()));
+        }
+
+        RaceAthlete raceAthlete = raceQueryService.getRaceAthlete(dto.getId());
+        raceAthlete.setAthlete(athlete);
+        raceAthlete.setBibNumber(dto.getBibNumber());
+        raceAthleteRepository.save(raceAthlete);
+
+        AthleteGroup athleteGroup = athleteQueryService.getAthleteGroupById(dto.getAthleteGroupId());
+        raceAthleteGroupRepository.deleteAllByRaceAthlete(raceAthlete);
+        RaceAthleteGroup raceAthleteGroup = raceAthleteGroupRepository.findFirstByRaceAthleteAndAthleteGroup(
+                                                                          raceAthlete,
+                                                                          athleteGroup
+                                                                      )
+                                                                      .orElseGet(RaceAthleteGroup::new);
+
+        raceAthleteGroup.setAthleteGroup(athleteGroup);
+        raceAthleteGroup.setRaceAthlete(raceAthlete);
+        raceAthleteGroupRepository.save(raceAthleteGroup);
+
+        return raceAthlete;
     }
 
     @Transactional

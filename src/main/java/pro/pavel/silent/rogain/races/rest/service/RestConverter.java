@@ -180,6 +180,7 @@ public class RestConverter {
                        .orElse(null);
 
         return RaceAthleteDTO.builder()
+                             .id(raceAthlete.getId())
                              .athlete(toDTO(raceAthlete.getAthlete(), isAnonMode(raceAthlete.getRaceFormat())))
                              .bibNumber(raceAthlete.getBibNumber())
                              .state(raceAthlete.getState().name())

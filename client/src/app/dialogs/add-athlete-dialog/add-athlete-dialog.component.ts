@@ -1,11 +1,18 @@
 import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, Inject, inject } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatButton } from '@angular/material/button';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatOption } from '@angular/material/core';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
-import { MatDialog, MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle,
+} from '@angular/material/dialog';
 import { MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
@@ -18,8 +25,12 @@ import { AthleteModel } from '../../models/athlete.model';
 import { CityModel } from '../../models/city.model';
 import { Sex } from '../../models/enums/sex.enum';
 import { RU_DATE_FORMATS } from '../../utils/mat-date-formats';
-import { parseLocalDate, resolveEnumOrDefault } from '../../utils/utils';
+import { exists, localDateToMoment, parseLocalDate, resolveEnumOrDefault } from '../../utils/utils';
 import { AddCityDialogComponent } from '../add-city-dialog/add-city-dialog.component';
+
+export interface AddAthleteDialogConfig {
+  athlete?: AthleteModel;
+}
 
 @Component({
              selector: 'app-add-athlete-dialog',
@@ -59,23 +70,31 @@ export class AddAthleteDialogComponent {
   sexes: Sex[] = Sex.store.values();
   citiesRefresh$: Subject<void> = new Subject<void>();
   cities$: Observable<CityModel[]>;
-  cityControl = new FormControl(undefined, Validators.required);
-
-  form = this.fb.group({
-                         lastName: ['', Validators.required],
-                         firstName: ['', Validators.required],
-                         middleName: [''],
-                         birthDate: [undefined],
-                         sex: [undefined, Validators.required],
-                         city: this.cityControl,
-                         club: [''],
-                       });
+  cityControl: FormControl;
+  form: FormGroup;
+  title: string;
 
   constructor(
     private service: AthletesService,
-    private dictionaryService: DictionaryService,
+    dictionaryService: DictionaryService,
     private dialog: MatDialog,
+    @Inject(MAT_DIALOG_DATA) public data: AddAthleteDialogConfig,
   ) {
+    this.title = (exists(data?.athlete) ? 'Редактировать' : 'Добавить') + ' атлета';
+    this.cityControl = new FormControl(exists(data.athlete) ? data.athlete?.city?.id : undefined, Validators.required);
+    this.form = this.fb.group({
+                                lastName: [exists(data.athlete) ? data.athlete?.lastName : '', Validators.required],
+                                firstName: [exists(data.athlete) ? data.athlete?.firstName : '', Validators.required],
+                                middleName: [exists(data.athlete) ? data.athlete?.middleName : ''],
+                                birthDate: [
+                                  exists(data.athlete)
+                                  ? localDateToMoment(data.athlete?.birthDate!)
+                                  : undefined,
+                                ],
+                                sex: [exists(data.athlete) ? data.athlete?.sex?.code : undefined, Validators.required],
+                                city: this.cityControl,
+                                club: [exists(data.athlete) ? data.athlete.club : ''],
+                              });
     this.cities$ = this.citiesRefresh$.pipe(
       startWith(null),
       switchMap(data => dictionaryService.getCities()),
@@ -112,8 +131,14 @@ export class AddAthleteDialogComponent {
       model.club = formValue.club || undefined;
       model.city = Option.of(formValue.city).map(id => CityModel.of(id!)).getOrElse(undefined);
 
-      this.service.createAthlete(model)
-          .then(value => this.dialogRef.close(value));
+      if (exists(this.data.athlete)) {
+        model.id = this.data.athlete.id;
+        this.service.editAthlete(model)
+            .then(value => this.dialogRef.close(value));
+      } else {
+        this.service.createAthlete(model)
+            .then(value => this.dialogRef.close(value));
+      }
     }
   }
 

@@ -3,6 +3,7 @@ import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
 import { MatInput, MatInputModule, MatLabel } from '@angular/material/input';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortHeader, MatSortModule } from '@angular/material/sort';
@@ -67,6 +68,7 @@ import { RaceFormatPageService } from '../race-format-page.service';
                MatDivider,
                BoolPipe,
                RussianDateTimePipe,
+               MatIcon,
              ],
              templateUrl: './race-format-check-points-tab.component.html',
              standalone: true,
@@ -85,6 +87,7 @@ export class RaceFormatCheckPointsTabComponent
     'totalDistance',
     'checkDuration',
     'leaderDuration',
+    'edit',
   ];
   dataSource = new MatTableDataSource<RaceCheckPointModel>();
 

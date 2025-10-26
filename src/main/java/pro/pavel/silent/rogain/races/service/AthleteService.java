@@ -24,7 +24,7 @@ public class AthleteService {
         return athleteRepository.save(athlete);
     }
 
-    public Athlete updateAthlete(AthleteDTO dto) {
+    public Athlete updateAthlete(Long id, AthleteDTO dto) {
         Athlete athlete = athleteQueryService.getById(dto.getId());
         fillAthlete(athlete, dto);
         return athleteRepository.save(athlete);

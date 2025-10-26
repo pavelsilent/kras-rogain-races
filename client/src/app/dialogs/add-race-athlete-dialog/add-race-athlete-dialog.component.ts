@@ -1,6 +1,6 @@
 import { AsyncPipe, NgForOf } from '@angular/common';
 import { Component, inject, Inject } from '@angular/core';
-import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
@@ -16,19 +16,21 @@ import { MatFormField, MatSuffix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput, MatLabel } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
+import { Option } from 'funfix-core';
 import { firstValueFrom, lastValueFrom, map, Observable, startWith, Subject, switchMap } from 'rxjs';
 import { RaceService } from '../../components/race/race.service';
 import { AthleteGroupModel } from '../../models/athlete-group.model';
 import { AthleteModel } from '../../models/athlete.model';
 import { RaceAthleteSetupModel } from '../../models/race-athlete-setup.model';
-import { RaceFormatModel } from '../../models/race-format.model';
-import { exists } from '../../utils/utils';
+import { RaceAthleteModel } from '../../models/race-athlete.model';
+import { exists, hasLength } from '../../utils/utils';
 import { SelectAthleteDialog } from '../select-athlete-dialog/select-athlete-dialog';
 import { SelectAthleteGroupDialog } from '../select-athlete-group-dialog/select-athlete-group-dialog';
 
 export interface AddRaceAthleteDialogConfig {
   raceId: number;
   formatId: number,
+  raceAthlete?: RaceAthleteModel
 }
 
 @Component({
@@ -60,26 +62,40 @@ export interface AddRaceAthleteDialogConfig {
 export class AddRaceAthleteDialogComponent {
   fb = inject(FormBuilder);
   dialogRef = inject(MatDialogRef<AddRaceAthleteDialogComponent>);
-  format$: Observable<RaceFormatModel>;
   athleteGroups$: Observable<AthleteGroupModel[]>;
   raceAthletesIds$: Observable<number[]>;
   raceAthletesRefresh$: Subject<void> = new Subject();
   athleteGroupsRefresh$: Subject<void> = new Subject();
-
-  athleteControl = new FormControl(undefined, Validators.required);
-  athleteGroupControl = new FormControl(undefined, Validators.required);
-
-  form = this.fb.group({
-                         bibNumber: new FormControl(undefined, Validators.required),
-                         athlete: this.athleteControl,
-                         athleteGroup: this.athleteGroupControl,
-                       });
+  athleteControl: FormControl;
+  athleteGroupControl: FormControl;
+  form: FormGroup;
+  title: string;
 
   constructor(
     private service: RaceService,
     private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: AddRaceAthleteDialogConfig,
   ) {
+    this.title = (exists(data.raceAthlete) ? 'Редактировать' : 'Добавить') + ' атлета';
+    this.athleteControl = new FormControl(
+      exists(data.raceAthlete) ? data.raceAthlete.athlete : undefined,
+      Validators.required,
+    );
+    this.athleteControl.setValue(exists(data.raceAthlete) ? data.raceAthlete.athlete : undefined);
+    this.athleteGroupControl = new FormControl(exists(data.raceAthlete)
+                                               ? Option.of(data.raceAthlete.groups.map(value => value.id))
+                                                       .filter(data => hasLength(data))
+                                                       .map(data => data[0])
+                                                       .getOrElse(undefined)
+                                               : undefined, Validators.required);
+
+    this.form = this.fb.group({
+                                bibNumber: new FormControl(exists(data.raceAthlete)
+                                                           ? data.raceAthlete.bibNumber
+                                                           : undefined, Validators.required),
+                                athlete: this.athleteControl,
+                                athleteGroup: this.athleteGroupControl,
+                              });
     // @ts-ignore
     this.athleteGroups$ = this.athleteGroupsRefresh$.pipe(
       startWith(null),
@@ -102,8 +118,15 @@ export class AddRaceAthleteDialogComponent {
       model.bibNumber = formValue.bibNumber!;
       model.athlete = formValue.athlete!;
       model.athleteGroupId = formValue.athleteGroup!;
-      this.service.addRaceAthlete(this.data.raceId, this.data.formatId, model)
-          .then(value => this.dialogRef.close(value));
+
+      if (exists(this.data.raceAthlete)) {
+        model.id = this.data.raceAthlete.id;
+        this.service.editRaceAthlete(this.data.raceId, this.data.formatId, model)
+            .then(value => this.dialogRef.close(value));
+      } else {
+        this.service.addRaceAthlete(this.data.raceId, this.data.formatId, model)
+            .then(value => this.dialogRef.close(value));
+      }
     }
   }
 

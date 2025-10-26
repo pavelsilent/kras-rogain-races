@@ -55,6 +55,7 @@
     <ng-container matColumnDef="delete">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Действия</th>
       <td mat-cell *matCellDef="let item">
+        <mat-icon (click)="onEdit(item)">edit</mat-icon>
         <mat-icon (click)="onDelete(item)">delete</mat-icon>
       </td>
     </ng-container>

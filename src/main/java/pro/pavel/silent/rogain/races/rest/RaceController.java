@@ -10,6 +10,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,6 +47,7 @@ import pro.pavel.silent.rogain.races.rest.service.RestConverter;
 import pro.pavel.silent.rogain.races.service.RaceQueryService;
 import pro.pavel.silent.rogain.races.service.RaceService;
 
+@Transactional
 @RestController
 @RequestMapping("/api/races")
 @Tag(name = "RaceController", description = "API для работы с соревнованиями")
@@ -73,6 +75,14 @@ public class RaceController {
         return ResponseEntity.ok(race.getId());
     }
 
+    @PutMapping("/{id}")
+    @Operation(summary = "Редактировать соревнование")
+    @ApiResponse(responseCode = "200", description = "Данные о соревновании")
+    public ResponseEntity<Long> editRace(@PathVariable Long id, @RequestBody RaceSetupDTO dto) {
+        Race race = raceService.updateRace(id, dto);
+        return ResponseEntity.ok(race.getId());
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "Получить соревнование по ID")
     public ResponseEntity<RaceDTO> getRaceById(@PathVariable Long id) {
@@ -90,6 +100,18 @@ public class RaceController {
     @ApiResponse(responseCode = "200", description = "Данные о новом формате")
     public ResponseEntity<Long> addRaceFormat(@PathVariable Long id, @RequestBody RaceFormatDTO dto) {
         RaceFormat raceFormat = raceService.addRaceFormat(id, dto);
+        return ResponseEntity.ok(raceFormat.getId());
+    }
+
+    @PutMapping("/{id}/formats/{formatId}")
+    @Operation(summary = "Редактировать формат для соревнования")
+    @ApiResponse(responseCode = "200", description = "Данные о формате")
+    public ResponseEntity<Long> editRaceFormat(
+        @PathVariable Long id,
+        @PathVariable Long formatId,
+        @RequestBody RaceFormatDTO dto
+    ) {
+        RaceFormat raceFormat = raceService.editRaceFormat(id, formatId, dto);
         return ResponseEntity.ok(raceFormat.getId());
     }
 
@@ -136,6 +158,17 @@ public class RaceController {
         @RequestBody RaceAthleteSetupDTO dto
     ) {
         RaceAthlete raceAthlete = raceService.addRaceAthlete(id, formatId, dto);
+        return ResponseEntity.ok(raceAthlete.getId());
+    }
+
+    @PutMapping("/{id}/formats/{formatId}/athletes")
+    @Operation(summary = "Редактировать атлета в стартовом листе")
+    public ResponseEntity<Long> editRaceFormatAthlete(
+        @PathVariable Long id,
+        @PathVariable Long formatId,
+        @RequestBody RaceAthleteSetupDTO dto
+    ) {
+        RaceAthlete raceAthlete = raceService.editRaceAthlete(id, formatId, dto);
         return ResponseEntity.ok(raceAthlete.getId());
     }
 

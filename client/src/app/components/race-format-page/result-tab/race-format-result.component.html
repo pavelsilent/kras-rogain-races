@@ -1,4 +1,4 @@
-<h3 class="header" *ngIf="format as raceFormat">
+<h3 class="header" *ngIf="format$ | async as raceFormat">
   <div class="header-container">
     <span>{{
         raceFormat.raceName + ' / ' + raceFormat.name + ' (' + (raceFormat.startDateTime | toRusDateTime) + ')'
@@ -217,7 +217,7 @@
         <ng-container>
           <div class="athlete-data-container">
             <div class="athlete-data">
-              <span>{{ getShortFIO(row) }} </span> <span class="underline">{{
+              <span>{{ getShortFIO(row, format?.isAnon!) }} </span> <span class="underline">{{
                 '(' + row.state.name + ')'
               }}</span>
               <!--              <br>-->

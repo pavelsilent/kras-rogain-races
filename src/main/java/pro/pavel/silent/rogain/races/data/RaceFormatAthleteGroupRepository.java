@@ -16,4 +16,6 @@ public interface RaceFormatAthleteGroupRepository extends EntityRepository<RaceF
         AthleteGroup athleteGroup
     );
 
+    void deleteAllByRaceFormatAndAthleteGroup(RaceFormat raceFormat, AthleteGroup athleteGroup);
+
 }

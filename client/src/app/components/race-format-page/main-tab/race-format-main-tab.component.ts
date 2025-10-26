@@ -4,8 +4,9 @@ import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Option } from 'funfix-core';
-import { lastValueFrom, map, Observable, startWith, Subject, switchMap } from 'rxjs';
+import { firstValueFrom, lastValueFrom, map, Observable, startWith, Subject, switchMap, tap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
+import { AddRaceFormatDialogComponent } from '../../../dialogs/add-race-format-dialog/add-race-format-dialog.component';
 import { AddFileDialogComponent } from '../../../dialogs/add-race-format-file-dialog/add-file-dialog.component';
 import { RaceFormatFileType } from '../../../models/enums/race-format-file-type.enum';
 import { RaceFormatModel } from '../../../models/race-format.model';
@@ -14,6 +15,7 @@ import { BoolPipe } from '../../../utils/list.pipe';
 import { RussianDateTimePipe } from '../../../utils/russian-date-time.pipe';
 import { RussianDatePipe } from '../../../utils/russian-date.pipe';
 import { RaceService } from '../../race/race.service';
+import { RaceFormatPageService } from '../race-format-page.service';
 
 @Component({
              selector: 'app-race-format-main-tab',
@@ -91,5 +93,21 @@ export class RaceFormatMainTabComponent {
 
     lastValueFrom(dialogRef.afterClosed())
       .then(value => this.refresh$.next());
+  }
+
+  onEditRaceFormat() {
+    firstValueFrom(this.raceFormat$)
+      .then(raceFormat => this.dialog.open(AddRaceFormatDialogComponent, {
+        data: {
+          raceId: this.id,
+          raceFormat: raceFormat,
+        },
+        width: '500px',
+        disableClose: true,
+      }))
+      .then(dialogRef => dialogRef.afterClosed())
+      .then(value => lastValueFrom(value))
+      .then(value => this.refresh$.next());
+
   }
 }

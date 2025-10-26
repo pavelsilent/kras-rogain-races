@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -21,13 +22,13 @@ import { RaceService } from '../race/race.service';
              styleUrl: './race-list.component.css',
              imports: [
                MatTableModule, MatPaginatorModule, MatSortModule, MatFormFieldModule, MatInputModule,
-               RouterLink, MatButton, RussianDatePipe,
+               RouterLink, MatButton, RussianDatePipe, MatIcon,
              ],
            })
 export class RaceListComponent
   implements AfterViewInit {
 
-  displayedColumns: string[] = ['name', 'type', 'date', 'city', 'state'];
+  displayedColumns: string[] = ['name', 'type', 'date', 'city', 'state', 'edit'];
   dataSource = new MatTableDataSource<RaceModel>();
   refresh$: Subject<void> = new Subject<void>();
 
@@ -54,12 +55,26 @@ export class RaceListComponent
   onAdd() {
     const dialogRef =
       this.dialog.open(AddRaceDialogComponent, {
+        data: {},
         width: '500px',
         disableClose: true,
       });
 
     lastValueFrom(dialogRef.afterClosed())
       .then(value => this.refresh$.next());
+  }
 
+  onEdit(row: RaceModel) {
+    const dialogRef =
+      this.dialog.open(AddRaceDialogComponent, {
+        data: {
+          race: row,
+        },
+        width: '500px',
+        disableClose: true,
+      });
+
+    lastValueFrom(dialogRef.afterClosed())
+      .then(value => this.refresh$.next());
   }
 }

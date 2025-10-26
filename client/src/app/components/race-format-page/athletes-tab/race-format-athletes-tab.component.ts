@@ -115,6 +115,23 @@ export class RaceFormatAthletesTabComponent
       .then(value => this.refresh$.next());
   }
 
+
+  onEdit(row: RaceAthleteModel) {
+    const dialogRef =
+      this.dialog.open(AddRaceAthleteDialogComponent, {
+        width: '500px',
+        disableClose: true,
+        data: {
+          raceId: this.id,
+          formatId: this.formatId,
+          raceAthlete: row
+        },
+      });
+
+    lastValueFrom(dialogRef.afterClosed())
+      .then(value => this.refresh$.next());
+  }
+
   onDelete(row: RaceAthleteModel) {
     this.service.deleteRaceAthlete(this.id, this.formatId, row)
         .then(value => this.refresh$.next());

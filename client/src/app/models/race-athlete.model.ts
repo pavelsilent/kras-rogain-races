@@ -10,6 +10,7 @@ import { RaceAthleteGroupModel } from './race-athlete-group.model';
 import { RaceCheckPointModel } from './race-check-point.model';
 
 export class RaceAthleteModel {
+  id: number;
   bibNumber: number;
   athlete: AthleteModel;
   state: AthleteState;
@@ -35,6 +36,7 @@ export class RaceAthleteModel {
 
   constructor(dto?: RaceAthleteDTO) {
     if (exists(dto)) {
+      this.id = dto.id;
       this.bibNumber = dto.bibNumber;
       this.athlete = AthleteModel.fromDTO(dto.athlete);
       this.state = resolveEnumOrDefault(dto.state, AthleteState.store, AthleteState.NOT_DATA);

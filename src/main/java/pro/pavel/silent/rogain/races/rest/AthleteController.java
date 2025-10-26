@@ -53,12 +53,13 @@ public class AthleteController {
         return ResponseEntity.ok(athlete.getId());
     }
 
-    @PutMapping
-    @Operation(summary = "Сохранить атлета")
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Редактировать атлета")
     @ApiResponse(responseCode = "200", description = "Данные атлета")
-    public ResponseEntity<AthleteDTO> updateAthlete(@RequestBody AthleteDTO dto) {
-        Athlete athlete = athleteService.updateAthlete(dto);
-        return ResponseEntity.ok(restConverter.toDTO(athlete));
+    public ResponseEntity<Long> updateAthlete(@PathVariable Long id, @RequestBody AthleteDTO dto) {
+        Athlete athlete = athleteService.updateAthlete(id, dto);
+        return ResponseEntity.ok(athlete.getId());
     }
 
     @GetMapping("/{id}")

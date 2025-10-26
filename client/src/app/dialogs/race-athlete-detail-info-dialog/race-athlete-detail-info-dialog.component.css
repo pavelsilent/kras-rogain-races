@@ -60,17 +60,18 @@ td {
 .control-time {
   color: red;
 }
+.cell-wrapper {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+  align-items: center;
+  justify-content: center;
+}
 
-.race-action {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  padding-left: 10px;
-  margin-top: 2px;
-  padding: 2px 8px;
-  font-size: 12px;
-  min-width: 40px;
-  line-height: 15px;
-  height: 38px;
-  white-space: wrap;
+.cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }

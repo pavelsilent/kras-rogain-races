@@ -90,6 +90,13 @@ public class RaceQueryService {
                                         "Not found race athlete with id: " + athlete.getId()));
     }
 
+
+    public RaceAthlete getRaceAthlete(Long id) {
+        return raceAthleteRepository.findById(id)
+                                    .orElseThrow(() -> new RuntimeException(
+                                        "Not found race athlete link with id: " + id));
+    }
+
     public Optional<RaceFormatCheckPoint> findRaceFormatCheckPoint(Long id) {
         return raceFormatCheckPointRepository.findById(id);
     }
