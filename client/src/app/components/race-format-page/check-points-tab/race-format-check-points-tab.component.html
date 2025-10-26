@@ -35,8 +35,13 @@
     </ng-container>
 
     <ng-container matColumnDef="totalDistance">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Общая дистанция</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Общая дистанция, км</th>
       <td mat-cell *matCellDef="let item"> {{ item.totalDistance }} км</td>
+    </ng-container>
+
+    <ng-container matColumnDef="totalAltitude">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Высота, м</th>
+      <td mat-cell *matCellDef="let item"> {{ item.totalAltitude }} м</td>
     </ng-container>
 
     <ng-container matColumnDef="checkDuration">

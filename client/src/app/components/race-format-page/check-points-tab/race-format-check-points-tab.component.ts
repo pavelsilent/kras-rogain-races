@@ -85,6 +85,7 @@ export class RaceFormatCheckPointsTabComponent
     'name',
     'description',
     'totalDistance',
+    'totalAltitude',
     'checkDuration',
     'leaderDuration',
     'edit',

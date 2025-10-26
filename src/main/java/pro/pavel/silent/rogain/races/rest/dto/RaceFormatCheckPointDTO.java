@@ -34,6 +34,21 @@ public class RaceFormatCheckPointDTO {
     @Schema(description = "Общая дистанция от старта")
     private BigDecimal totalDistance;
 
+    @Schema(description = "Расстояние от пред. точки")
+    private BigDecimal diffDistance;
+
+    @Schema(description = "Скорость от пред. точки")
+    private BigDecimal diffSpeed;
+
+    @Schema(description = "Абс. высота")
+    private BigDecimal totalAltitude;
+
+    @Schema(description = "Набор")
+    private BigDecimal diffAscent;
+
+    @Schema(description = "Сброс")
+    private BigDecimal diffDescent;
+
     @Schema(description = "Контрольное время от старта")
     private String checkDuration;
 

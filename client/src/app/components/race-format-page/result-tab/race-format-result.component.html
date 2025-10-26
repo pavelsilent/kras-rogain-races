@@ -102,7 +102,7 @@
     <!-- Третья строка заголовка-->
     <!-- Расстояние -->
     <ng-container matColumnDef="distanceHeader">
-      <th *matHeaderCellDef mat-header-cell class="bold" colspan="2">Расстояние</th>
+      <th *matHeaderCellDef mat-header-cell class="bold" colspan="2">Расстояние, км</th>
     </ng-container>
 
     <ng-container matColumnDef="emptyHeader">
@@ -114,7 +114,59 @@
     </ng-container>
 
     <ng-container matColumnDef="emptyHeaderRowSpan4">
-      <th *matHeaderCellDef mat-header-cell style="background-color: #faf9fc" rowspan="4"></th>
+      <th *matHeaderCellDef mat-header-cell style="background-color: #faf9fc" rowspan="8"></th>
+    </ng-container>
+
+    <!-- Расстояние - диффы -->
+    <ng-container matColumnDef="distanceDiffHeader">
+      <th *matHeaderCellDef mat-header-cell class="bold" colspan="2">Отдельные участки, км</th>
+    </ng-container>
+
+    <ng-container matColumnDef="emptyDiffHeader">
+      <th *matHeaderCellDef mat-header-cell></th>
+    </ng-container>
+
+    <ng-container *ngFor="let cp of checkPoints" [matColumnDef]="'checkPointDistanceDiff' + cp.id">
+      <th *matHeaderCellDef mat-header-cell class="center bold">{{ cp.diffDistance }}</th>
+    </ng-container>
+
+    <!-- Подъем -->
+    <ng-container matColumnDef="ascentHeader">
+      <th *matHeaderCellDef mat-header-cell class="bold" colspan="2">Набор, м</th>
+    </ng-container>
+
+    <ng-container matColumnDef="emptyAscentHeader">
+      <th *matHeaderCellDef mat-header-cell></th>
+    </ng-container>
+
+    <ng-container *ngFor="let cp of checkPoints" [matColumnDef]="'checkPointAscent' + cp.id">
+      <th *matHeaderCellDef mat-header-cell class="center bold">{{ cp.diffAscent }}</th>
+    </ng-container>
+
+    <!-- Спуск -->
+    <ng-container matColumnDef="descentHeader">
+      <th *matHeaderCellDef mat-header-cell class="bold" colspan="2">Спуск, м</th>
+    </ng-container>
+
+    <ng-container matColumnDef="emptyDescentHeader">
+      <th *matHeaderCellDef mat-header-cell></th>
+    </ng-container>
+
+    <ng-container *ngFor="let cp of checkPoints" [matColumnDef]="'checkPointDescent' + cp.id">
+      <th *matHeaderCellDef mat-header-cell class="center bold">{{ cp.diffDescent }}</th>
+    </ng-container>
+
+    <!-- Скорость -->
+    <ng-container matColumnDef="speedHeader">
+      <th *matHeaderCellDef mat-header-cell class="bold" colspan="2">Скорость, км/ч</th>
+    </ng-container>
+
+    <ng-container matColumnDef="emptySpeedHeader">
+      <th *matHeaderCellDef mat-header-cell></th>
+    </ng-container>
+
+    <ng-container *ngFor="let cp of checkPoints" [matColumnDef]="'checkPointSpeed' + cp.id">
+      <th *matHeaderCellDef mat-header-cell class="center bold">{{ cp.diffSpeed }}</th>
     </ng-container>
 
     <!-- Четвертая строка заголовка-->
@@ -205,7 +257,7 @@
     <!-- Номер участника -->
     <ng-container matColumnDef="bib">
       <th *matHeaderCellDef mat-header-cell></th>
-      <td *matCellDef="let row" class="center" mat-cell rowspan="2">
+      <td *matCellDef="let row" class="center" mat-cell rowspan="3">
         <ng-container>{{ row.bibNumber }}</ng-container>
       </td>
     </ng-container>
@@ -213,7 +265,7 @@
     <!-- Name -->
     <ng-container matColumnDef="name">
       <th *matHeaderCellDef mat-header-cell></th>
-      <td *matCellDef="let row" mat-cell rowspan="2" class="athlete-name-column">
+      <td *matCellDef="let row" mat-cell rowspan="3" class="athlete-name-column">
         <ng-container>
           <div class="athlete-data-container">
             <div class="athlete-data">
@@ -270,13 +322,13 @@
     <!-- Absolute -->
     <ng-container matColumnDef="absolutePlace">
       <th *matHeaderCellDef mat-header-cell></th>
-      <td *matCellDef="let row" mat-cell class="abs-place-column center" rowspan="2">{{ row.absolutePlace }}</td>
+      <td *matCellDef="let row" mat-cell class="abs-place-column center" rowspan="3">{{ row.absolutePlace }}</td>
     </ng-container>
 
     <!-- Group -->
     <ng-container matColumnDef="groupPlace">
       <th *matHeaderCellDef mat-header-cell></th>
-      <td *matCellDef="let row" mat-cell class="place-column center" rowspan="2">
+      <td *matCellDef="let row" mat-cell class="place-column center" rowspan="3">
         <span *ngFor="let group of row.groupPlaces" [ngStyle]="{'color': group.group.sex.color}">{{
             group.group.name + ': ' + group.place
           }}<br></span>
@@ -295,10 +347,28 @@
       </td>
     </ng-container>
 
+    <ng-container matColumnDef="speed-detail">
+      <td *matCellDef="let row" mat-cell class="speed-column">
+        <div class="left diff-time">Средняя скорость, км/ч</div>
+      </td>
+    </ng-container>
+
+    <ng-container *ngFor="let cp of checkPoints" [matColumnDef]="'athleteCheckPointSpeed' + cp.id">
+      <td mat-cell *matCellDef="let row" class="checkpoint-column center">
+        <span class="diff-time">{{ getCheckPointSpeed(row, cp.id) }}</span>
+      </td>
+    </ng-container>
+
     <!-- ===== Header rows ===== -->
     <tr mat-header-row class="one-line-row center athlete-row sticky-header" *matHeaderRowDef="topHeaderDef"></tr>
     <tr mat-header-row class="athlete-row  sticky-header-2" *matHeaderRowDef="checkPointsHeaderDef"></tr>
     <tr mat-header-row class="one-line-row header-row sticky-header-3" *matHeaderRowDef="raceDistanceHeaderDef"></tr>
+    <tr mat-header-row
+        class="one-line-row header-row sticky-header-3"
+        *matHeaderRowDef="raceDistanceDiffHeaderDef"></tr>
+    <tr mat-header-row class="one-line-row header-row sticky-header-3" *matHeaderRowDef="ascentHeaderDef"></tr>
+    <tr mat-header-row class="one-line-row header-row sticky-header-3" *matHeaderRowDef="descentHeaderDef"></tr>
+    <tr mat-header-row class="one-line-row header-row sticky-header-3" *matHeaderRowDef="raceSpeedHeaderDef"></tr>
     <tr mat-header-row
         class="two-line-row header-row control-row sticky-header-4"
         *matHeaderRowDef="raceCheckTimeHeaderDef"></tr>
@@ -315,6 +385,10 @@
         class="diff-time-row one-line-row athlete-row"
         [ngClass]="{'finished': row.isFinished(), 'disqualified': row.isDisqualified() }"
         *matRowDef="let row; columns: dataTableDiffDef"></tr>
+    <tr mat-row
+        class="diff-time-row one-line-row athlete-row"
+        [ngClass]="{'finished': row.isFinished(), 'disqualified': row.isDisqualified() }"
+        *matRowDef="let row; columns: dataTableSpeedDef"></tr>
   </table>
 </div>
 <br>

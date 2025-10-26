@@ -3,6 +3,7 @@ package pro.pavel.silent.rogain.races.rest.dto;
 import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,6 +33,9 @@ public class RaceAthleteCheckPointDTO {
 
     @Schema(description = "Разница по времени с предыдущей контрольной точкой")
     private String prevCheckPointDiffDuration;
+
+    @Schema(description = "Скорость от пред. точки")
+    private BigDecimal diffSpeed;
 
     @Schema(description = "Точка пройдена?", requiredMode = REQUIRED)
     private Boolean passed;

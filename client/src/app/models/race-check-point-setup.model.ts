@@ -6,6 +6,7 @@ export class RaceCheckPointSetupModel {
   name: string;
   description?: string;
   totalDistance?: number;
+  totalAltitude?: number;
   checkDuration?: string;
   leaderDuration?: string;
 
@@ -15,6 +16,7 @@ export class RaceCheckPointSetupModel {
       name: this.name,
       description: this.description,
       totalDistance: this.totalDistance,
+      totalAltitude: this.totalAltitude,
       orderNumber: this.orderNumber,
       checkDuration: this.checkDuration,
       leaderDuration: this.leaderDuration,

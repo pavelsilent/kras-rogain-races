@@ -125,6 +125,10 @@ export class RaceFormatResultComponent
 
   checkPointsHeaderDef: string[] = [];
   raceDistanceHeaderDef: string[] = [];
+  raceDistanceDiffHeaderDef: string[] = [];
+  ascentHeaderDef: string[] = [];
+  descentHeaderDef: string[] = [];
+  raceSpeedHeaderDef: string[] = [];
   raceCheckTimeHeaderDef: string[] = [];
   raceLeaderHeaderDef: string[] = [];
   raceLeaderDiffTimeHeaderDef: string[] = [];
@@ -138,6 +142,7 @@ export class RaceFormatResultComponent
 
   dataTableBodyDef: string[] = [];
   dataTableDiffDef: string[] = [];
+  dataTableSpeedDef: string[] = [];
 
   membersDataSource = new MatTableDataSource<RaceAthleteModel>();
   protected readonly raceStates = RaceState;
@@ -179,6 +184,31 @@ export class RaceFormatResultComponent
         'emptyHeaderRowSpan4',
         'emptyHeaderRowSpan4',
       ];
+
+      this.raceDistanceDiffHeaderDef = [
+        'distanceDiffHeader',
+        'emptyDiffHeader',
+        ...checkPoints.map(checkPoint => 'checkPointDistanceDiff' + checkPoint.id),
+      ];
+
+      this.ascentHeaderDef = [
+        'ascentHeader',
+        'emptyAscentHeader',
+        ...checkPoints.map(checkPoint => 'checkPointAscent' + checkPoint.id),
+      ];
+
+      this.descentHeaderDef = [
+        'descentHeader',
+        'emptyDescentHeader',
+        ...checkPoints.map(checkPoint => 'checkPointDescent' + checkPoint.id),
+      ];
+
+      this.raceSpeedHeaderDef = [
+        'speedHeader',
+        'emptySpeedHeader',
+        ...checkPoints.map(checkPoint => 'checkPointSpeed' + checkPoint.id),
+      ];
+
       // КВ
       this.raceCheckTimeHeaderDef = [
         'checkTimeHeader',
@@ -202,7 +232,6 @@ export class RaceFormatResultComponent
       this.dataTableBodyDef = [
         'bib',
         'name',
-
         'timeDetail',
         ...checkPoints.map(checkPoint => 'athleteCheckPoint' + checkPoint.id),
         'absolutePlace',
@@ -212,6 +241,10 @@ export class RaceFormatResultComponent
       this.dataTableDiffDef = [
         'time-diff-detail',
         ...checkPoints.map(checkPoint => 'athleteCheckPointDiffTime' + checkPoint.id),
+      ];
+      this.dataTableSpeedDef = [
+        'speed-detail',
+        ...checkPoints.map(checkPoint => 'athleteCheckPointSpeed' + checkPoint.id),
       ];
       return checkPoints;
     }), shareReplay({ bufferSize: 1, refCount: true }));
@@ -257,6 +290,16 @@ export class RaceFormatResultComponent
       return undefined;
     }
     return member.checkPoints?.find(value => value.id === checkPointId)?.prevCheckPointDiffDuration;
+  }
+
+  getCheckPointSpeed(member: RaceAthleteModel | undefined, checkPointId: number): number | undefined {
+    if (member === undefined) {
+      return undefined;
+    }
+    if (this.getCheckPointTime(member, checkPointId) === undefined) {
+      return undefined;
+    }
+    return member.checkPoints?.find(value => value.id === checkPointId)?.diffSpeed;
   }
 
   getCheckPointTimeExpired(member: RaceAthleteModel | undefined, checkPointId: number): boolean {

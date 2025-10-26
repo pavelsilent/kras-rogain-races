@@ -18,6 +18,10 @@
       <mat-label>Расстояние от старта (км)</mat-label>
       <input type="number" matInput formControlName="distance" step="0.01"/>
     </mat-form-field>
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Высота (м)</mat-label>
+      <input type="number" matInput formControlName="altitude" step="0.01"/>
+    </mat-form-field>
 
     <app-duration-split-field formControlName="controlDuration" [label]="'Контрольное время'"/>
 

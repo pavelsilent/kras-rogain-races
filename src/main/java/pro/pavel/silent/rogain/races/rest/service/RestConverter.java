@@ -3,6 +3,8 @@ package pro.pavel.silent.rogain.races.rest.service;
 import static pro.pavel.silent.rogain.races.domain.enumeration.RaceFormatFileType.DISTANCE_ATTITUDE_PROFILE;
 import static pro.pavel.silent.rogain.races.domain.enumeration.RaceFormatFileType.DISTANCE_SCHEMA;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -147,12 +149,30 @@ public class RestConverter {
             prevCheckPointDiff = Duration.ofMillis(0);
         }
 
+        BigDecimal diffDistance = prevCheckPointOpt
+            .map(prev -> checkPoint.getTotalDistance()
+                                   .subtract(prev.getTotalDistance()))
+            .orElse(BigDecimal.ZERO);
+
+        Duration leaderDuration = checkPoint.getLeaderDuration();
+        BigDecimal leaderDurationHours = BigDecimal.valueOf(leaderDuration.toSeconds())
+                                                   .divide(BigDecimal.valueOf(3600), 2, RoundingMode.HALF_EVEN);
+        BigDecimal diffSpeed =
+            !leaderDurationHours.equals(BigDecimal.valueOf(0, 2)) ?
+            diffDistance.divide(leaderDurationHours, 2, RoundingMode.HALF_EVEN) :
+            BigDecimal.ZERO;
+
         return RaceFormatCheckPointDTO.builder()
                                       .id(checkPoint.getId())
                                       .name(checkPoint.getName())
                                       .description(checkPoint.getDescription())
                                       .orderNumber(checkPoint.getOrderNumber())
                                       .totalDistance(checkPoint.getTotalDistance())
+                                      .totalAltitude(checkPoint.getTotalAltitude())
+                                      .diffDistance(diffDistance)
+                                      .diffSpeed(diffSpeed)
+                                      .diffAscent(BigDecimal.ZERO)
+                                      .diffDescent(BigDecimal.ZERO)
                                       .checkDuration(DurationHelper.format(checkPoint.getCheckDuration()))
                                       .checkTime(Optional.ofNullable(checkPoint.getCheckDuration())
                                                          .map(startTime::plus)
@@ -270,6 +290,23 @@ public class RestConverter {
             prevCheckPointDiff = Duration.ofMillis(0);
         }
 
+        BigDecimal diffDistance = prevCheckPointOpt
+            .map(RaceAthleteCheckPoint::getRaceFormatCheckPoint)
+            .map(prevCheckPoint -> checkPoint.getRaceFormatCheckPoint().getTotalDistance()
+                                             .subtract(prevCheckPoint.getTotalDistance()))
+            .orElse(BigDecimal.ZERO);
+
+        Duration raceDuration = Optional.ofNullable(checkPoint.getTime())
+                                        .map(time -> Duration.between(startTime, time))
+                                        .orElse(Duration.ofMillis(0));
+
+        BigDecimal raceDurationHours = BigDecimal.valueOf(raceDuration.toSeconds())
+                                                 .divide(BigDecimal.valueOf(3600), 2, RoundingMode.HALF_EVEN);
+        BigDecimal diffSpeed =
+            !raceDurationHours.equals(BigDecimal.valueOf(0, 2)) ?
+            diffDistance.divide(raceDurationHours, 2, RoundingMode.HALF_EVEN) :
+            BigDecimal.ZERO;
+
         return RaceAthleteCheckPointDTO.builder()
                                        .id(raceFormatCheckPoint.getId())
                                        .time(checkPoint.getTime())
@@ -280,6 +317,7 @@ public class RestConverter {
                                                              .map(time -> Duration.between(startTime, time))
                                                              .map(DurationHelper::format)
                                                              .orElse(null))
+                                       .diffSpeed(diffSpeed)
                                        .prevCheckPointDiffDuration(DurationHelper.format(prevCheckPointDiff))
                                        .passed(checkPoint.isPassed())
                                        .checkTimeExpired(checkTimeIsExpired)

@@ -8,6 +8,11 @@ export class RaceCheckPointModel {
   name: string;
   description?: string;
   totalDistance?: number;
+  diffDistance?: number;
+  diffSpeed?: number;
+  totalAltitude?: number;
+  diffAscent?: number;
+  diffDescent?: number;
   checkDuration?: string;
   checkTime?: LocalDateTime;
   leaderDuration?: string;
@@ -25,6 +30,11 @@ export class RaceCheckPointModel {
       this.name = dto.name;
       this.description = dto.description;
       this.totalDistance = dto.totalDistance;
+      this.diffDistance = dto.diffDistance;
+      this.diffSpeed = dto.diffSpeed;
+      this.totalAltitude = dto.totalAltitude;
+      this.diffAscent = dto.diffAscent;
+      this.diffDescent = dto.diffDescent;
       this.isStart = dto.isStart;
       this.isFinish = dto.isFinish;
       this.hasCheckTime = dto.hasCheckTime;

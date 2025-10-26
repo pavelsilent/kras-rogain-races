@@ -11,7 +11,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -55,17 +54,13 @@ public class RaceFormatCheckPoint {
     @Schema(description = "Общая дистанция")
     private BigDecimal totalDistance;
 
-//    @Column(name = "check_time")
-//    @Schema(description = "Контрольное время")
-//    private LocalDateTime checkTime;
+    @Column(name = "total_altitude", nullable = false, precision = 19, scale = 2)
+    @Schema(description = "Общая дистанция")
+    private BigDecimal totalAltitude;
 
     @Column(name = "has_check_time", nullable = false)
     @Schema(description = "Есть контрольное время?")
     private boolean hasCheckTime;
-
-//    @Column(name = "leader_time")
-//    @Schema(description = "Время предполагаемого лидера")
-//    private LocalDateTime leaderTime;
 
     @Column(name = "check_duration")
     @Schema(description = "Длительность предполагаемого лидера")
