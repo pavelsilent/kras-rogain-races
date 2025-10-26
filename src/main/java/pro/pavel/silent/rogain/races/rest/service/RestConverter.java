@@ -154,8 +154,8 @@ public class RestConverter {
                                    .subtract(prev.getTotalDistance()))
             .orElse(BigDecimal.ZERO);
 
-        Duration leaderDuration = checkPoint.getLeaderDuration();
-        BigDecimal leaderDurationHours = BigDecimal.valueOf(leaderDuration.toSeconds())
+        Duration leaderDiffDuration = Optional.ofNullable(prevCheckPointDiff).orElseGet(() -> Duration.ofMillis(0));
+        BigDecimal leaderDurationHours = BigDecimal.valueOf(leaderDiffDuration.toSeconds())
                                                    .divide(BigDecimal.valueOf(3600), 2, RoundingMode.HALF_EVEN);
         BigDecimal diffSpeed =
             !leaderDurationHours.equals(BigDecimal.valueOf(0, 2)) ?
@@ -296,15 +296,12 @@ public class RestConverter {
                                              .subtract(prevCheckPoint.getTotalDistance()))
             .orElse(BigDecimal.ZERO);
 
-        Duration raceDuration = Optional.ofNullable(checkPoint.getTime())
-                                        .map(time -> Duration.between(startTime, time))
-                                        .orElse(Duration.ofMillis(0));
-
-        BigDecimal raceDurationHours = BigDecimal.valueOf(raceDuration.toSeconds())
-                                                 .divide(BigDecimal.valueOf(3600), 2, RoundingMode.HALF_EVEN);
+        Duration raceDiffDuration = Optional.ofNullable(prevCheckPointDiff).orElse(Duration.ZERO);
+        BigDecimal raceDiffDurationHours = BigDecimal.valueOf(raceDiffDuration.toSeconds())
+                                                     .divide(BigDecimal.valueOf(3600), 2, RoundingMode.HALF_EVEN);
         BigDecimal diffSpeed =
-            !raceDurationHours.equals(BigDecimal.valueOf(0, 2)) ?
-            diffDistance.divide(raceDurationHours, 2, RoundingMode.HALF_EVEN) :
+            !raceDiffDurationHours.equals(BigDecimal.valueOf(0, 2)) ?
+            diffDistance.divide(raceDiffDurationHours, 2, RoundingMode.HALF_EVEN) :
             BigDecimal.ZERO;
 
         return RaceAthleteCheckPointDTO.builder()
