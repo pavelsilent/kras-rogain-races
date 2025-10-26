@@ -101,6 +101,14 @@ export class AddRaceFormatCheckPointDialogComponent {
                                   exists(data.checkPoint) ? data.checkPoint.totalAltitude : undefined,
                                   [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)],
                                 ),
+                                diffAscent: new FormControl(
+                                  exists(data.checkPoint) ? data.checkPoint.diffAscent : undefined,
+                                  [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)],
+                                ),
+                                diffDescent: new FormControl(
+                                  exists(data.checkPoint) ? data.checkPoint.diffDescent : undefined,
+                                  [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)],
+                                ),
                                 controlDuration: [exists(data.checkPoint) ? data.checkPoint.checkDuration : ''],
                                 leaderDuration: [exists(data.checkPoint) ? data.checkPoint.leaderDuration : ''],
                               });
@@ -116,6 +124,8 @@ export class AddRaceFormatCheckPointDialogComponent {
       model.description = value.description!;
       model.totalDistance = value.distance!;
       model.totalAltitude = value.altitude!;
+      model.diffAscent = value.diffAscent!;
+      model.diffDescent = value.diffDescent!;
       model.checkDuration = value.controlDuration!;
       model.leaderDuration = value.leaderDuration!;
       if (exists(this.data.checkPoint)) {

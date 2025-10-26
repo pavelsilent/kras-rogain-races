@@ -58,6 +58,14 @@ public class RaceFormatCheckPoint {
     @Schema(description = "Общая дистанция")
     private BigDecimal totalAltitude;
 
+    @Column(name = "diff_ascent", nullable = false, precision = 19, scale = 2)
+    @Schema(description = "Набор высоты от пред. КТ")
+    private BigDecimal diffAscent;
+
+    @Column(name = "diff_descent", nullable = false, precision = 19, scale = 2)
+    @Schema(description = "Сброс высоты от пред. КТ")
+    private BigDecimal diffDescent;
+
     @Column(name = "has_check_time", nullable = false)
     @Schema(description = "Есть контрольное время?")
     private boolean hasCheckTime;

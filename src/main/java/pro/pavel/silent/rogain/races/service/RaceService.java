@@ -312,6 +312,8 @@ public class RaceService {
         newCheckPoint.setIsFinish(isItNewFinish);
         newCheckPoint.setTotalDistance(checkPointDTO.getTotalDistance());
         newCheckPoint.setTotalAltitude(checkPointDTO.getTotalAltitude());
+        newCheckPoint.setDiffAscent(checkPointDTO.getDiffAscent());
+        newCheckPoint.setDiffDescent(checkPointDTO.getDiffDescent());
         newCheckPoint.setHasCheckTime(Objects.nonNull(checkPointDTO.getCheckDuration()));
         newCheckPoint.setCheckDuration(DurationHelper.parse(checkPointDTO.getCheckDuration()));
         newCheckPoint.setLeaderDuration(DurationHelper.parse(checkPointDTO.getLeaderDuration()));
@@ -367,6 +369,8 @@ public class RaceService {
         checkPoint.setIsFinish(false);
         checkPoint.setTotalDistance(checkPointDTO.getTotalDistance());
         checkPoint.setTotalAltitude(checkPointDTO.getTotalAltitude());
+        checkPoint.setDiffAscent(checkPointDTO.getDiffAscent());
+        checkPoint.setDiffDescent(checkPointDTO.getDiffDescent());
         checkPoint.setHasCheckTime(Objects.nonNull(checkPointDTO.getCheckDuration()));
         checkPoint.setCheckDuration(DurationHelper.parse(checkPointDTO.getCheckDuration()));
         checkPoint.setLeaderDuration(DurationHelper.parse(checkPointDTO.getLeaderDuration()));

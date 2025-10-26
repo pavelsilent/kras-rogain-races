@@ -44,6 +44,16 @@
       <td mat-cell *matCellDef="let item"> {{ item.totalAltitude }} м</td>
     </ng-container>
 
+    <ng-container matColumnDef="diffAscent">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Набор, м</th>
+      <td mat-cell *matCellDef="let item"> {{ item.diffAscent }} м</td>
+    </ng-container>
+
+    <ng-container matColumnDef="diffDescent">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Сброс, м</th>
+      <td mat-cell *matCellDef="let item"> {{ item.diffDescent }} м</td>
+    </ng-container>
+
     <ng-container matColumnDef="checkDuration">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Контрольное время</th>
       <td mat-cell *matCellDef="let item"> {{ item.checkDuration }}</td>

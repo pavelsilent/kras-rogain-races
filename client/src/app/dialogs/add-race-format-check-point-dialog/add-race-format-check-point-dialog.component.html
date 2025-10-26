@@ -22,6 +22,14 @@
       <mat-label>Высота (м)</mat-label>
       <input type="number" matInput formControlName="altitude" step="0.01"/>
     </mat-form-field>
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Набор (м)</mat-label>
+      <input type="number" matInput formControlName="diffAscent" step="0.01"/>
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Сброс (м)</mat-label>
+      <input type="number" matInput formControlName="diffDescent" step="0.01"/>
+    </mat-form-field>
 
     <app-duration-split-field formControlName="controlDuration" [label]="'Контрольное время'"/>
 

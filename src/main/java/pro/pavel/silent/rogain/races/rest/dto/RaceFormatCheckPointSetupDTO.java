@@ -36,6 +36,12 @@ public class RaceFormatCheckPointSetupDTO {
     @Schema(description = "Абс. высота")
     private BigDecimal totalAltitude;
 
+    @Schema(description = "Набор высоты")
+    private BigDecimal diffAscent;
+
+    @Schema(description = "Сброс высоты")
+    private BigDecimal diffDescent;
+
     @Schema(description = "Контрольное время от старта")
     private String checkDuration;
 
