@@ -17,8 +17,10 @@ RUN ./gradlew clean build generateOpenApiDocs -Dspring.profiles.active=openapi -
 # ---------- Stage 2: Frontend Build & DTO ----------
 FROM node:20 AS frontend-builder
 WORKDIR /app/client
+
 COPY client/package*.json ./
 RUN npm install
+
 COPY client/ .
 
 # Копируем сгенерированный openapi.json из backend
@@ -29,21 +31,24 @@ ENV API_BASE_URL=${API_BASE_URL:-https://fallback-url.com}
 RUN echo "=== [Build ARG] API_BASE_URL=${API_BASE_URL} ==="
 
 # Установка Java (требуется для openapi-generator-cli)
-RUN apt-get update && \
-    apt-get install -y openjdk-17-jdk && \
-    rm -rf /var/lib/apt/lists/*
+#RUN apt-get update && \
+#    apt-get install -y openjdk-17-jdk && \
+#    rm -rf /var/lib/apt/lists/*
 
-RUN npm install @openapitools/openapi-generator-cli -g
-RUN sed -i "s#http://localhost:7777#${API_BASE_URL}#g" src/environments/environment.prod.ts
+#RUN npm install @openapitools/openapi-generator-cli -g
+#RUN sed -i "s#http://localhost:7777#${API_BASE_URL}#g" src/environments/environment.prod.ts
 
 # Генерация Angular DTO и сервисов через кастомный шаблон
-RUN openapi-generator-cli generate \
+RUN npx @openapitools/openapi-generator-cli generate \
   -i ./openapi.json \
   -g typescript-angular \
   -c ./openapi-generator-config.json \
   -o src/app/api \
   -t ./templates \
   --skip-validate-spec
+
+RUN sed -i "s#http://localhost:7777#${API_BASE_URL}#g" src/environments/environment.prod.ts
+
 
 # Сборка фронта с production конфигурацией
 RUN npm run build -- --configuration production
