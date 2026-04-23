@@ -1,7 +1,7 @@
 import { NgForOf } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatTab, MatTabGroup } from '@angular/material/tabs';
-import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { AppService } from '../../app.service';
 import { RaceFormatPageService } from './race-format-page.service';
 
@@ -12,7 +12,7 @@ import { RaceFormatPageService } from './race-format-page.service';
                MatTab,
                MatTabGroup,
                NgForOf,
-               RouterLink,
+
              ],
              templateUrl: './race-format-page.component.html',
              standalone: true,

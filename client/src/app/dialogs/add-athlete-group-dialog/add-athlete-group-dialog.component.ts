@@ -1,4 +1,4 @@
-import { NgForOf, NgSwitchCase } from '@angular/common';
+import { NgForOf } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -26,7 +26,7 @@ import { resolveEnumOrDefault } from '../../utils/utils';
                MatSelect,
                NgForOf,
                ReactiveFormsModule,
-               NgSwitchCase,
+
              ],
              templateUrl: './add-athlete-group-dialog.component.html',
              standalone: true,

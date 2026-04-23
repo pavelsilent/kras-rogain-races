@@ -1,11 +1,8 @@
-import { NgForOf } from '@angular/common';
 import { Component, inject, Inject } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatButtonToggle } from '@angular/material/button-toggle';
-import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatOption } from '@angular/material/core';
-import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
+import { MatButton } from '@angular/material/button';
+import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -14,10 +11,9 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
-import { MatFormField, MatPrefix, MatSuffix } from '@angular/material/form-field';
+import { MatFormField } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInput, MatLabel } from '@angular/material/input';
-import { MatSelect } from '@angular/material/select';
 import { LocalDateTime } from '@js-joda/core';
 import { DurationSplitFieldComponent } from '../../components/core/duration-split-field/duration-split-field.component';
 import { RaceService } from '../../components/race/race.service';
@@ -38,25 +34,15 @@ export interface AddRaceFormatCheckPointDialogConfig {
              imports: [
                FormsModule,
                MatButton,
-               MatDatepicker,
-               MatDatepickerInput,
-               MatDatepickerToggle,
                MatDialogActions,
                MatDialogContent,
                MatDialogTitle,
                MatFormField,
                MatInput,
                MatLabel,
-               MatOption,
-               MatSelect,
-               NgForOf,
                ReactiveFormsModule,
                MatMomentDateModule,
                MatIconModule,
-               MatPrefix,
-               MatSuffix,
-               MatIconButton,
-               MatButtonToggle,
                DurationSplitFieldComponent,
              ],
              providers: [

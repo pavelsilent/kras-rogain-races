@@ -5,8 +5,8 @@ import { exists, parseLocalDateTime, resolveEnum } from '../utils/utils';
 import { AthleteGroupModel } from './athlete-group.model';
 import { RaceFormatType } from './enums/race-format-type.enum';
 import { RaceState } from './enums/race-state.enum';
-import { RaceMemberModel } from './race-member.model';
 import { RaceCheckPointModel } from './race-check-point.model';
+import { RaceMemberModel } from './race-member.model';
 
 export class RaceFormatResultModel {
   id: number;

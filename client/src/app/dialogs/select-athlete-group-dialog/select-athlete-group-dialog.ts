@@ -1,7 +1,7 @@
 import { AsyncPipe, NgForOf } from '@angular/common';
 import { Component, Inject, inject } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
 import {
   MAT_DIALOG_DATA,
@@ -11,12 +11,10 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
-import { MatFormField, MatSuffix } from '@angular/material/form-field';
-import { MatIcon } from '@angular/material/icon';
-import { MatInput, MatLabel } from '@angular/material/input';
+import { MatFormField } from '@angular/material/form-field';
+import { MatLabel } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { firstValueFrom, lastValueFrom, map, Observable, startWith, Subject, switchMap } from 'rxjs';
-import { AthleteListComponent } from '../../components/athlete-list/athlete-list.component';
 import { AthletesService } from '../../components/athlete-list/athletes.service';
 import { RaceService } from '../../components/race/race.service';
 import { AthleteGroupModel } from '../../models/athlete-group.model';
@@ -32,20 +30,15 @@ export interface SelectAthleteGroupDialogConfig {
 @Component({
              selector: 'app-select-athlete-group-dialog',
              imports: [
-               AthleteListComponent,
                MatButton,
                MatDialogActions,
                AsyncPipe,
                MatDialogContent,
                MatDialogTitle,
                MatFormField,
-               MatIcon,
-               MatIconButton,
-               MatInput,
                MatLabel,
                MatOption,
                MatSelect,
-               MatSuffix,
                NgForOf,
                ReactiveFormsModule,
              ],

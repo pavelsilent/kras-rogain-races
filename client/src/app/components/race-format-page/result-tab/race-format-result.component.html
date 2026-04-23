@@ -272,8 +272,6 @@
               <span>{{ getShortFIO(row, format?.isAnon!) }} </span> <span class="underline">{{
                 '(' + row.state.name + ')'
               }}</span>
-              <!--              <br>-->
-              <!--              <span style="font-style: italic; font-size: 11px">{{ row.athlete.club }}</span>-->
             </div>
             <div *ngIf="page.canEdit() | async" class="athlete-actions">
               <button mat-icon-button
@@ -365,7 +363,7 @@
 
     <ng-container matColumnDef="members-detail">
       <td *matCellDef="let row" mat-cell class="speed-column">
-        <div class="left diff-time">Участники КТ</div>
+        <div class="left diff-time">Участники</div>
       </td>
     </ng-container>
 

@@ -7,14 +7,14 @@ import { AthleteGroupModel } from '../../models/athlete-group.model';
 import { AthleteState } from '../../models/enums/athlete-state.enum';
 import { RaceAthleteCheckPointSetupModel } from '../../models/race-athlete-check-point-setup.model';
 import { RaceAthleteCheckPointModel } from '../../models/race-athlete-check-point.model';
-import { RaceMemberSetupModel } from '../../models/race-member-setup.model';
-import { RaceMemberModel } from '../../models/race-member.model';
 import { RaceCheckPointSetupModel } from '../../models/race-check-point-setup.model';
 import { RaceCheckPointModel } from '../../models/race-check-point.model';
 import { RaceFormatResultLinkModel } from '../../models/race-format-result-link.model';
 import { RaceFormatResultModel } from '../../models/race-format-result.model';
 import { RaceFormatTokenModel } from '../../models/race-format-token.model';
 import { RaceFormatModel } from '../../models/race-format.model';
+import { RaceMemberSetupModel } from '../../models/race-member-setup.model';
+import { RaceMemberModel } from '../../models/race-member.model';
 import { RaceSetupModel } from '../../models/race-setup.model';
 import { RaceModel } from '../../models/race.model';
 

@@ -4,7 +4,6 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatButton } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
-import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -12,7 +11,7 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
-import { MatFormField, MatPrefix, MatSuffix } from '@angular/material/form-field';
+import { MatFormField } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInput, MatLabel } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
@@ -40,13 +39,9 @@ export interface SetAthleteStateDialogConfig {
                MatOptionModule,
                MatSelect,
                NgForOf,
-               MatDatepickerInput,
-               MatDatepickerToggle,
-               MatDatepicker,
                MatMomentDateModule,
                MatIconModule,
-               MatPrefix,
-               MatSuffix,
+
              ],
              templateUrl: './set-athlete-state-dialog.component.html',
              standalone: true,

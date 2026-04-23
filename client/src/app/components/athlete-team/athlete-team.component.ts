@@ -19,7 +19,7 @@ import {
   MatTableDataSource,
 } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
-import { first, firstValueFrom, lastValueFrom, Observable, ReplaySubject, startWith, switchMap } from 'rxjs';
+import { first, firstValueFrom, Observable, ReplaySubject, startWith, switchMap } from 'rxjs';
 import { AddAthleteTeamDialogComponent } from '../../dialogs/add-athlete-team-dialog/add-athlete-team-dialog.component';
 import { SelectAthleteDialog } from '../../dialogs/select-athlete-dialog/select-athlete-dialog';
 import { AthleteTeamModel } from '../../models/athlete-team.model';
