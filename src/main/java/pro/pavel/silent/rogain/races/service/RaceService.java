@@ -100,6 +100,8 @@ public class RaceService {
             raceFormat.setState(RaceState.DRAFT);
             raceFormat.setViewToken(UUID.randomUUID().toString());
             raceFormat.setEditToken(UUID.randomUUID().toString());
+            raceFormat.setCanEdit(true);
+            raceFormat.setAnonMode(false);
         }
 
         raceFormat.setName(dto.getName());

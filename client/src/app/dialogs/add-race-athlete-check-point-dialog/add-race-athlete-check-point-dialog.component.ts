@@ -150,7 +150,6 @@ export class AddRaceAthleteCheckPointDialogComponent {
         athleteBibNumber,
         checkPointId,
       ).then(value => {
-        console.log(value)
         this.checkPointAvailableMembers = value.availableMembers;
         this.checkPointMembersControl.setValue(
           value.data.checkPointMembers.map(item => item.id) as any);
@@ -177,11 +176,10 @@ export class AddRaceAthleteCheckPointDialogComponent {
                                                      value.nextPointTime,
                                                    ),
                                                  ]);
-        this.checkPointDateControl.markAsTouched();
-        this.checkPointDateControl.updateValueAndValidity();
-
         this.checkPointTimeControl.setValue(parseLocalDateTimeToRussianTime(checkPointTime!));
         this.checkPointTimeControl.setValidators([this.timeRangeValidator(value.prevPointTime, value.nextPointTime)]);
+        this.checkPointDateControl.markAsTouched();
+        this.checkPointDateControl.updateValueAndValidity();
         this.checkPointTimeControl.markAsTouched();
         this.checkPointTimeControl.updateValueAndValidity();
       });
@@ -225,14 +223,12 @@ export class AddRaceAthleteCheckPointDialogComponent {
       if (!value) {
         return null;
       }
-
       const date = moment(value);
       let time = this.checkPointTimeControl.value;
       if (!hasLength(time)) {
         time = '00:00:00';
       }
       const dateTime = parseLocalDateTimeFromMoment(date, time!);
-
       if (exists(min) && !exists(max)) {
         if (dateTime?.isBefore(min)) {
           return { timeRange: true };

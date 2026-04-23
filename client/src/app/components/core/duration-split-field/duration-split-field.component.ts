@@ -34,7 +34,6 @@ export class DurationSplitFieldComponent
   seconds: string = '';
 
   writeValue(value: string | null): void {
-    console.log(value);
     if (value) {
       const [hh, mm, ss] = value.split(':');
       this.hours = hh ?? '';
