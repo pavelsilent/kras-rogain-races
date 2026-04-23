@@ -99,6 +99,7 @@ export class RaceFormatResultComponent
   format: RaceFormatModel;
 
   format$: Observable<RaceFormatModel>;
+  detailRowCount$: Observable<number>;
 
   @Input()
   showAttitude: boolean = false;
@@ -135,6 +136,7 @@ export class RaceFormatResultComponent
   dataTableBodyDef: string[] = [];
   dataTableDiffDef: string[] = [];
   dataTableSpeedDef: string[] = [];
+  dataTableMembersDef: string[] = [];
 
   membersDataSource = new MatTableDataSource<RaceMemberModel>();
   protected readonly raceStates = RaceState;
@@ -144,6 +146,7 @@ export class RaceFormatResultComponent
     public page: RaceFormatPageService, private fileService: FileService,
     private router: Router,
   ) {
+
     this.result$ = this.page.refresh$.pipe(
       startWith(null),
       switchMap(data => combineLatest([this.page.getRaceId(), this.page.getRaceFormatId()])),
@@ -239,6 +242,11 @@ export class RaceFormatResultComponent
         'speed-detail',
         ...checkPoints.map(checkPoint => 'athleteCheckPointSpeed' + checkPoint.id),
       ];
+      this.dataTableMembersDef = [
+        'members-detail',
+        ...checkPoints.map(checkPoint => 'athleteCheckPointMembers' + checkPoint.id),
+      ];
+
       return checkPoints;
     }), shareReplay({ bufferSize: 1, refCount: true }));
 
@@ -262,27 +270,19 @@ export class RaceFormatResultComponent
     } else {
       this.format$ = of(this.format);
     }
+    this.detailRowCount$ = this.format$.pipe(map(x => this.getDetailRowCount(x)));
   }
 
   getCheckPointRaceTime(member: RaceMemberModel | undefined, checkPointId: number): string | undefined {
-    if (member === undefined) {
-      return undefined;
-    }
-    return member.checkPoints?.find(value => value.id === checkPointId)?.raceDuration;
+    return this.getMemberCheckPoint(member, checkPointId)?.raceDuration;
   }
 
   getCheckPointTime(member: RaceMemberModel | undefined, checkPointId: number): LocalDateTime | undefined {
-    if (member === undefined) {
-      return undefined;
-    }
-    return member.checkPoints?.find(value => value.id === checkPointId)?.time;
+    return this.getMemberCheckPoint(member, checkPointId)?.time;
   }
 
   getCheckPointDiffTime(member: RaceMemberModel | undefined, checkPointId: number): string | undefined {
-    if (member === undefined) {
-      return undefined;
-    }
-    return member.checkPoints?.find(value => value.id === checkPointId)?.prevCheckPointDiffDuration;
+    return this.getMemberCheckPoint(member, checkPointId)?.prevCheckPointDiffDuration;
   }
 
   getCheckPointSpeed(member: RaceMemberModel | undefined, checkPointId: number): number | undefined {
@@ -292,14 +292,35 @@ export class RaceFormatResultComponent
     if (this.getCheckPointTime(member, checkPointId) === undefined) {
       return undefined;
     }
-    return member.checkPoints?.find(value => value.id === checkPointId)?.diffSpeed;
+    return this.getMemberCheckPoint(member, checkPointId)?.diffSpeed;
+  }
+
+  getCheckPointMembers(member: RaceMemberModel | undefined, checkPointId: number): string | undefined {
+    if (member === undefined) {
+      return undefined;
+    }
+    return (this.getMemberCheckPoint(member, checkPointId)?.checkPointMembers ?? []).map(item => item.name).join(', ');
   }
 
   getCheckPointTimeExpired(member: RaceMemberModel | undefined, checkPointId: number): boolean {
     if (member === undefined) {
       return false;
     }
-    return member.checkPoints?.find(value => value.id === checkPointId)?.checkTimeExpired ?? false;
+    return this.getMemberCheckPoint(member, checkPointId)?.checkTimeExpired ?? false;
+  }
+
+  getMemberCheckPoint(member: RaceMemberModel | undefined, checkPointId: number) {
+    if (member === undefined) {
+      return undefined;
+    }
+    return member.checkPoints?.find(value => value.id === checkPointId);
+  }
+
+  getDetailRowCount(format: RaceFormatModel) {
+    if (!exists(format)) {
+      return 3;
+    }
+    return format?.isTeamRace() ? 4 : 3;
   }
 
   onAddAthleteCheckPoint(row: RaceMemberModel) {

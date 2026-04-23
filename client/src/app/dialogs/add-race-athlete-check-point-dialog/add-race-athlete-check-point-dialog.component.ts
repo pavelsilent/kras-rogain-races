@@ -29,6 +29,7 @@ import { Option } from 'funfix-core';
 import moment from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import { RaceService } from '../../components/race/race.service';
+import { MemberInfoModel } from '../../models/member-info.model';
 import { RaceAthleteCheckPointModel } from '../../models/race-athlete-check-point.model';
 import { RaceCheckPointModel } from '../../models/race-check-point.model';
 import { RU_DATE_FORMATS } from '../../utils/mat-date-formats';
@@ -88,8 +89,10 @@ export class AddRaceAthleteCheckPointDialogComponent {
   checkPointIdControl;
   checkPointDateControl;
   checkPointTimeControl;
+  checkPointMembersControl;
   checkPoints: RaceCheckPointModel[] = [];
   validatorMessage$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  checkPointAvailableMembers: MemberInfoModel[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -101,8 +104,10 @@ export class AddRaceAthleteCheckPointDialogComponent {
     this.checkPointDateControl = new FormControl(localDateToMoment(data.raceDate));
     this.checkPointTimeControl = new FormControl('');
     this.checkPointIdControl = new FormControl(NaN, Validators.required);
+    this.checkPointMembersControl = new FormControl(null);
     this.form = this.fb.group({
                                 athleteBibNumber: [data.athleteBibNumber, Validators.required],
+                                checkPointMembers: this.checkPointMembersControl,
                                 checkPointId: this.checkPointIdControl,
                                 checkPointDate: this.checkPointDateControl,
                                 checkPointTime: this.checkPointTimeControl,
@@ -119,7 +124,6 @@ export class AddRaceAthleteCheckPointDialogComponent {
   onSave(): void {
     if (this.form.valid) {
       let value = this.form.value;
-
       let model = new RaceAthleteCheckPointModel();
       model.id = value.checkPointId;
       // model.athleteBibNumber = value.athleteBibNumber;
@@ -127,6 +131,7 @@ export class AddRaceAthleteCheckPointDialogComponent {
         model.time = parseLocalDateTimeFromMoment(value.checkPointDate, value.checkPointTime);
       }
       model.passed = exists(model.time);
+      model.checkPointMembers = value.checkPointMembers.map((id: number) => this.checkPointAvailableMembers.find(value1 => value1.id === id));
       this.service.addRaceAthleteCheckPoint(this.data.raceId, this.data.raceFormatId, value.athleteBibNumber, model)
           .then(value => this.dialogRef.close(value));
     }
@@ -145,6 +150,10 @@ export class AddRaceAthleteCheckPointDialogComponent {
         athleteBibNumber,
         checkPointId,
       ).then(value => {
+        console.log(value)
+        this.checkPointAvailableMembers = value.availableMembers;
+        this.checkPointMembersControl.setValue(
+          value.data.checkPointMembers.map(item => item.id) as any);
 
         let prevRusDateTime = parseLocalDateTimeToRussianDateTime(value.prevPointTime);
         let nextRusDateTime = parseLocalDateTimeToRussianDateTime(value.nextPointTime);

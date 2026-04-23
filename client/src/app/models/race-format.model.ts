@@ -51,6 +51,10 @@ export class RaceFormatModel {
     return new RaceFormatModel(dto);
   }
 
+  isTeamRace(): boolean {
+    return this.type === RaceFormatType.TEAM;
+  }
+
   getStartDate(): LocalDate | undefined {
     return exists(this.startDateTime) ? this.startDateTime.toLocalDate() : undefined;
   }

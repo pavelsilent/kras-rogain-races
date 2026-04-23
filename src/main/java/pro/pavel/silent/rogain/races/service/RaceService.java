@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pro.pavel.silent.lib.core.util.DurationHelper;
 import pro.pavel.silent.rogain.races.data.RaceAthleteCheckPointRepository;
 import pro.pavel.silent.rogain.races.data.RaceAthleteGroupRepository;
+import pro.pavel.silent.rogain.races.data.RaceAthleteMemberCheckPointRepository;
 import pro.pavel.silent.rogain.races.data.RaceAthleteRepository;
 import pro.pavel.silent.rogain.races.data.RaceFormatAthleteGroupRepository;
 import pro.pavel.silent.rogain.races.data.RaceFormatCheckPointRepository;
@@ -28,6 +29,7 @@ import pro.pavel.silent.rogain.races.entity.Race;
 import pro.pavel.silent.rogain.races.entity.RaceAthlete;
 import pro.pavel.silent.rogain.races.entity.RaceAthleteCheckPoint;
 import pro.pavel.silent.rogain.races.entity.RaceAthleteGroup;
+import pro.pavel.silent.rogain.races.entity.RaceAthleteMemberCheckPoint;
 import pro.pavel.silent.rogain.races.entity.RaceFormat;
 import pro.pavel.silent.rogain.races.entity.RaceFormatAthleteGroup;
 import pro.pavel.silent.rogain.races.entity.RaceFormatCheckPoint;
@@ -46,6 +48,7 @@ public class RaceService {
     private final RaceRepository raceRepository;
     private final RaceAthleteRepository raceAthleteRepository;
     private final RaceAthleteCheckPointRepository raceAthleteCheckPointRepository;
+    private final RaceAthleteMemberCheckPointRepository raceAthleteMemberCheckPointRepository;
     private final RaceQueryService raceQueryService;
     private final RaceTypeService raceTypeService;
     private final CityService cityService;
@@ -475,6 +478,41 @@ public class RaceService {
         if (!currentState.equals(actualState)) {
             setRaceAthleteState(raceId, raceFormatId, athleteBibNumber, actualState.name());
         }
+
+        deleteAllCheckPointMembers(raceAthleteCheckPoint);
+        if (raceAthleteCheckPoint.getRaceAthlete().getType().equals(RaceAthleteType.ATHLETE)) {
+            createCheckPointMember(raceAthleteCheckPoint, RaceAthleteType.ATHLETE, raceAthlete.getMemberId());
+        } else {
+            if (Objects.nonNull(dto.getMembers())) {
+                dto.getMembers().forEach(
+                    memberInfoDTO ->
+                        createCheckPointMember(
+                            raceAthleteCheckPoint,
+                            RaceAthleteType.valueOf(memberInfoDTO.getType()),
+                            memberInfoDTO.getId()
+                        ));
+            }
+        }
+    }
+
+    private void createCheckPointMember(
+        RaceAthleteCheckPoint raceAthleteCheckPoint,
+        RaceAthleteType memberType,
+        Long memberId
+    ) {
+        raceAthleteMemberCheckPointRepository
+            .findFirstByRaceAthleteCheckPointAndMemberTypeAndMemberId(raceAthleteCheckPoint, memberType, memberId)
+            .orElseGet(() -> {
+                RaceAthleteMemberCheckPoint checkPoint = new RaceAthleteMemberCheckPoint();
+                checkPoint.setRaceAthleteCheckPoint(raceAthleteCheckPoint);
+                checkPoint.setMemberType(memberType);
+                checkPoint.setMemberId(memberId);
+                return raceAthleteMemberCheckPointRepository.save(checkPoint);
+            });
+    }
+
+    private void deleteAllCheckPointMembers(RaceAthleteCheckPoint raceAthleteCheckPoint) {
+        raceAthleteMemberCheckPointRepository.deleteAllByRaceAthleteCheckPoint(raceAthleteCheckPoint);
     }
 
     private boolean checkPointTimeExpired(RaceAthleteCheckPoint raceAthleteCheckPoint) {

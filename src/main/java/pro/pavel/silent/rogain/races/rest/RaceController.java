@@ -5,6 +5,7 @@ import static pro.pavel.silent.lib.core.util.ListHelper.map;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -306,11 +307,7 @@ public class RaceController {
                                 .time(null)
                                 .prevCheckPointDiffDuration(null)
                                 .checkTimeExpired(false)
-                                .members(
-                                    raceQueryService.getAthletes(raceAthlete)
-                                                    .stream()
-                                                    .map(athlete -> restConverter.toMemberDTO(athlete, false))
-                                                    .toList())
+                                .members(Collections.emptyList())
                                 .build());
 
         Optional<RaceAthleteCheckPoint> prevCheckPoint =
@@ -326,6 +323,11 @@ public class RaceController {
                                              .orElseGet(() -> checkPoint.getRaceFormat().getStartTime()))
                 .nextPointTime(nextCheckPoint.map(RaceAthleteCheckPoint::getTime)
                                              .orElseGet(() -> checkPoint.getRaceFormat().getFinishTime()))
+                .members(
+                    raceQueryService.getAthletes(raceAthlete)
+                                    .stream()
+                                    .map(athlete -> restConverter.toMemberDTO(athlete, false))
+                                    .toList())
                 .build())
             ;
     }

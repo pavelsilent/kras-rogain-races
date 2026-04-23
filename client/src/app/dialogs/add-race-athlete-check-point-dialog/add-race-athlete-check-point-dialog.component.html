@@ -4,7 +4,16 @@
   <form [formGroup]="form">
     <mat-form-field appearance="fill" class="w-full">
       <mat-label>Номер участника</mat-label>
-      <input matInput formControlName="athleteBibNumber"/>
+      <input matInput formControlName="athleteBibNumber" readonly/>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Участники</mat-label>
+      <mat-select formControlName="checkPointMembers" multiple>
+        <mat-option *ngFor="let member of checkPointAvailableMembers"
+                    [value]="member.id">{{ member.name }}
+        </mat-option>
+      </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="w-full">

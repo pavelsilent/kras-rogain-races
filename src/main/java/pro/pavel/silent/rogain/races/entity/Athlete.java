@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
 import pro.pavel.silent.lib.core.util.StringHelper;
@@ -65,9 +66,14 @@ public class Athlete {
     @Schema(description = "Клуб")
     private Club club;
 
-    public String getFIO(boolean isAnonMode) {
+    public String getFIO(boolean isAnonMode, boolean needShort) {
         if (isAnonMode) {
-            return "Неизвестный атлет";
+            return (needShort ? "Атлет " : "Неизвестный атлет") + id.toString();
+        }
+
+        if (needShort) {
+            return lastName + " " +
+                ((Objects.nonNull(firstName) && !firstName.isEmpty()) ? firstName.charAt(0) + "." : "");
         }
 
         var result = "%s %s".formatted(lastName, firstName);

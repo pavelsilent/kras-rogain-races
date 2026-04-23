@@ -478,4 +478,31 @@
       deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"/>
   </changeSet>
 
+  <changeSet author="p.brychev" id="2025-09-16--01-init-schema.027">
+    <createTable schemaName="public" tableName="race_athlete_member_check_point">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" primaryKeyName="race_athlete_member_check_point_pkey"/>
+      </column>
+      <column name="race_athlete_check_point_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="member_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="member_type" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <addForeignKeyConstraint
+      baseTableSchemaName="public"
+      baseTableName="race_athlete_member_check_point"
+      baseColumnNames="race_athlete_check_point_id"
+      referencedTableSchemaName="public"
+      referencedTableName="race_athlete_check_point"
+      referencedColumnNames="id"
+      constraintName="fk_race_athlete_member_check_point_race_athlete_check_point"
+      deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"/>
+  </changeSet>
+
 </databaseChangeLog>

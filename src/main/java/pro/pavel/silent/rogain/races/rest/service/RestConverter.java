@@ -330,13 +330,14 @@ public class RestConverter {
                                        .prevCheckPointDiffDuration(DurationHelper.format(prevCheckPointDiff))
                                        .passed(checkPoint.isPassed())
                                        .checkTimeExpired(checkTimeIsExpired)
-                                       .members(raceQueryService.getAthletes(raceAthlete)
-                                                                .stream()
-                                                                .map(athlete -> toMemberDTO(
-                                                                    athlete,
-                                                                    isAnonMode(raceAthlete.getRaceFormat())
-                                                                ))
-                                                                .toList())
+                                       .members(raceQueryService
+                                                    .getCheckPointAthletes(checkPoint)
+                                                    .stream()
+                                                    .map(athlete -> toMemberDTO(
+                                                        athlete,
+                                                        isAnonMode(raceAthlete.getRaceFormat())
+                                                    ))
+                                                    .toList())
                                        .build();
     }
 
@@ -466,7 +467,7 @@ public class RestConverter {
         return MemberInfoDTO.builder()
                             .id(athlete.getId())
                             .type(RaceAthleteType.ATHLETE.name())
-                            .name(athlete.getFIO(isAnonMode))
+                            .name(athlete.getFIO(isAnonMode, true))
                             .build();
     }
 

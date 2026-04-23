@@ -22,6 +22,7 @@ import {
   MatTable,
 } from '@angular/material/table';
 import { LocalDateTime } from '@js-joda/core';
+import { AthleteType } from '../../models/enums/athlete-type.enum';
 import { RaceCheckPointModel } from '../../models/race-check-point.model';
 import { RaceMemberModel } from '../../models/race-member.model';
 import { RussianDateTimePipe } from '../../utils/russian-date-time.pipe';
@@ -61,48 +62,72 @@ export interface RaceAthleteDetailInfoDialogConfig {
 export class RaceAthleteDetailInfoDialogComponent {
   dialogRef = inject(MatDialogRef<RaceAthleteDetailInfoDialogComponent>);
   dataTableBodyDef: string[] = ['checkPoint', 'distance', 'raceTime', 'checkPointCheckTime', 'checkPointLeaderTime'];
-  localTime = false;
+  dataTableBodyDef2: string[] = [
+    'checkPoint2',
+    'distance2',
+    'raceTime2',
+    'checkPointCheckTime2',
+    'checkPointLeaderTime2',
+  ];
+  membersBodyDef: string[] = ['memberLabel', 'members'];
+
   constructor(@Inject(MAT_DIALOG_DATA) public data: RaceAthleteDetailInfoDialogConfig) {
   }
 
-  onToggleLocalTime() {
-    this.localTime = !this.localTime;
+  getAthleteCheckPoint(checkPointId: number) {
+    return this.data.athleteInfo.checkPoints?.find(value => value.id === checkPointId);
+  }
+
+  getRaceCheckPoint(checkPointId: number) {
+    return this.data.checkPoints.find(value => value.id === checkPointId);
   }
 
   getCheckPointRaceDuration(checkPointId: number): string | undefined {
-    return this.data.athleteInfo.checkPoints?.find(value => value.id === checkPointId)?.raceDuration;
+    return this.getAthleteCheckPoint(checkPointId)?.raceDuration;
   }
 
   getCheckPointRaceDateTime(checkPointId: number): LocalDateTime | undefined {
-    return this.data.athleteInfo.checkPoints?.find(value => value.id === checkPointId)?.time;
+    return this.getAthleteCheckPoint(checkPointId)?.time;
   }
 
   getCheckPointCheckTimeExpired(checkPointId: number): boolean | undefined {
-    return this.data.athleteInfo.checkPoints?.find(value => value.id === checkPointId)?.checkTimeExpired;
+    return this.getAthleteCheckPoint(checkPointId)?.checkTimeExpired;
   }
 
   getCheckPointDiffTime(checkPointId: number): string | undefined {
-    return this.data.athleteInfo.checkPoints?.find(value => value.id === checkPointId)?.prevCheckPointDiffDuration;
+    return this.getAthleteCheckPoint(checkPointId)?.prevCheckPointDiffDuration;
   }
 
   getCheckPointLeaderTime(checkPointId: number): string | undefined {
-    return this.data.checkPoints.find(value => value.id === checkPointId)?.leaderDuration
+    return this.getRaceCheckPoint(checkPointId)?.leaderDuration;
   }
 
   getCheckPointLeaderDateTime(checkPointId: number): LocalDateTime | undefined {
-    return this.data.checkPoints.find(value => value.id === checkPointId)?.leaderTime;
+    return this.getRaceCheckPoint(checkPointId)?.leaderTime;
   }
 
   getCheckPointLeaderDiffTime(checkPointId: number): string | undefined {
-    return this.data.checkPoints.find(value => value.id === checkPointId)?.leaderDiffDuration
+    return this.getRaceCheckPoint(checkPointId)?.leaderDiffDuration;
   }
 
   getCheckPointCheckTime(checkPointId: number): string | undefined {
-    return this.data.checkPoints.find(value => value.id === checkPointId)?.checkDuration
+    return this.getRaceCheckPoint(checkPointId)?.checkDuration;
   }
 
   getCheckPointCheckDateTime(checkPointId: number): LocalDateTime | undefined {
-    return this.data.checkPoints.find(value => value.id === checkPointId)?.checkTime
+    return this.getRaceCheckPoint(checkPointId)?.checkTime;
+  }
+
+  getCheckPointMembers(checkPointId: number): string | undefined {
+    return this.getAthleteCheckPoint(checkPointId)?.checkPointMembers
+               .map(value => value.name).join(', ');
+  }
+
+  isMembersHidden(row: RaceCheckPointModel) {
+    if (this.data.athleteInfo.type === AthleteType.ATHLETE) {
+      return true;
+    }
+    return !row.open;
   }
 
   cancel() {

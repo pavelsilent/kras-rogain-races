@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import pro.pavel.silent.lib.core.util.ThreeMap;
 import pro.pavel.silent.rogain.races.data.RaceAthleteCheckPointRepository;
 import pro.pavel.silent.rogain.races.data.RaceAthleteGroupRepository;
+import pro.pavel.silent.rogain.races.data.RaceAthleteMemberCheckPointRepository;
 import pro.pavel.silent.rogain.races.data.RaceAthleteRepository;
 import pro.pavel.silent.rogain.races.data.RaceFormatAthleteGroupRepository;
 import pro.pavel.silent.rogain.races.data.RaceFormatCheckPointRepository;
@@ -32,6 +33,7 @@ import pro.pavel.silent.rogain.races.entity.Race;
 import pro.pavel.silent.rogain.races.entity.RaceAthlete;
 import pro.pavel.silent.rogain.races.entity.RaceAthleteCheckPoint;
 import pro.pavel.silent.rogain.races.entity.RaceAthleteGroup;
+import pro.pavel.silent.rogain.races.entity.RaceAthleteMemberCheckPoint;
 import pro.pavel.silent.rogain.races.entity.RaceFormat;
 import pro.pavel.silent.rogain.races.entity.RaceFormatAthleteGroup;
 import pro.pavel.silent.rogain.races.entity.RaceFormatCheckPoint;
@@ -47,6 +49,7 @@ public class RaceQueryService {
     private final RaceAthleteRepository raceAthleteRepository;
     private final RaceAthleteGroupRepository raceAthleteGroupRepository;
     private final RaceAthleteCheckPointRepository raceAthleteCheckPointRepository;
+    private final RaceAthleteMemberCheckPointRepository raceAthleteMemberCheckPointRepository;
     private final AthleteQueryService athleteQueryService;
 
     public List<Race> getRaces() {
@@ -352,6 +355,26 @@ public class RaceQueryService {
                                                     .stream()
                                                     .map(AthleteTeamMember::getAthlete)
                                                     .toList();
+            case CONTROL, LEADER ->
+                throw new RuntimeException("Unsupported race athlete type '%s'".formatted(raceAthlete.getType()));
+        };
+    }
+
+    public List<Athlete> getCheckPointAthletes(RaceAthleteCheckPoint checkPoint) {
+        if (Objects.isNull(checkPoint)) {
+            return Collections.emptyList();
+        }
+        RaceAthlete raceAthlete = checkPoint.getRaceAthlete();
+
+        return switch (raceAthlete.getType()) {
+            case ATHLETE -> Collections.singletonList(
+                athleteQueryService.getById(raceAthlete.getMemberId()));
+            case ATHLETE_TEAM -> raceAthleteMemberCheckPointRepository
+                .findAllByRaceAthleteCheckPoint(checkPoint)
+                .stream()
+                .map(RaceAthleteMemberCheckPoint::getMemberId)
+                .map(athleteQueryService::getById)
+                .toList();
             case CONTROL, LEADER ->
                 throw new RuntimeException("Unsupported race athlete type '%s'".formatted(raceAthlete.getType()));
         };

@@ -4,6 +4,7 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,6 +28,9 @@ public class RaceAthleteCheckPointSetupDTO {
 
     @Schema(description = "Время прохождения след. точки")
     private LocalDateTime nextPointTime;
+
+    @Schema(description = "Вспомогательный список спортсменов")
+    private List<MemberInfoDTO> members;
 
 
 }
