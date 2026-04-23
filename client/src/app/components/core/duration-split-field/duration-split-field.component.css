@@ -11,12 +11,16 @@
   width: 100%;
 
   input {
-    width: 32px;
+    width: 37px;
     text-align: center;
     border: none;
     outline: none;
     background: transparent;
     font-size: 14px;
+  }
+
+  .hoursInput {
+    width: 42px;
   }
 
   &.disabled input {

@@ -1,7 +1,6 @@
 import { Component, forwardRef, Input } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
-import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 
 @Component({
@@ -11,10 +10,6 @@ import { MatInput } from '@angular/material/input';
                MatFormField,
                MatInput,
                FormsModule,
-               MatDatepicker,
-               MatDatepickerInput,
-               MatDatepickerToggle,
-               MatSuffix,
                ReactiveFormsModule,
              ],
              templateUrl: './duration-split-field.component.html',
@@ -36,11 +31,6 @@ export class DurationSplitFieldComponent
   hours: string = '';
   minutes: string = '';
   seconds: string = '';
-
-  private onChange: (value: string) => void = () => {
-  };
-  protected onTouched: () => void = () => {
-  };
 
   writeValue(value: string | null): void {
     if (value) {
@@ -81,9 +71,15 @@ export class DurationSplitFieldComponent
   }
 
   updateValue(): void {
-    const hh = String(this.hours).padStart(2, '0') || '00';
+    const hh = String(this.hours).padStart(3, '0') || '000';
     const mm = String(this.minutes).padStart(2, '0') || '00';
     const ss = String(this.seconds).padStart(2, '0') || '00';
     this.onChange(`${hh}:${mm}:${ss}`);
   }
+
+  protected onTouched: () => void = () => {
+  };
+
+  private onChange: (value: string) => void = () => {
+  };
 }

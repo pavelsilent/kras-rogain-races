@@ -8,7 +8,7 @@ public class DurationHelper {
         if (duration == null || duration.isEmpty()) {
             return null;
         }
-        if (!duration.matches("\\d{1,2}:\\d{1,2}:\\d{1,2}")) {
+        if (!duration.matches("\\d{1,3}:\\d{1,2}:\\d{1,2}")) {
             throw new IllegalArgumentException("Некорректный формат: " + duration);
         }
 
