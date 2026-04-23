@@ -1,5 +1,5 @@
-import { EnumValuesStorage } from '../../utils/enum-values-storage';
 import { Enum } from '../../utils/enum';
+import { EnumValuesStorage } from '../../utils/enum-values-storage';
 
 export class Sex
   implements Enum {

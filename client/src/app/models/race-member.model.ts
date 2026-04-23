@@ -1,18 +1,18 @@
 import { Option } from 'funfix-core';
-import { RaceAthleteDTO } from '../api/index';
+import { RaceMemberDTO } from '../api/index';
 import { exists, resolveEnumOrDefault } from '../utils/utils';
 import { AthleteGroupModel } from './athlete-group.model';
-import { AthleteModel } from './athlete.model';
 import { AthleteState } from './enums/athlete-state.enum';
 import { AthleteType } from './enums/athlete-type.enum';
+import { MemberInfoModel } from './member-info.model';
 import { RaceAthleteCheckPointModel } from './race-athlete-check-point.model';
 import { RaceAthleteGroupModel } from './race-athlete-group.model';
 import { RaceCheckPointModel } from './race-check-point.model';
 
-export class RaceAthleteModel {
+export class RaceMemberModel {
   id: number;
   bibNumber: number;
-  athlete: AthleteModel;
+  member: MemberInfoModel;
   state: AthleteState;
   type: AthleteType;
   checkPoints: RaceAthleteCheckPointModel[];
@@ -22,23 +22,23 @@ export class RaceAthleteModel {
   absolutePlace: number;
   groups: AthleteGroupModel[];
 
-  isFinished() : boolean {
+  isFinished(): boolean {
     return this.state === AthleteState.FINISHED;
   }
 
-  isDisqualified() : boolean {
+  isDisqualified(): boolean {
     return this.state === AthleteState.DISQUALIFIED;
   }
 
-  getGroups() : string {
-    return this.groups.map(value => value.name).join(", ");
+  getGroups(): string {
+    return this.groups.map(value => value.name).join(', ');
   }
 
-  constructor(dto?: RaceAthleteDTO) {
+  constructor(dto?: RaceMemberDTO) {
     if (exists(dto)) {
       this.id = dto.id;
       this.bibNumber = dto.bibNumber;
-      this.athlete = AthleteModel.fromDTO(dto.athlete);
+      this.member = MemberInfoModel.fromDTO(dto.member);
       this.state = resolveEnumOrDefault(dto.state, AthleteState.store, AthleteState.NOT_DATA);
       this.type = resolveEnumOrDefault(dto.type, AthleteType.store, AthleteType.ATHLETE);
       this.checkPoints = Option.of(dto.checkPoints)
@@ -56,12 +56,12 @@ export class RaceAthleteModel {
                                .map(data => data.map(dto => RaceAthleteGroupModel.fromDTO(dto)))
                                .getOrElse([]);
       this.groups = Option.of(dto.groups)
-                               .map(data => data.map(dto => AthleteGroupModel.fromDTO(dto)))
-                               .getOrElse([]);
+                          .map(data => data.map(dto => AthleteGroupModel.fromDTO(dto)))
+                          .getOrElse([]);
     }
   }
 
-  static fromDTO(dto?: RaceAthleteDTO) {
-    return new RaceAthleteModel(dto);
+  static fromDTO(dto?: RaceMemberDTO) {
+    return new RaceMemberModel(dto);
   }
 }

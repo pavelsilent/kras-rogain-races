@@ -5,10 +5,12 @@ import static pro.pavel.silent.lib.core.util.ListHelper.map;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -31,8 +33,6 @@ import pro.pavel.silent.rogain.races.entity.RaceFormatCheckPoint;
 import pro.pavel.silent.rogain.races.rest.dto.AthleteGroupDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceAthleteCheckPointDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceAthleteCheckPointSetupDTO;
-import pro.pavel.silent.rogain.races.rest.dto.RaceAthleteDTO;
-import pro.pavel.silent.rogain.races.rest.dto.RaceAthleteSetupDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatCheckPointDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatCheckPointSetupDTO;
@@ -40,6 +40,8 @@ import pro.pavel.silent.rogain.races.rest.dto.RaceFormatDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatResultDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatResultLinkDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatTokenDTO;
+import pro.pavel.silent.rogain.races.rest.dto.RaceMemberDTO;
+import pro.pavel.silent.rogain.races.rest.dto.RaceMemberSetupDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceSetupDTO;
 import pro.pavel.silent.rogain.races.rest.dto.StateDTO;
 import pro.pavel.silent.rogain.races.rest.dto.core.StringDTO;
@@ -59,7 +61,7 @@ public class RaceController {
     private final RaceQueryService raceQueryService;
     private final RestConverter restConverter;
 
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Получить список соревнований")
     @ApiResponse(responseCode = "200", description = "Список соревнований")
     public ResponseEntity<List<RaceDTO>> getAllRaces() {
@@ -83,13 +85,13 @@ public class RaceController {
         return ResponseEntity.ok(race.getId());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Получить соревнование по ID")
     public ResponseEntity<RaceDTO> getRaceById(@PathVariable Long id) {
         return ResponseEntity.ok(restConverter.toDTO(raceQueryService.getRaceById(id)));
     }
 
-    @GetMapping("/{id}/formats")
+    @GetMapping(path = "/{id}/formats", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Получить форматы")
     public ResponseEntity<List<RaceFormatDTO>> getRaceFormats(@PathVariable Long id) {
         return ResponseEntity.ok(map(raceQueryService.getRaceFormats(id), restConverter::toDTO));
@@ -115,7 +117,7 @@ public class RaceController {
         return ResponseEntity.ok(raceFormat.getId());
     }
 
-    @GetMapping("/{id}/formats/{formatId}")
+    @GetMapping(path = "/{id}/formats/{formatId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Получить данные о формате")
     public ResponseEntity<RaceFormatDTO> getRaceFormat(
         @PathVariable Long id,
@@ -130,9 +132,9 @@ public class RaceController {
         return ResponseEntity.ok(dto);
     }
 
-    @GetMapping("/{id}/formats/{formatId}/athletes")
+    @GetMapping(path = "/{id}/formats/{formatId}/athletes", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Получить стартовый лист")
-    public ResponseEntity<List<RaceAthleteDTO>> getRaceFormatAthletes(
+    public ResponseEntity<List<RaceMemberDTO>> getRaceFormatAthletes(
         @PathVariable Long id,
         @PathVariable Long formatId
     ) {
@@ -155,7 +157,7 @@ public class RaceController {
     public ResponseEntity<Long> addRaceFormatAthlete(
         @PathVariable Long id,
         @PathVariable Long formatId,
-        @RequestBody RaceAthleteSetupDTO dto
+        @RequestBody RaceMemberSetupDTO dto
     ) {
         RaceAthlete raceAthlete = raceService.addRaceAthlete(id, formatId, dto);
         return ResponseEntity.ok(raceAthlete.getId());
@@ -166,7 +168,7 @@ public class RaceController {
     public ResponseEntity<Long> editRaceFormatAthlete(
         @PathVariable Long id,
         @PathVariable Long formatId,
-        @RequestBody RaceAthleteSetupDTO dto
+        @RequestBody RaceMemberSetupDTO dto
     ) {
         RaceAthlete raceAthlete = raceService.editRaceAthlete(id, formatId, dto);
         return ResponseEntity.ok(raceAthlete.getId());
@@ -183,7 +185,7 @@ public class RaceController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/{id}/formats/{formatId}/checkpoints")
+    @GetMapping(path = "/{id}/formats/{formatId}/checkpoints", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Получить список контрольных точек")
     public ResponseEntity<List<RaceFormatCheckPointDTO>> getRaceFormatCheckPoints(
         @PathVariable Long id,
@@ -215,29 +217,23 @@ public class RaceController {
         return ResponseEntity.ok(raceCheckPoint.getId());
     }
 
-    @GetMapping("/results")
+    @GetMapping(path = "/results", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Получить результаты соревнования")
     public ResponseEntity<List<RaceFormatResultLinkDTO>> getActiveRaceFormatResults() {
         return ResponseEntity.ok(map(raceQueryService.getActiveRaceFormats(), restConverter::toLinkDTO));
     }
 
-    @GetMapping("/{id}/formats/{formatId}/result")
+    @GetMapping(path = "/{id}/formats/{formatId}/result", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Получить результат соревнования")
     public ResponseEntity<RaceFormatResultDTO> getRaceFormatResultTable(
         @PathVariable Long id,
         @PathVariable Long formatId
     ) {
         RaceFormatResultDTO resultDTO = restConverter.toResultDTO(raceQueryService.getRaceFormatById(formatId));
-        //        resultDTO.setAthletes(resultDTO
-
-        //            ListHelper.merge(
-        //                ListHelper.merge(resultDTO.getAthletes(), resultDTO.getAthletes()),
-        //                ListHelper.merge(resultDTO.getAthletes(), resultDTO.getAthletes())
-        //            ));
         return ResponseEntity.ok(resultDTO);
     }
 
-    @GetMapping("/{token}/token")
+    @GetMapping(path = "/{token}/token", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Получить данные формата соревнований по токену")
     public ResponseEntity<RaceFormatTokenDTO> getRaceFormatLink(@PathVariable String token) {
         return ResponseEntity.ok(
@@ -245,7 +241,7 @@ public class RaceController {
                 raceQueryService.getRaceFormatTokenModel(token)));
     }
 
-    @PutMapping("/{id}/formats/{formatId}/state")
+    @PutMapping(path = "/{id}/formats/{formatId}/state", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Установить статус соревнованию")
     public ResponseEntity<RaceFormatResultDTO> setRaceState(
         @PathVariable Long id,
@@ -261,7 +257,7 @@ public class RaceController {
             restConverter.toResultDTO(raceQueryService.getRaceFormatById(formatId)));
     }
 
-    @GetMapping("/{id}/formats/{formatId}/athlete/{athleteBibNumber}/state/")
+    @GetMapping(path = "/{id}/formats/{formatId}/athlete/{athleteBibNumber}/state/", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Получить статус атлета")
     public ResponseEntity<StringDTO> getRaceAthleteState(
         @PathVariable Long id,
@@ -272,7 +268,7 @@ public class RaceController {
             StringDTO.of(raceQueryService.getRaceAthleteState(id, formatId, athleteBibNumber).name()));
     }
 
-    @PutMapping("/{id}/formats/{formatId}/athlete/{athleteBibNumber}/state/")
+    @PutMapping(path = "/{id}/formats/{formatId}/athlete/{athleteBibNumber}/state/", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Установить статус атлету")
     public ResponseEntity<RaceFormatResultDTO> setRaceAthleteState(
         @PathVariable Long id,
@@ -285,7 +281,7 @@ public class RaceController {
             restConverter.toResultDTO(raceQueryService.getRaceFormatById(formatId)));
     }
 
-    @GetMapping("/{id}/formats/{formatId}/athlete/{athleteBibNumber}/checkpoint/{checkpointId}")
+    @GetMapping(path = "/{id}/formats/{formatId}/athlete/{athleteBibNumber}/checkpoint/{checkpointId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Получить контрольную отсечку")
     public ResponseEntity<RaceAthleteCheckPointSetupDTO> getRaceAthleteCheckPoint(
         @PathVariable Long id,
@@ -302,15 +298,17 @@ public class RaceController {
         RaceAthleteCheckPointDTO raceAthleteCheckPointDTO =
             raceQueryService.findRaceAthleteCheckPoint(raceAthlete, checkPoint)
                             .map(restConverter::toDTO)
-                            .orElseGet(() -> RaceAthleteCheckPointDTO.builder()
-                                                                     .id(checkpointId)
-                                                                     .passed(false)
-                                                                     .raceTime(null)
-                                                                     .raceDuration(null)
-                                                                     .time(null)
-                                                                     .prevCheckPointDiffDuration(null)
-                                                                     .checkTimeExpired(false)
-                                                                     .build());
+                            .orElseGet(() -> RaceAthleteCheckPointDTO
+                                .builder()
+                                .id(checkpointId)
+                                .passed(false)
+                                .raceTime(null)
+                                .raceDuration(null)
+                                .time(null)
+                                .prevCheckPointDiffDuration(null)
+                                .checkTimeExpired(false)
+                                .members(Collections.emptyList())
+                                .build());
 
         Optional<RaceAthleteCheckPoint> prevCheckPoint =
             raceQueryService.findPrevCheckPoint(raceAthlete, checkPoint);
@@ -325,11 +323,16 @@ public class RaceController {
                                              .orElseGet(() -> checkPoint.getRaceFormat().getStartTime()))
                 .nextPointTime(nextCheckPoint.map(RaceAthleteCheckPoint::getTime)
                                              .orElseGet(() -> checkPoint.getRaceFormat().getFinishTime()))
+                .members(
+                    raceQueryService.getAthletes(raceAthlete)
+                                    .stream()
+                                    .map(athlete -> restConverter.toMemberDTO(athlete, false))
+                                    .toList())
                 .build())
             ;
     }
 
-    @GetMapping("/{id}/formats/{formatId}/athlete/{athleteBibNumber}/checkpoint/next")
+    @GetMapping(value = "/{id}/formats/{formatId}/athlete/{athleteBibNumber}/checkpoint/next", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Получить следующую контрольную отсечку")
     public ResponseEntity<Long> getRaceAthleteNextCheckPoint(
         @PathVariable Long id,
@@ -340,7 +343,7 @@ public class RaceController {
             raceQueryService.getRaceAthleteNextCheckPoint(id, formatId, athleteBibNumber).getId());
     }
 
-    @PutMapping("/{id}/formats/{formatId}/athlete/{athleteBibNumber}/checkpoint")
+    @PutMapping(path = "/{id}/formats/{formatId}/athlete/{athleteBibNumber}/checkpoint", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Добавить контрольную отсечку атлету")
     public ResponseEntity<RaceFormatResultDTO> addRaceAthleteCheckPoint(
         @PathVariable Long id,

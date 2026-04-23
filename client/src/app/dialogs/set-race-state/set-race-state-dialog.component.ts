@@ -1,4 +1,3 @@
-import { NgForOf } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
@@ -12,10 +11,9 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
-import { MatFormField, MatPrefix, MatSuffix } from '@angular/material/form-field';
+import { MatFormField, MatSuffix } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInput, MatLabel } from '@angular/material/input';
-import { MatSelect } from '@angular/material/select';
 import { LocalDateTime, ZonedDateTime, ZoneOffset } from '@js-joda/core';
 import { RaceService } from '../../components/race/race.service';
 import { RaceState } from '../../models/enums/race-state.enum';
@@ -41,14 +39,11 @@ export interface SetRaceStateDialogConfig {
                MatLabel,
                MatDialogTitle,
                MatOptionModule,
-               MatSelect,
-               NgForOf,
                MatDatepickerInput,
                MatDatepickerToggle,
                MatDatepicker,
                MatMomentDateModule,
                MatIconModule,
-               MatPrefix,
                MatSuffix,
              ],
              templateUrl: './set-race-state-dialog.component.html',

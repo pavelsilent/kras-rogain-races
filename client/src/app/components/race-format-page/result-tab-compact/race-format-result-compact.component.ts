@@ -1,13 +1,9 @@
 import { AsyncPipe, NgClass, NgForOf, NgIf, NgStyle } from '@angular/common';
 import { Component, Input, ViewChild } from '@angular/core';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { MatFormField } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInput } from '@angular/material/input';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { MatSort, MatSortHeader } from '@angular/material/sort';
 import {
   MatCell,
   MatCellDef,
@@ -21,7 +17,6 @@ import {
   MatTable,
   MatTableDataSource,
 } from '@angular/material/table';
-import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDateTime } from '@js-joda/core';
 import { Option } from 'funfix-core';
@@ -47,13 +42,11 @@ import {
 } from '../../../dialogs/set-athlete-state-dialog/set-athlete-state-dialog.component';
 import { SetRaceStateDialogComponent } from '../../../dialogs/set-race-state/set-race-state-dialog.component';
 import { RaceState } from '../../../models/enums/race-state.enum';
-import { RaceAthleteModel } from '../../../models/race-athlete.model';
 import { RaceCheckPointModel } from '../../../models/race-check-point.model';
 import { RaceFormatResultModel } from '../../../models/race-format-result.model';
 import { RaceFormatModel } from '../../../models/race-format.model';
-import { CosmicTimePipe } from '../../../utils/cosmic-time.pipe';
+import { RaceMemberModel } from '../../../models/race-member.model';
 import { RussianDateTimePipe } from '../../../utils/russian-date-time.pipe';
-import { RussianTimePipe } from '../../../utils/russian-time.pipe';
 import { exists, parseLocalDateTimeToRussianDateTime, parseLocalDateTimeToRussianTime } from '../../../utils/utils';
 import { FileService } from '../../core/file.service';
 import { RaceService } from '../../race/race.service';
@@ -71,25 +64,16 @@ import { RaceFormatPageService } from '../race-format-page.service';
                MatRow,
                NgClass,
                MatTable,
-               MatSort,
                MatRowDef,
                MatHeaderRowDef,
-               MatSortHeader,
-               MatFormField,
-               MatInput,
                NgIf,
                NgForOf,
                AsyncPipe,
                RussianDateTimePipe,
-               RussianTimePipe,
                NgStyle,
-               CosmicTimePipe,
-               MatPaginator,
                MatIconModule,
-               MatTooltip,
-               MatIconButton,
                MatButton,
-               MatSlideToggle,
+
              ],
              templateUrl: './race-format-result-compact.component.html',
              standalone: true,
@@ -117,11 +101,12 @@ export class RaceFormatResultCompactComponent {
 
   dataTableBodyDef: string[] = ['name'];
 
-  membersDataSource = new MatTableDataSource<RaceAthleteModel>();
+  membersDataSource = new MatTableDataSource<RaceMemberModel>();
 
-  constructor(private route: ActivatedRoute, private service: RaceService, private dialog: MatDialog,
-              public page: RaceFormatPageService, private fileService: FileService,
-              private router: Router,
+  constructor(
+    private route: ActivatedRoute, private service: RaceService, private dialog: MatDialog,
+    public page: RaceFormatPageService, private fileService: FileService,
+    private router: Router,
   ) {
     this.result$ = this.page.refresh$.pipe(
       startWith(null),
@@ -151,14 +136,14 @@ export class RaceFormatResultCompactComponent {
     );
   }
 
-  getCheckPointTimeExpired(athlete: RaceAthleteModel | undefined): boolean {
+  getCheckPointTimeExpired(athlete: RaceMemberModel | undefined): boolean {
     if (!exists(athlete) || !exists(athlete.lastRaceAthleteCheckPoint)) {
       return false;
     }
     return athlete.lastRaceAthleteCheckPoint.checkTimeExpired;
   }
 
-  onShowAthleteDetailInfo(row: RaceAthleteModel) {
+  onShowAthleteDetailInfo(row: RaceMemberModel) {
     firstValueFrom(this.checkPoints$)
       .then((checkPoints) => this.dialog.open(
         RaceAthleteDetailInfoDialogComponent,
@@ -178,7 +163,7 @@ export class RaceFormatResultCompactComponent {
       ));
   }
 
-  onAddAthleteCheckPoint(row: RaceAthleteModel) {
+  onAddAthleteCheckPoint(row: RaceMemberModel) {
     firstValueFrom(combineLatest([
                                    this.page.getRaceId(),
                                    this.page.getRaceFormatId(),
@@ -204,7 +189,7 @@ export class RaceFormatResultCompactComponent {
       .then(value => this.page.refresh$.next());
   }
 
-  onSetAthleteState(row: RaceAthleteModel) {
+  onSetAthleteState(row: RaceMemberModel) {
     firstValueFrom(combineLatest([this.page.getRaceId(), this.page.getRaceFormatId()]))
       .then(([raceId, raceFormatId]) => this.dialog.open(SetAthleteStateDialogComponent, {
         disableClose: true,
@@ -220,21 +205,21 @@ export class RaceFormatResultCompactComponent {
       .then(value => this.page.refresh$.next());
   }
 
-  getShortFIO(row: RaceAthleteModel) {
+  getShortFIO(row: RaceMemberModel) {
     if (this.format.isAnon) {
-      return 'Неизвестный атлет (' + row.athlete.sex?.short + ')';
+      return 'Неизвестный атлет';
     }
-    return row.athlete.getShortFIO();
+    return row.member.name;
   }
 
-  getLastCheckPoint(row: RaceAthleteModel) {
+  getLastCheckPoint(row: RaceMemberModel) {
     if (exists(row.lastCheckPoint)) {
       return 'KT: ' + row.lastCheckPoint.name;
     }
     return 'КТ: -';
   }
 
-  getLastCheckPointTime(row: RaceAthleteModel, startDateTime: LocalDateTime) {
+  getLastCheckPointTime(row: RaceMemberModel, startDateTime: LocalDateTime) {
     let result = '';
     if (exists(row.lastRaceAthleteCheckPoint)) {
       if (this.localTime === 0) {

@@ -13,7 +13,7 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
-import { MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
@@ -51,7 +51,6 @@ export interface AddAthleteDialogConfig {
                MatLabel,
                MatMomentDateModule,
                MatIconModule,
-               MatPrefix,
                MatSuffix,
                AsyncPipe,
                NgIf,
@@ -81,19 +80,19 @@ export class AddAthleteDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: AddAthleteDialogConfig,
   ) {
     this.title = (exists(data?.athlete) ? 'Редактировать' : 'Добавить') + ' атлета';
-    this.cityControl = new FormControl(exists(data.athlete) ? data.athlete?.city?.id : undefined, Validators.required);
+    this.cityControl = new FormControl(exists(data?.athlete) ? data.athlete?.city?.id : undefined, Validators.required);
     this.form = this.fb.group({
-                                lastName: [exists(data.athlete) ? data.athlete?.lastName : '', Validators.required],
-                                firstName: [exists(data.athlete) ? data.athlete?.firstName : '', Validators.required],
-                                middleName: [exists(data.athlete) ? data.athlete?.middleName : ''],
+                                lastName: [exists(data?.athlete) ? data.athlete?.lastName : '', Validators.required],
+                                firstName: [exists(data?.athlete) ? data.athlete?.firstName : '', Validators.required],
+                                middleName: [exists(data?.athlete) ? data.athlete?.middleName : ''],
                                 birthDate: [
-                                  exists(data.athlete)
+                                  exists(data?.athlete)
                                   ? localDateToMoment(data.athlete?.birthDate!)
                                   : undefined,
                                 ],
-                                sex: [exists(data.athlete) ? data.athlete?.sex?.code : undefined, Validators.required],
+                                sex: [exists(data?.athlete) ? data.athlete?.sex?.code : undefined, Validators.required],
                                 city: this.cityControl,
-                                club: [exists(data.athlete) ? data.athlete.club : ''],
+                                club: [exists(data?.athlete) ? data.athlete.club : ''],
                               });
     this.cities$ = this.citiesRefresh$.pipe(
       startWith(null),
@@ -131,7 +130,7 @@ export class AddAthleteDialogComponent {
       model.club = formValue.club || undefined;
       model.city = Option.of(formValue.city).map(id => CityModel.of(id!)).getOrElse(undefined);
 
-      if (exists(this.data.athlete)) {
+      if (exists(this.data?.athlete)) {
         model.id = this.data.athlete.id;
         this.service.editAthlete(model)
             .then(value => this.dialogRef.close(value));

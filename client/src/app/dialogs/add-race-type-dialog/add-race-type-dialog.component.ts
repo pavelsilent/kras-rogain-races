@@ -1,11 +1,9 @@
-import { NgForOf } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { RouterLink } from '@angular/router';
 import { Option } from 'funfix-core';
 import { DictionaryService } from '../../components/dictionaries/dictionary.service';
 import { RaceTypeModel } from '../../models/race-type.model';
@@ -14,8 +12,8 @@ import { RaceTypeModel } from '../../models/race-type.model';
              selector: 'app-add-race-type-dialog',
              imports: [
                MatFormFieldModule, MatInputModule,
-               RouterLink, MatButton, FormsModule,
-               MatDialogActions, MatDialogContent, MatDialogTitle, NgForOf, ReactiveFormsModule,
+               MatButton, FormsModule,
+               MatDialogActions, MatDialogContent, MatDialogTitle, ReactiveFormsModule,
              ],
              templateUrl: './add-race-type-dialog.component.html',
              standalone: true,

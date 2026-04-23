@@ -1,9 +1,6 @@
-import { LocalDate, LocalDateTime } from '@js-joda/core';
-import { Option } from 'funfix-core';
-import { RaceFormatDTO, RaceFormatResultLinkDTO } from '../api/index';
-import { exists, parseLocalDate, parseLocalDateTime, resolveEnum, resolveEnumOrDefault } from '../utils/utils';
-import { AthleteGroupModel } from './athlete-group.model';
-import { RaceFormatType } from './enums/race-format-type.enum';
+import { LocalDate } from '@js-joda/core';
+import { RaceFormatResultLinkDTO } from '../api/index';
+import { exists, parseLocalDate, resolveEnum } from '../utils/utils';
 import { RaceState } from './enums/race-state.enum';
 import { RaceTypeModel } from './race-type.model';
 

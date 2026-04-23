@@ -1,9 +1,8 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, HostListener, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { MatTab, MatTabGroup } from '@angular/material/tabs';
 import {
   NavigationCancel,
   NavigationEnd,
@@ -20,7 +19,7 @@ import { LoaderService } from './components/core/loader/loader.service';
 @Component({
              selector: 'app-root',
              imports: [
-               RouterOutlet, MatTab, MatTabGroup, NgForOf, NgIf, AsyncPipe, LoaderComponent,
+               RouterOutlet, AsyncPipe, LoaderComponent,
                ErrorDialogComponent, MatSlideToggle, FormsModule,
              ],
              templateUrl: './app.component.html',

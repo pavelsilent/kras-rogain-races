@@ -18,7 +18,7 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
-import { MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
@@ -58,7 +58,6 @@ export interface AddRaceDialogConfig {
                MatLabel,
                MatMomentDateModule,
                MatIconModule,
-               MatPrefix,
                MatSuffix,
              ],
              templateUrl: './add-race-dialog.component.html',

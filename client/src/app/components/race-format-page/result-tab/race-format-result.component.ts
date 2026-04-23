@@ -2,11 +2,9 @@ import { AsyncPipe, NgClass, NgForOf, NgIf, NgStyle } from '@angular/common';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { MatFormField } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInput } from '@angular/material/input';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { MatSort } from '@angular/material/sort';
 import {
   MatCell,
   MatCellDef,
@@ -44,13 +42,12 @@ import {
 } from '../../../dialogs/set-athlete-state-dialog/set-athlete-state-dialog.component';
 import { SetRaceStateDialogComponent } from '../../../dialogs/set-race-state/set-race-state-dialog.component';
 import { RaceState } from '../../../models/enums/race-state.enum';
-import { RaceAthleteModel } from '../../../models/race-athlete.model';
 import { RaceCheckPointModel } from '../../../models/race-check-point.model';
 import { RaceFormatResultModel } from '../../../models/race-format-result.model';
 import { RaceFormatModel } from '../../../models/race-format.model';
+import { RaceMemberModel } from '../../../models/race-member.model';
 import { CosmicTimePipe } from '../../../utils/cosmic-time.pipe';
 import { RussianDateTimePipe } from '../../../utils/russian-date-time.pipe';
-import { RussianTimePipe } from '../../../utils/russian-time.pipe';
 import { exists, hasLength } from '../../../utils/utils';
 import { FileService } from '../../core/file.service';
 import { RaceService } from '../../race/race.service';
@@ -71,17 +68,12 @@ import { RaceFormatPageService } from '../race-format-page.service';
                MatSort,
                MatRowDef,
                MatHeaderRowDef,
-               MatSortHeader,
-               MatFormField,
-               MatInput,
                NgIf,
                NgForOf,
                AsyncPipe,
                RussianDateTimePipe,
-               RussianTimePipe,
                NgStyle,
                CosmicTimePipe,
-               MatPaginator,
                MatIconModule,
                MatTooltip,
                MatIconButton,
@@ -107,6 +99,7 @@ export class RaceFormatResultComponent
   format: RaceFormatModel;
 
   format$: Observable<RaceFormatModel>;
+  detailRowCount$: Observable<number>;
 
   @Input()
   showAttitude: boolean = false;
@@ -143,14 +136,17 @@ export class RaceFormatResultComponent
   dataTableBodyDef: string[] = [];
   dataTableDiffDef: string[] = [];
   dataTableSpeedDef: string[] = [];
+  dataTableMembersDef: string[] = [];
 
-  membersDataSource = new MatTableDataSource<RaceAthleteModel>();
+  membersDataSource = new MatTableDataSource<RaceMemberModel>();
   protected readonly raceStates = RaceState;
 
-  constructor(private route: ActivatedRoute, private service: RaceService, private dialog: MatDialog,
-              public page: RaceFormatPageService, private fileService: FileService,
-              private router: Router,
+  constructor(
+    private route: ActivatedRoute, private service: RaceService, private dialog: MatDialog,
+    public page: RaceFormatPageService, private fileService: FileService,
+    private router: Router,
   ) {
+
     this.result$ = this.page.refresh$.pipe(
       startWith(null),
       switchMap(data => combineLatest([this.page.getRaceId(), this.page.getRaceFormatId()])),
@@ -246,6 +242,11 @@ export class RaceFormatResultComponent
         'speed-detail',
         ...checkPoints.map(checkPoint => 'athleteCheckPointSpeed' + checkPoint.id),
       ];
+      this.dataTableMembersDef = [
+        'members-detail',
+        ...checkPoints.map(checkPoint => 'athleteCheckPointMembers' + checkPoint.id),
+      ];
+
       return checkPoints;
     }), shareReplay({ bufferSize: 1, refCount: true }));
 
@@ -269,47 +270,60 @@ export class RaceFormatResultComponent
     } else {
       this.format$ = of(this.format);
     }
+    this.detailRowCount$ = this.format$.pipe(map(x => this.getDetailRowCount(x)));
   }
 
-  getCheckPointRaceTime(member: RaceAthleteModel | undefined, checkPointId: number): string | undefined {
-    if (member === undefined) {
-      return undefined;
-    }
-    return member.checkPoints?.find(value => value.id === checkPointId)?.raceDuration;
+  getCheckPointRaceTime(member: RaceMemberModel | undefined, checkPointId: number): string | undefined {
+    return this.getMemberCheckPoint(member, checkPointId)?.raceDuration;
   }
 
-  getCheckPointTime(member: RaceAthleteModel | undefined, checkPointId: number): LocalDateTime | undefined {
-    if (member === undefined) {
-      return undefined;
-    }
-    return member.checkPoints?.find(value => value.id === checkPointId)?.time;
+  getCheckPointTime(member: RaceMemberModel | undefined, checkPointId: number): LocalDateTime | undefined {
+    return this.getMemberCheckPoint(member, checkPointId)?.time;
   }
 
-  getCheckPointDiffTime(member: RaceAthleteModel | undefined, checkPointId: number): string | undefined {
-    if (member === undefined) {
-      return undefined;
-    }
-    return member.checkPoints?.find(value => value.id === checkPointId)?.prevCheckPointDiffDuration;
+  getCheckPointDiffTime(member: RaceMemberModel | undefined, checkPointId: number): string | undefined {
+    return this.getMemberCheckPoint(member, checkPointId)?.prevCheckPointDiffDuration;
   }
 
-  getCheckPointSpeed(member: RaceAthleteModel | undefined, checkPointId: number): number | undefined {
+  getCheckPointSpeed(member: RaceMemberModel | undefined, checkPointId: number): number | undefined {
     if (member === undefined) {
       return undefined;
     }
     if (this.getCheckPointTime(member, checkPointId) === undefined) {
       return undefined;
     }
-    return member.checkPoints?.find(value => value.id === checkPointId)?.diffSpeed;
+    return this.getMemberCheckPoint(member, checkPointId)?.diffSpeed;
   }
 
-  getCheckPointTimeExpired(member: RaceAthleteModel | undefined, checkPointId: number): boolean {
+  getCheckPointMembers(member: RaceMemberModel | undefined, checkPointId: number): string | undefined {
+    if (member === undefined) {
+      return undefined;
+    }
+    return (this.getMemberCheckPoint(member, checkPointId)?.checkPointMembers ?? []).map(item => item.name).join(', ');
+  }
+
+  getCheckPointTimeExpired(member: RaceMemberModel | undefined, checkPointId: number): boolean {
     if (member === undefined) {
       return false;
     }
-    return member.checkPoints?.find(value => value.id === checkPointId)?.checkTimeExpired ?? false;
+    return this.getMemberCheckPoint(member, checkPointId)?.checkTimeExpired ?? false;
   }
 
-  onAddAthleteCheckPoint(row: RaceAthleteModel) {
+  getMemberCheckPoint(member: RaceMemberModel | undefined, checkPointId: number) {
+    if (member === undefined) {
+      return undefined;
+    }
+    return member.checkPoints?.find(value => value.id === checkPointId);
+  }
+
+  getDetailRowCount(format: RaceFormatModel) {
+    if (!exists(format)) {
+      return 3;
+    }
+    return format?.isTeamRace() ? 4 : 3;
+  }
+
+  onAddAthleteCheckPoint(row: RaceMemberModel) {
     firstValueFrom(combineLatest([
                                    this.page.getRaceId(),
                                    this.page.getRaceFormatId(),
@@ -334,7 +348,7 @@ export class RaceFormatResultComponent
       .then(value => this.page.refresh$.next());
   }
 
-  onSetAthleteState(row: RaceAthleteModel) {
+  onSetAthleteState(row: RaceMemberModel) {
     firstValueFrom(combineLatest([this.page.getRaceId(), this.page.getRaceFormatId()]))
       .then(([raceId, raceFormatId]) => this.dialog.open(SetAthleteStateDialogComponent, {
         disableClose: true,
@@ -383,10 +397,10 @@ export class RaceFormatResultComponent
     this.fixedTable = !this.fixedTable;
   }
 
-  getShortFIO(row: RaceAthleteModel, isAnon: boolean) {
+  getShortFIO(row: RaceMemberModel, isAnon: boolean) {
     if (isAnon) {
-      return 'Неизвестный атлет (' + row.athlete.sex?.short + ')';
+      return 'Неизвестный атлет';
     }
-    return row.athlete.getShortFIO();
+    return row.member.name;
   }
 }

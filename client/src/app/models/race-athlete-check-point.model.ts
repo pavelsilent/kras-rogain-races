@@ -1,6 +1,8 @@
 import { LocalDateTime } from '@js-joda/core';
+import { Option } from 'funfix-core';
 import { RaceAthleteCheckPointDTO } from '../api/index';
 import { exists, parseLocalDateTime } from '../utils/utils';
+import { MemberInfoModel } from './member-info.model';
 
 export class RaceAthleteCheckPointModel {
   id: number;
@@ -11,6 +13,7 @@ export class RaceAthleteCheckPointModel {
   prevCheckPointDiffDuration?: string;
   passed?: boolean;
   checkTimeExpired: boolean = false;
+  checkPointMembers: MemberInfoModel[];
 
   constructor(dto?: RaceAthleteCheckPointDTO) {
     if (exists(dto)) {
@@ -22,6 +25,9 @@ export class RaceAthleteCheckPointModel {
       this.prevCheckPointDiffDuration = dto.prevCheckPointDiffDuration;
       this.passed = dto.passed;
       this.checkTimeExpired = dto.checkTimeExpired ?? false;
+      this.checkPointMembers = Option.of(dto.members)
+                                     .map(data => data.map(value => MemberInfoModel.fromDTO(value)))
+                                     .getOrElse([]);
     }
   }
 
@@ -41,6 +47,7 @@ export class RaceAthleteCheckPointModel {
       previousCheckPointDiffTime: this.prevCheckPointDiffDuration,
       // @ts-ignore
       passed: this.passed,
+      members: Option.of(this.checkPointMembers).map(data => data.map(item => item.toDTO())).getOrElse([]),
     };
   }
 

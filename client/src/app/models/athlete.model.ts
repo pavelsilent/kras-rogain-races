@@ -2,7 +2,9 @@ import { LocalDate } from '@js-joda/core';
 import { AthleteDTO } from '../api/index';
 import { exists, hasLength, parseLocalDate, resolveEnumOrDefault } from '../utils/utils';
 import { CityModel } from './city.model';
+import { AthleteType } from './enums/athlete-type.enum';
 import { Sex } from './enums/sex.enum';
+import { MemberInfoModel } from './member-info.model';
 
 export class AthleteModel {
   id?: number;
@@ -25,6 +27,14 @@ export class AthleteModel {
       this.club = dto.club;
       this.city = CityModel.fromDTO(dto.city);
     }
+  }
+
+  public toMemberInfo(): MemberInfoModel {
+    const member = new MemberInfoModel();
+    member.id = this.id as any;
+    member.name = this.getFIO();
+    member.type = AthleteType.ATHLETE;
+    return member;
   }
 
   public getShortFIO() {

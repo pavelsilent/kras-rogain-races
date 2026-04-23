@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 import { AthleteListComponent } from './components/athlete-list/athlete-list.component';
+import { AthleteTeamListComponent } from './components/athlete-team-list/athlete-team-list.component';
+import { AthleteTeamComponent } from './components/athlete-team/athlete-team.component';
 import { AthleteComponent } from './components/athlete/athlete.component';
 import { NotFoundComponent } from './components/core/not-found/not-found.component';
 import {
@@ -35,6 +37,8 @@ export const routes: Routes = [
   },
   { path: 'athletes', component: AthleteListComponent, canActivate: [DisableEditGuard] },
   { path: 'athletes/:id', component: AthleteComponent, canActivate: [DisableEditGuard] },
+  { path: 'teams', component: AthleteTeamListComponent, canActivate: [DisableEditGuard] },
+  { path: 'teams/:id', component: AthleteTeamComponent, canActivate: [DisableEditGuard] },
   { path: 'results/:token', component: RaceResultPageComponent },
   { path: '**', component: NotFoundComponent },
 

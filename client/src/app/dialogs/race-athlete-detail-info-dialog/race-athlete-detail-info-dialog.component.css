@@ -15,7 +15,27 @@ td {
   padding: 2px;
   text-align: center;
   border-collapse: collapse;
+  border: none;
   font-size: 16px;
+}
+
+tr {
+  td {
+    border-bottom: none;
+  }
+}
+
+tr.main-row, tr.last-row {
+  td {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  }
+}
+
+tr.main-row:has(+ tr.last-row.not-hidden) {
+  td {
+    border-bottom: 0;
+
+  }
 }
 
 .header-row {
@@ -60,6 +80,7 @@ td {
 .control-time {
   color: red;
 }
+
 .cell-wrapper {
   display: flex;
   flex-direction: column;
@@ -74,4 +95,15 @@ td {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+.detail-row {
+
+}
+
+.hidden {
+  display: none;
+}
+
+.not-hidden {
 }

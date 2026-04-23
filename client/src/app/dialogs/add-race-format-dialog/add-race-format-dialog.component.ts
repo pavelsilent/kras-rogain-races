@@ -2,7 +2,7 @@ import { NgForOf } from '@angular/common';
 import { Component, Inject, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatOption } from '@angular/material/core';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 import {
@@ -13,7 +13,7 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
-import { MatFormField, MatPrefix, MatSuffix } from '@angular/material/form-field';
+import { MatFormField, MatSuffix } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInput, MatLabel } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
@@ -52,9 +52,7 @@ export interface AddRaceFormatDialogConfig {
                ReactiveFormsModule,
                MatMomentDateModule,
                MatIconModule,
-               MatPrefix,
                MatSuffix,
-               MatIconButton,
 
              ],
              providers: [

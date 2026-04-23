@@ -5,8 +5,8 @@ import { exists, parseLocalDateTime, resolveEnum } from '../utils/utils';
 import { AthleteGroupModel } from './athlete-group.model';
 import { RaceFormatType } from './enums/race-format-type.enum';
 import { RaceState } from './enums/race-state.enum';
-import { RaceAthleteModel } from './race-athlete.model';
 import { RaceCheckPointModel } from './race-check-point.model';
+import { RaceMemberModel } from './race-member.model';
 
 export class RaceFormatResultModel {
   id: number;
@@ -14,7 +14,7 @@ export class RaceFormatResultModel {
   type?: RaceFormatType;
   checkPoints: RaceCheckPointModel[];
   athletesGroups: AthleteGroupModel[];
-  athletes: RaceAthleteModel[];
+  athletes: RaceMemberModel[];
   startDateTime?: LocalDateTime;
   finishDateTime?: LocalDateTime;
   state: RaceState;
@@ -35,7 +35,7 @@ export class RaceFormatResultModel {
                                   .map(groups => groups.map(value => AthleteGroupModel.fromDTO(value)))
                                   .getOrElse([]);
       this.athletes = Option.of(dto.athletes)
-                            .map(athletes => athletes.map(value => RaceAthleteModel.fromDTO(value)))
+                            .map(athletes => athletes.map(value => RaceMemberModel.fromDTO(value)))
                             .getOrElse([]);
       this.state = resolveEnum(dto.state!, RaceState.store);
       this.attitudeProfileFileId = dto.attitudeProfileFileId!;

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +34,7 @@ public class DictionaryController {
     private final CityService cityService;
     private final RestConverter restConverter;
 
-    @GetMapping("/race-types")
+    @GetMapping(path = "/race-types", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Получить список типов соревнований")
     @ApiResponse(responseCode = "200", description = "Список")
     public ResponseEntity<List<RaceTypeDTO>> getAllRaceTypes() {
@@ -48,7 +49,7 @@ public class DictionaryController {
         return ResponseEntity.ok(raceType.getId());
     }
 
-    @GetMapping("/cities")
+    @GetMapping(path = "/cities", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Получить список мест проведения соревнований")
     @ApiResponse(responseCode = "200", description = "Список")
     public ResponseEntity<List<CityDTO>> getAllCities() {

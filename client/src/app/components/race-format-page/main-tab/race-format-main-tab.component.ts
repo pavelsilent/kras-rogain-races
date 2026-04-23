@@ -2,9 +2,9 @@ import { AsyncPipe, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Option } from 'funfix-core';
-import { firstValueFrom, lastValueFrom, map, Observable, startWith, Subject, switchMap, tap } from 'rxjs';
+import { firstValueFrom, lastValueFrom, map, Observable, startWith, Subject, switchMap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { AddRaceFormatDialogComponent } from '../../../dialogs/add-race-format-dialog/add-race-format-dialog.component';
 import { AddFileDialogComponent } from '../../../dialogs/add-race-format-file-dialog/add-file-dialog.component';
@@ -13,9 +13,7 @@ import { RaceFormatModel } from '../../../models/race-format.model';
 import { EnumPipe } from '../../../utils/enum.pipe';
 import { BoolPipe } from '../../../utils/list.pipe';
 import { RussianDateTimePipe } from '../../../utils/russian-date-time.pipe';
-import { RussianDatePipe } from '../../../utils/russian-date.pipe';
 import { RaceService } from '../../race/race.service';
-import { RaceFormatPageService } from '../race-format-page.service';
 
 @Component({
              selector: 'app-race-format-main-tab',
@@ -23,11 +21,10 @@ import { RaceFormatPageService } from '../race-format-page.service';
                AsyncPipe,
                MatButton,
                NgIf,
-               RussianDatePipe,
                EnumPipe,
                RussianDateTimePipe,
                BoolPipe,
-               RouterLink,
+
              ],
              templateUrl: './race-format-main-tab.component.html',
              standalone: true,

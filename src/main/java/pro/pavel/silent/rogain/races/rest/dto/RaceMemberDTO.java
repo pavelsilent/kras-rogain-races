@@ -16,13 +16,13 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @Schema(description = "Участник соревнования")
-public class RaceAthleteDTO {
+public class RaceMemberDTO {
 
     @Schema(description = "Идентификатор", requiredMode = REQUIRED)
     private Long id;
 
     @Schema(description = "Участник", requiredMode = REQUIRED)
-    private AthleteDTO athlete;
+    private MemberInfoDTO member;
 
     @Schema(description = "Нагрудный номер", requiredMode = REQUIRED)
     private Integer bibNumber;

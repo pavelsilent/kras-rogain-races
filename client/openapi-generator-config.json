@@ -11,6 +11,8 @@
     "useSingleRequestParameter": false,
     "enumPropertyNaming": "original",
     "httpResponseType": "json",
-    "withSeparateModelsAndApi": true
+    "withSeparateModelsAndApi": true,
+    "produces": "application/json",
+    "consumes": "application/json"
   }
 }

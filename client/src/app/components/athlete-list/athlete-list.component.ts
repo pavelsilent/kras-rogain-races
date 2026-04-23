@@ -27,7 +27,6 @@ import { AddAthleteDialogComponent } from '../../dialogs/add-athlete-dialog/add-
 import { AthleteModel } from '../../models/athlete.model';
 import { EnumPipe } from '../../utils/enum.pipe';
 import { RussianDatePipe } from '../../utils/russian-date.pipe';
-import { RussianTimePipe } from '../../utils/russian-time.pipe';
 import { hasLength } from '../../utils/utils';
 import { AthletesService } from './athletes.service';
 
@@ -53,7 +52,7 @@ import { AthletesService } from './athletes.service';
                RouterLink,
                MatHeaderCellDef,
                MatTableModule, MatPaginatorModule, MatSortModule, MatFormFieldModule, MatInputModule,
-               RouterLink, RussianTimePipe, RussianDatePipe, EnumPipe, MatButton, NgClass, NgIf,
+               RouterLink, RussianDatePipe, EnumPipe, MatButton, NgClass, NgIf,
              ],
              templateUrl: './athlete-list.component.html',
              styleUrl: './athlete-list.component.css',

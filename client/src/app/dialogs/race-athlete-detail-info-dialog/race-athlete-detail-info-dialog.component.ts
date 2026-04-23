@@ -1,7 +1,7 @@
-import { AsyncPipe, NgClass, NgForOf, NgIf } from '@angular/common';
+import { NgClass, NgIf } from '@angular/common';
 import { Component, Inject, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -9,10 +9,6 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
-import { MatFormField } from '@angular/material/form-field';
-import { MatIcon } from '@angular/material/icon';
-import { MatInput, MatLabel } from '@angular/material/input';
-import { MatSort } from '@angular/material/sort';
 import {
   MatCell,
   MatCellDef,
@@ -20,20 +16,20 @@ import {
   MatHeaderCell,
   MatHeaderCellDef,
   MatHeaderRow,
-  MatHeaderRowDef, MatRow,
+  MatHeaderRowDef,
+  MatRow,
   MatRowDef,
   MatTable,
 } from '@angular/material/table';
-import { MatTooltip } from '@angular/material/tooltip';
 import { LocalDateTime } from '@js-joda/core';
-import { RaceAthleteModel } from '../../models/race-athlete.model';
+import { AthleteType } from '../../models/enums/athlete-type.enum';
 import { RaceCheckPointModel } from '../../models/race-check-point.model';
+import { RaceMemberModel } from '../../models/race-member.model';
 import { RussianDateTimePipe } from '../../utils/russian-date-time.pipe';
-import { RussianTimePipe } from '../../utils/russian-time.pipe';
 
 export interface RaceAthleteDetailInfoDialogConfig {
   checkPoints: RaceCheckPointModel[],
-  athleteInfo: RaceAthleteModel,
+  athleteInfo: RaceMemberModel,
 }
 
 @Component({
@@ -44,26 +40,16 @@ export interface RaceAthleteDetailInfoDialogConfig {
                MatDialogActions,
                MatDialogContent,
                MatDialogTitle,
-               MatFormField,
-               MatInput,
-               MatLabel,
                ReactiveFormsModule,
-               AsyncPipe,
                MatCell,
                MatCellDef,
                MatColumnDef,
                MatHeaderCell,
                MatHeaderRow,
                MatHeaderRowDef,
-               MatIcon,
-               MatIconButton,
                MatRowDef,
-               MatSort,
                MatTable,
-               MatTooltip,
-               NgForOf,
                NgIf,
-               RussianTimePipe,
                MatHeaderCellDef,
                MatRow,
                NgClass,
@@ -76,48 +62,72 @@ export interface RaceAthleteDetailInfoDialogConfig {
 export class RaceAthleteDetailInfoDialogComponent {
   dialogRef = inject(MatDialogRef<RaceAthleteDetailInfoDialogComponent>);
   dataTableBodyDef: string[] = ['checkPoint', 'distance', 'raceTime', 'checkPointCheckTime', 'checkPointLeaderTime'];
-  localTime = false;
+  dataTableBodyDef2: string[] = [
+    'checkPoint2',
+    'distance2',
+    'raceTime2',
+    'checkPointCheckTime2',
+    'checkPointLeaderTime2',
+  ];
+  membersBodyDef: string[] = ['memberLabel', 'members'];
+
   constructor(@Inject(MAT_DIALOG_DATA) public data: RaceAthleteDetailInfoDialogConfig) {
   }
 
-  onToggleLocalTime() {
-    this.localTime = !this.localTime;
+  getAthleteCheckPoint(checkPointId: number) {
+    return this.data.athleteInfo.checkPoints?.find(value => value.id === checkPointId);
+  }
+
+  getRaceCheckPoint(checkPointId: number) {
+    return this.data.checkPoints.find(value => value.id === checkPointId);
   }
 
   getCheckPointRaceDuration(checkPointId: number): string | undefined {
-    return this.data.athleteInfo.checkPoints?.find(value => value.id === checkPointId)?.raceDuration;
+    return this.getAthleteCheckPoint(checkPointId)?.raceDuration;
   }
 
   getCheckPointRaceDateTime(checkPointId: number): LocalDateTime | undefined {
-    return this.data.athleteInfo.checkPoints?.find(value => value.id === checkPointId)?.time;
+    return this.getAthleteCheckPoint(checkPointId)?.time;
   }
 
   getCheckPointCheckTimeExpired(checkPointId: number): boolean | undefined {
-    return this.data.athleteInfo.checkPoints?.find(value => value.id === checkPointId)?.checkTimeExpired;
+    return this.getAthleteCheckPoint(checkPointId)?.checkTimeExpired;
   }
 
   getCheckPointDiffTime(checkPointId: number): string | undefined {
-    return this.data.athleteInfo.checkPoints?.find(value => value.id === checkPointId)?.prevCheckPointDiffDuration;
+    return this.getAthleteCheckPoint(checkPointId)?.prevCheckPointDiffDuration;
   }
 
   getCheckPointLeaderTime(checkPointId: number): string | undefined {
-    return this.data.checkPoints.find(value => value.id === checkPointId)?.leaderDuration
+    return this.getRaceCheckPoint(checkPointId)?.leaderDuration;
   }
 
   getCheckPointLeaderDateTime(checkPointId: number): LocalDateTime | undefined {
-    return this.data.checkPoints.find(value => value.id === checkPointId)?.leaderTime;
+    return this.getRaceCheckPoint(checkPointId)?.leaderTime;
   }
 
   getCheckPointLeaderDiffTime(checkPointId: number): string | undefined {
-    return this.data.checkPoints.find(value => value.id === checkPointId)?.leaderDiffDuration
+    return this.getRaceCheckPoint(checkPointId)?.leaderDiffDuration;
   }
 
   getCheckPointCheckTime(checkPointId: number): string | undefined {
-    return this.data.checkPoints.find(value => value.id === checkPointId)?.checkDuration
+    return this.getRaceCheckPoint(checkPointId)?.checkDuration;
   }
 
   getCheckPointCheckDateTime(checkPointId: number): LocalDateTime | undefined {
-    return this.data.checkPoints.find(value => value.id === checkPointId)?.checkTime
+    return this.getRaceCheckPoint(checkPointId)?.checkTime;
+  }
+
+  getCheckPointMembers(checkPointId: number): string | undefined {
+    return this.getAthleteCheckPoint(checkPointId)?.checkPointMembers
+               .map(value => value.name).join(', ');
+  }
+
+  isMembersHidden(row: RaceCheckPointModel) {
+    if (this.data.athleteInfo.type === AthleteType.ATHLETE) {
+      return true;
+    }
+    return !row.open;
   }
 
   cancel() {

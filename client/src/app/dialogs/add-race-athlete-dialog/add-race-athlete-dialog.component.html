@@ -7,8 +7,9 @@
       <input matInput formControlName="bibNumber"/>
     </mat-form-field>
     <mat-form-field appearance="fill">
-      <mat-label>Атлет</mat-label>
-      <input matInput formControlName="athlete" [value]="getAthleteFIO()" readonly/>
+      <mat-label>{{ memberLabel }}</mat-label>
+      <input matInput [value]="getAthleteName()" readonly/>
+      <input matInput formControlName="athlete" hidden="hidden" readonly/>
       <button mat-icon-button matSuffix (click)="openAthleteDialog()">
         <mat-icon>search</mat-icon>
       </button>

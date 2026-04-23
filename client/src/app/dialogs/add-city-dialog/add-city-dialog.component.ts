@@ -7,7 +7,6 @@ import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
-import { RouterLink } from '@angular/router';
 import { DictionaryService } from '../../components/dictionaries/dictionary.service';
 import { CityModel } from '../../models/city.model';
 import { CityType } from '../../models/enums/city-type.enum';
@@ -17,7 +16,7 @@ import { resolveEnum } from '../../utils/utils';
              selector: 'app-add-race-type-dialog',
              imports: [
                MatFormFieldModule, MatInputModule,
-               RouterLink, MatButton, FormsModule,
+               MatButton, FormsModule,
                MatDialogActions, MatDialogContent, MatDialogTitle, NgForOf, ReactiveFormsModule, MatSelect, MatOption,
              ],
              templateUrl: './add-city-dialog.component.html',
