@@ -15,7 +15,6 @@ export class DisableEditGuard
   canActivate() {
     return lastValueFrom(this.appService.canSetup())
       .then(value => {
-        console.log(value);
         if (!value) {
           this.router.navigate(['/']);
         }

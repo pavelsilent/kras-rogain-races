@@ -136,8 +136,6 @@ export class RaceService {
     athleteBibNumber: number,
     checkPointId: number,
   ): Promise<RaceAthleteCheckPointSetupModel> {
-    console.log(checkPointId);
-
     return lastValueFrom(this.backend.getRaceAthleteCheckPoint(id, formatId, athleteBibNumber, checkPointId))
       .then(value => RaceAthleteCheckPointSetupModel.fromDTO(value));
   }
