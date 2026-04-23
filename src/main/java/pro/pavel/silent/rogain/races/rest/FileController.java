@@ -36,7 +36,7 @@ public class FileController {
         return this.fileService.create(fileData).getId();
     }
 
-    @GetMapping("/download/{id}")
+    @GetMapping(path = "/download/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<FileDTO> download(@PathVariable Long id) {
         File file = fileService.getById(id);
         String base64Data = Base64.getEncoder().encodeToString(file.getFileData());

@@ -3,7 +3,6 @@ import { Component, inject, Inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
-import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -20,26 +19,26 @@ import { Option } from 'funfix-core';
 import { firstValueFrom, lastValueFrom, map, Observable, startWith, Subject, switchMap } from 'rxjs';
 import { RaceService } from '../../components/race/race.service';
 import { AthleteGroupModel } from '../../models/athlete-group.model';
-import { AthleteModel } from '../../models/athlete.model';
-import { RaceAthleteSetupModel } from '../../models/race-athlete-setup.model';
-import { RaceAthleteModel } from '../../models/race-athlete.model';
+import { AthleteType } from '../../models/enums/athlete-type.enum';
+import { MemberInfoModel } from '../../models/member-info.model';
+import { RaceMemberSetupModel } from '../../models/race-member-setup.model';
+import { RaceMemberModel } from '../../models/race-member.model';
 import { exists, hasLength } from '../../utils/utils';
 import { SelectAthleteDialog } from '../select-athlete-dialog/select-athlete-dialog';
 import { SelectAthleteGroupDialog } from '../select-athlete-group-dialog/select-athlete-group-dialog';
+import { SelectAthleteTeamDialogComponent } from '../select-athlete-team-dialog/select-athlete-team-dialog.component';
 
 export interface AddRaceAthleteDialogConfig {
   raceId: number;
   formatId: number,
-  raceAthlete?: RaceAthleteModel
+  athleteType: AthleteType,
+  raceMember?: RaceMemberModel
 }
 
 @Component({
              selector: 'app-add-race-athlete-dialog',
              imports: [
                MatButton,
-               MatDatepicker,
-               MatDatepickerInput,
-               MatDatepickerToggle,
                MatDialogActions,
                MatDialogContent,
                MatDialogTitle,
@@ -70,28 +69,30 @@ export class AddRaceAthleteDialogComponent {
   athleteGroupControl: FormControl;
   form: FormGroup;
   title: string;
+  memberLabel: string;
 
   constructor(
     private service: RaceService,
     private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: AddRaceAthleteDialogConfig,
   ) {
-    this.title = (exists(data.raceAthlete) ? 'Редактировать' : 'Добавить') + ' атлета';
+    this.title = (exists(data.raceMember) ? 'Редактировать' : 'Добавить') + (data.athleteType === AthleteType.ATHLETE ? ' атлета' : ' команду');
+    this.memberLabel =  (data.athleteType === AthleteType.ATHLETE ? 'Атлет' : 'Команда');
     this.athleteControl = new FormControl(
-      exists(data.raceAthlete) ? data.raceAthlete.athlete : undefined,
+      exists(data.raceMember) ? data.raceMember.member : undefined,
       Validators.required,
     );
-    this.athleteControl.setValue(exists(data.raceAthlete) ? data.raceAthlete.athlete : undefined);
-    this.athleteGroupControl = new FormControl(exists(data.raceAthlete)
-                                               ? Option.of(data.raceAthlete.groups.map(value => value.id))
+    this.athleteControl.setValue(exists(data.raceMember) ? data.raceMember.member : undefined);
+    this.athleteGroupControl = new FormControl(exists(data.raceMember)
+                                               ? Option.of(data.raceMember.groups.map(value => value.id))
                                                        .filter(data => hasLength(data))
                                                        .map(data => data[0])
                                                        .getOrElse(undefined)
                                                : undefined, Validators.required);
 
     this.form = this.fb.group({
-                                bibNumber: new FormControl(exists(data.raceAthlete)
-                                                           ? data.raceAthlete.bibNumber
+                                bibNumber: new FormControl(exists(data.raceMember)
+                                                           ? data.raceMember.bibNumber
                                                            : undefined, Validators.required),
                                 athlete: this.athleteControl,
                                 athleteGroup: this.athleteGroupControl,
@@ -106,7 +107,7 @@ export class AddRaceAthleteDialogComponent {
     this.raceAthletesIds$ = this.raceAthletesRefresh$.pipe(
       startWith(null),
       switchMap(value => service.getRaceFormatsAthletes(data.raceId, data.formatId)),
-      map(value => value.map(value => value.athlete)
+      map(value => value.map(value => value.member)
                         .map(value => value.id!)),
     );
   }
@@ -114,13 +115,14 @@ export class AddRaceAthleteDialogComponent {
   submit() {
     if (this.form.valid) {
       let formValue = this.form.value;
-      const model = new RaceAthleteSetupModel();
+      const model = new RaceMemberSetupModel();
       model.bibNumber = formValue.bibNumber!;
-      model.athlete = formValue.athlete!;
+      model.memberId = formValue.athlete!.id!;
+      model.memberType = this.data.athleteType;
       model.athleteGroupId = formValue.athleteGroup!;
 
-      if (exists(this.data.raceAthlete)) {
-        model.id = this.data.raceAthlete.id;
+      if (exists(this.data.raceMember)) {
+        model.id = this.data.raceMember.id;
         this.service.editRaceAthlete(this.data.raceId, this.data.formatId, model)
             .then(value => this.dialogRef.close(value));
       } else {
@@ -135,6 +137,14 @@ export class AddRaceAthleteDialogComponent {
   }
 
   openAthleteDialog() {
+    if (this.data.athleteType === AthleteType.ATHLETE) {
+      this.openSelectAthleteDialog();
+    } else if (this.data.athleteType === AthleteType.ATHLETE_TEAM) {
+      this.openSelectAthleteTeamDialog();
+    }
+  }
+
+  openSelectAthleteDialog() {
     firstValueFrom(this.raceAthletesIds$)
       .then(ids =>
               this.dialog.open(
@@ -147,7 +157,24 @@ export class AddRaceAthleteDialogComponent {
                 }))
       .then(value => lastValueFrom(value.afterClosed()))
       .then(value => {
-        this.athleteControl.setValue(value);
+        this.athleteControl.setValue(Option.of(value).map(data => data.toMemberInfo()).getOrElse(null));
+      });
+  };
+
+  openSelectAthleteTeamDialog() {
+    firstValueFrom(this.raceAthletesIds$)
+      .then(ids =>
+              this.dialog.open(
+                SelectAthleteTeamDialogComponent, {
+                  width: '900px',
+                  height: '850px',
+                  maxWidth: '90vw',
+                  disableClose: true,
+                  data: { selectedTeamIds: ids },
+                }))
+      .then(value => lastValueFrom(value.afterClosed()))
+      .then(value => {
+        this.athleteControl.setValue(Option.of(value).map(data => data.toMemberInfo()).getOrElse(null));
       });
   };
 
@@ -157,13 +184,13 @@ export class AddRaceAthleteDialogComponent {
 
       firstValueFrom(this.athleteGroups$)
         .then(value => value.map(value => value.id))
-        .then(raceForamtAthleteGroupIds => this.dialog.open(SelectAthleteGroupDialog, {
+        .then(raceFormatAthleteGroupIds => this.dialog.open(SelectAthleteGroupDialog, {
           width: '500px',
           disableClose: true,
           data: {
             raceId: this.data.raceId,
             formatId: this.data.formatId,
-            selectedIds: raceForamtAthleteGroupIds,
+            selectedIds: raceFormatAthleteGroupIds,
           },
         }))
         .then(dialogRef => lastValueFrom(dialogRef.afterClosed()))
@@ -174,10 +201,10 @@ export class AddRaceAthleteDialogComponent {
     }
   }
 
-  getAthleteFIO() {
+  getAthleteName() {
     if (exists(this.athleteControl.value)) {
-      let athlete = this.athleteControl.value as any as AthleteModel;
-      return athlete.getFIO();
+      let athlete = this.athleteControl.value as any as MemberInfoModel;
+      return athlete.name;
     }
 
     return '';

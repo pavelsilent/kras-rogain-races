@@ -44,7 +44,7 @@ public class RaceFormatResultDTO {
     private List<RaceFormatCheckPointDTO> checkPoints;
 
     @Schema(description = "Участники")
-    private List<RaceAthleteDTO> athletes;
+    private List<RaceMemberDTO> athletes;
 
     @Schema(description = "Статус")
     private String state;

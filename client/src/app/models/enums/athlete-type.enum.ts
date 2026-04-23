@@ -6,6 +6,7 @@ export class AthleteType
   static store: EnumValuesStorage<AthleteType> = new EnumValuesStorage();
 
   static ATHLETE = new AthleteType('ATHLETE', 'Атлет');
+  static ATHLETE_TEAM = new AthleteType('ATHLETE_TEAM', 'Команда');
   static LEADER = new AthleteType('LEADER', 'Прогнозируемый лидер');
   static CONTROL = new AthleteType('CONTROL', 'Контрольное время');
 

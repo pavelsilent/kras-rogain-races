@@ -2,6 +2,7 @@ import { Component, forwardRef, Input } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
+import { exists } from '../../../utils/utils';
 
 @Component({
              selector: 'app-duration-split-field',
@@ -33,6 +34,7 @@ export class DurationSplitFieldComponent
   seconds: string = '';
 
   writeValue(value: string | null): void {
+    console.log(value);
     if (value) {
       const [hh, mm, ss] = value.split(':');
       this.hours = hh ?? '';
@@ -71,6 +73,11 @@ export class DurationSplitFieldComponent
   }
 
   updateValue(): void {
+    if (!exists(this.hours) && !exists(this.minutes) && !exists(this.seconds)) {
+      this.onChange('');
+      return;
+    }
+
     const hh = String(this.hours).padStart(3, '0') || '000';
     const mm = String(this.minutes).padStart(2, '0') || '00';
     const ss = String(this.seconds).padStart(2, '0') || '00';

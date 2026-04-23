@@ -1,7 +1,7 @@
+import { AsyncPipe } from '@angular/common';
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { MatDivider } from '@angular/material/divider';
 import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput, MatInputModule, MatLabel } from '@angular/material/input';
@@ -22,14 +22,14 @@ import {
   MatTableModule,
 } from '@angular/material/table';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { lastValueFrom, Subject } from 'rxjs';
+import { firstValueFrom, lastValueFrom, map, Observable, Subject } from 'rxjs';
 import {
   AddRaceAthleteDialogComponent,
 } from '../../../dialogs/add-race-athlete-dialog/add-race-athlete-dialog.component';
-import { RaceAthleteModel } from '../../../models/race-athlete.model';
+import { AthleteType } from '../../../models/enums/athlete-type.enum';
+import { RaceFormatModel } from '../../../models/race-format.model';
+import { RaceMemberModel } from '../../../models/race-member.model';
 import { EnumPipe } from '../../../utils/enum.pipe';
-import { RussianDatePipe } from '../../../utils/russian-date.pipe';
-import { RussianTimePipe } from '../../../utils/russian-time.pipe';
 import { RaceService } from '../../race/race.service';
 
 @Component({
@@ -58,12 +58,10 @@ import { RaceService } from '../../race/race.service';
                MatFormFieldModule,
                MatInputModule,
                RouterLink,
-               RussianTimePipe,
-               RussianDatePipe,
                EnumPipe,
                MatButton,
-               MatDivider,
                MatIcon,
+               AsyncPipe,
              ],
              templateUrl: './race-format-athletes-tab.component.html',
              standalone: true,
@@ -73,16 +71,22 @@ export class RaceFormatAthletesTabComponent
   implements AfterViewInit {
   id: number;
   formatId: number;
-  displayedColumns: string[] = ['bib', 'fio', 'birthDate', 'sex', 'city', 'club', 'groups', 'state', 'delete'];
-  dataSource = new MatTableDataSource<RaceAthleteModel>();
+  displayedColumns: string[] = ['bib', 'fio', 'groups', 'state', 'delete'];
+  dataSource = new MatTableDataSource<RaceMemberModel>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   refresh$: Subject<void> = new Subject<void>();
+  raceFormat$: Observable<RaceFormatModel>;
+  memberLabel$: Observable<string>;
 
   constructor(private route: ActivatedRoute, private service: RaceService, private dialog: MatDialog) {
     this.id = Number(this.route.parent?.snapshot.paramMap.get('id'));
     this.formatId = Number(this.route.parent?.snapshot.paramMap.get('formatId'));
+    this.raceFormat$ = this.service.getRaceFormatById(this.id, this.formatId, true);
+    this.memberLabel$ = this.raceFormat$.pipe(map(x => x.type.athleteType === AthleteType.ATHLETE
+                                                       ? 'Добавить атлета'
+                                                       : 'Добавить команду'));
     this.refresh$.subscribe(
       value => this.service.getRaceFormatsAthletes(this.id, this.formatId)
                    .subscribe(data => this.dataSource.data = data),
@@ -100,7 +104,25 @@ export class RaceFormatAthletesTabComponent
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  onAdd() {
+  onAddMember() {
+    firstValueFrom(this.raceFormat$)
+      .then(raceFormat => {
+        const dialogRef =
+          this.dialog.open(AddRaceAthleteDialogComponent, {
+            width: '500px',
+            disableClose: true,
+            data: {
+              raceId: this.id,
+              formatId: this.formatId,
+              athleteType: raceFormat.type.athleteType,
+            },
+          });
+        lastValueFrom(dialogRef.afterClosed())
+          .then(value => this.refresh$.next());
+      });
+  }
+
+  onEditMember(row: RaceMemberModel) {
     const dialogRef =
       this.dialog.open(AddRaceAthleteDialogComponent, {
         width: '500px',
@@ -108,6 +130,8 @@ export class RaceFormatAthletesTabComponent
         data: {
           raceId: this.id,
           formatId: this.formatId,
+          athleteType: row.type,
+          raceMember: row,
         },
       });
 
@@ -115,24 +139,7 @@ export class RaceFormatAthletesTabComponent
       .then(value => this.refresh$.next());
   }
 
-
-  onEdit(row: RaceAthleteModel) {
-    const dialogRef =
-      this.dialog.open(AddRaceAthleteDialogComponent, {
-        width: '500px',
-        disableClose: true,
-        data: {
-          raceId: this.id,
-          formatId: this.formatId,
-          raceAthlete: row
-        },
-      });
-
-    lastValueFrom(dialogRef.afterClosed())
-      .then(value => this.refresh$.next());
-  }
-
-  onDelete(row: RaceAthleteModel) {
+  onDelete(row: RaceMemberModel) {
     this.service.deleteRaceAthlete(this.id, this.formatId, row)
         .then(value => this.refresh$.next());
   }

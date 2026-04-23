@@ -65,7 +65,11 @@ public class Athlete {
     @Schema(description = "Клуб")
     private Club club;
 
-    public String getFIO() {
+    public String getFIO(boolean isAnonMode) {
+        if (isAnonMode) {
+            return "Неизвестный атлет";
+        }
+
         var result = "%s %s".formatted(lastName, firstName);
         if (StringHelper.hasLength(middleName)) {
             result += " %s".formatted(middleName);

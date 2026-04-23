@@ -17,10 +17,13 @@ import pro.pavel.silent.lib.core.util.DurationHelper;
 import pro.pavel.silent.lib.core.util.ListHelper;
 import pro.pavel.silent.lib.core.util.OptionalHelper;
 import pro.pavel.silent.lib.core.util.ThreeMap;
+import pro.pavel.silent.rogain.races.domain.enumeration.RaceAthleteType;
 import pro.pavel.silent.rogain.races.domain.enumeration.RaceState;
 import pro.pavel.silent.rogain.races.domain.model.RaceFormatTokenModel;
 import pro.pavel.silent.rogain.races.entity.Athlete;
 import pro.pavel.silent.rogain.races.entity.AthleteGroup;
+import pro.pavel.silent.rogain.races.entity.AthleteTeam;
+import pro.pavel.silent.rogain.races.entity.AthleteTeamMember;
 import pro.pavel.silent.rogain.races.entity.City;
 import pro.pavel.silent.rogain.races.entity.Club;
 import pro.pavel.silent.rogain.races.entity.File;
@@ -33,9 +36,10 @@ import pro.pavel.silent.rogain.races.entity.RaceFormatCheckPoint;
 import pro.pavel.silent.rogain.races.entity.RaceType;
 import pro.pavel.silent.rogain.races.rest.dto.AthleteDTO;
 import pro.pavel.silent.rogain.races.rest.dto.AthleteGroupDTO;
+import pro.pavel.silent.rogain.races.rest.dto.AthleteTeamDTO;
 import pro.pavel.silent.rogain.races.rest.dto.CityDTO;
+import pro.pavel.silent.rogain.races.rest.dto.MemberInfoDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceAthleteCheckPointDTO;
-import pro.pavel.silent.rogain.races.rest.dto.RaceAthleteDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceAthleteGroupDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatCheckPointDTO;
@@ -43,8 +47,10 @@ import pro.pavel.silent.rogain.races.rest.dto.RaceFormatDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatResultDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatResultLinkDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatTokenDTO;
+import pro.pavel.silent.rogain.races.rest.dto.RaceMemberDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceTypeDTO;
 import pro.pavel.silent.rogain.races.service.AppSettingsService;
+import pro.pavel.silent.rogain.races.service.AthleteQueryService;
 import pro.pavel.silent.rogain.races.service.RaceFormatFileService;
 import pro.pavel.silent.rogain.races.service.RaceQueryService;
 
@@ -53,6 +59,7 @@ import pro.pavel.silent.rogain.races.service.RaceQueryService;
 public class RestConverter {
 
     private final RaceQueryService raceQueryService;
+    private final AthleteQueryService athleteQueryService;
     private final RaceFormatFileService raceFormatFileService;
     private final AppSettingsService appSettingsService;
 
@@ -86,7 +93,8 @@ public class RestConverter {
                                           ListHelper.map(
                                               raceQueryService.getRaceFormatAthleteGroups(raceFormat),
                                               RaceFormatAthleteGroup::getAthleteGroup
-                                          ), this::toDTO))
+                                          ), this::toDTO
+                                      ))
                                   .checkPoints(
                                       ListHelper.map(
                                           raceQueryService.getRaceFormatCheckPoints(raceFormat),
@@ -185,7 +193,7 @@ public class RestConverter {
                                       .build();
     }
 
-    public RaceAthleteDTO toDTO(RaceAthlete raceAthlete) {
+    public RaceMemberDTO toDTO(RaceAthlete raceAthlete) {
         if (raceAthlete == null) {
             return null;
         }
@@ -199,27 +207,31 @@ public class RestConverter {
                        .map(RaceAthleteCheckPoint::getRaceFormatCheckPoint)
                        .orElse(null);
 
-        return RaceAthleteDTO.builder()
-                             .id(raceAthlete.getId())
-                             .athlete(toDTO(raceAthlete.getAthlete(), isAnonMode(raceAthlete.getRaceFormat())))
-                             .bibNumber(raceAthlete.getBibNumber())
-                             .state(raceAthlete.getState().name())
-                             .type(raceAthlete.getType().name())
-                             .checkPoints(ListHelper.map(checkPoints, this::toDTO))
-                             .lastCheckPoint(OptionalHelper.map(lastCheckPoint, this::toDTO))
-                             .groups(raceQueryService.getRaceAthleteGroups(raceAthlete)
-                                                     .stream()
-                                                     .map(raceAthleteGroup -> toDTO(raceAthleteGroup.getAthleteGroup()))
-                                                     .toList())
-                             .build();
+        return RaceMemberDTO.builder()
+                            .id(raceAthlete.getId())
+                            .member(toMemberDTO(
+                                raceAthlete.getMemberId(),
+                                raceAthlete.getType(),
+                                isAnonMode(raceAthlete.getRaceFormat())
+                            ))
+                            .bibNumber(raceAthlete.getBibNumber())
+                            .state(raceAthlete.getState().name())
+                            .type(raceAthlete.getType().name())
+                            .checkPoints(ListHelper.map(checkPoints, this::toDTO))
+                            .lastCheckPoint(OptionalHelper.map(lastCheckPoint, this::toDTO))
+                            .groups(raceQueryService.getRaceAthleteGroups(raceAthlete)
+                                                    .stream()
+                                                    .map(raceAthleteGroup -> toDTO(raceAthleteGroup.getAthleteGroup()))
+                                                    .toList())
+                            .build();
     }
 
     private boolean isAnonMode(RaceFormat raceFormat) {
         return appSettingsService.isAnonMode() || raceFormat.isAnonMode();
     }
 
-    public RaceAthleteDTO toDTO(RaceAthlete raceAthlete, Integer absPlace, Map<AthleteGroup, Integer> placesMap) {
-        RaceAthleteDTO dto = toDTO(raceAthlete);
+    public RaceMemberDTO toDTO(RaceAthlete raceAthlete, Integer absPlace, Map<AthleteGroup, Integer> placesMap) {
+        RaceMemberDTO dto = toDTO(raceAthlete);
         if (dto == null || placesMap == null) {
             return dto;
         }
@@ -258,7 +270,7 @@ public class RestConverter {
         if (checkPoint == null) {
             return null;
         }
-
+        RaceAthlete raceAthlete = checkPoint.getRaceAthlete();
         RaceFormatCheckPoint raceFormatCheckPoint = checkPoint.getRaceFormatCheckPoint();
 
         LocalDateTime startTime = raceFormatCheckPoint.getRaceFormat().getStartTime();
@@ -318,6 +330,13 @@ public class RestConverter {
                                        .prevCheckPointDiffDuration(DurationHelper.format(prevCheckPointDiff))
                                        .passed(checkPoint.isPassed())
                                        .checkTimeExpired(checkTimeIsExpired)
+                                       .members(raceQueryService.getAthletes(raceAthlete)
+                                                                .stream()
+                                                                .map(athlete -> toMemberDTO(
+                                                                    athlete,
+                                                                    isAnonMode(raceAthlete.getRaceFormat())
+                                                                ))
+                                                                .toList())
                                        .build();
     }
 
@@ -386,7 +405,8 @@ public class RestConverter {
                                     ListHelper.map(
                                         raceQueryService.getRaceFormatAthleteGroups(raceFormat),
                                         RaceFormatAthleteGroup::getAthleteGroup
-                                    ), this::toDTO))
+                                    ), this::toDTO
+                                ))
                             .build();
     }
 
@@ -410,6 +430,63 @@ public class RestConverter {
                       .name(city.getName())
                       .type(city.getType().name())
                       .build();
+    }
+
+
+    public AthleteTeamDTO toDTO(AthleteTeam athleteTeam) {
+        if (athleteTeam == null) {
+            return null;
+        }
+
+        List<AthleteTeamMember> members = athleteQueryService.getTeamMembers(athleteTeam.getId());
+        return AthleteTeamDTO.builder()
+                             .id(athleteTeam.getId())
+                             .name(athleteTeam.getName())
+                             .sex(athleteTeam.getSex().name())
+                             .members(members.stream()
+                                             .map(AthleteTeamMember::getAthlete)
+                                             .map(this::toMemberDTO)
+                                             .toList())
+                             .build();
+    }
+
+
+    public MemberInfoDTO toMemberDTO(Long memberId, RaceAthleteType type, boolean isAnonMode) {
+        return switch (type) {
+            case ATHLETE -> toMemberDTO(athleteQueryService.getById(memberId), isAnonMode);
+            case ATHLETE_TEAM -> toMemberDTO(athleteQueryService.getTeamById(memberId), isAnonMode);
+            case CONTROL, LEADER -> throw new RuntimeException("Unsupported member type '%s'.".formatted(type));
+        };
+    }
+
+    public MemberInfoDTO toMemberDTO(Athlete athlete, boolean isAnonMode) {
+        if (athlete == null) {
+            return null;
+        }
+        return MemberInfoDTO.builder()
+                            .id(athlete.getId())
+                            .type(RaceAthleteType.ATHLETE.name())
+                            .name(athlete.getFIO(isAnonMode))
+                            .build();
+    }
+
+    public MemberInfoDTO toMemberDTO(AthleteTeam athleteTeam) {
+        return toMemberDTO(athleteTeam, false);
+    }
+
+    public MemberInfoDTO toMemberDTO(Athlete athlete) {
+        return toMemberDTO(athlete, false);
+    }
+
+    public MemberInfoDTO toMemberDTO(AthleteTeam athleteTeam, boolean isAnonMode) {
+        if (athleteTeam == null) {
+            return null;
+        }
+        return MemberInfoDTO.builder()
+                            .id(athleteTeam.getId())
+                            .type(RaceAthleteType.ATHLETE_TEAM.name())
+                            .name(athleteTeam.getName(isAnonMode))
+                            .build();
     }
 
 }

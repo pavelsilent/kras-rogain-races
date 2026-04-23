@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.Optional;
 import pro.pavel.silent.lib.core.service.EntityRepository;
 import pro.pavel.silent.rogain.races.domain.enumeration.RaceAthleteType;
-import pro.pavel.silent.rogain.races.entity.Athlete;
 import pro.pavel.silent.rogain.races.entity.RaceAthlete;
 import pro.pavel.silent.rogain.races.entity.RaceFormat;
 
-public interface RaceAthleteRepository extends EntityRepository<RaceAthlete, Long> {
+public interface RaceAthleteRepository
+    extends EntityRepository<RaceAthlete, Long> {
 
     List<RaceAthlete> findAllByRaceFormatAndTypeOrderByTypeAsc(RaceFormat raceFormat, RaceAthleteType type);
 
@@ -19,7 +19,11 @@ public interface RaceAthleteRepository extends EntityRepository<RaceAthlete, Lon
 
     Optional<RaceAthlete> findFirstByRaceFormatAndType(RaceFormat raceFormat, RaceAthleteType type);
 
-    Optional<RaceAthlete> findFirstByRaceFormatAndAthlete(RaceFormat raceFormat, Athlete athlete);
+    Optional<RaceAthlete> findFirstByRaceFormatAndTypeAndMemberId(
+        RaceFormat raceFormat,
+        RaceAthleteType type,
+        Long memberId
+    );
 
     Optional<RaceAthlete> findFirstByRaceFormatAndBibNumber(RaceFormat raceFormat, Integer bibNumber);
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import{ Injectable } from '@angular/core';
 import { lastValueFrom, map, Observable } from 'rxjs';
 import { AthleteControllerService } from '../../api/index';
 import { AthleteGroupModel } from '../../models/athlete-group.model';

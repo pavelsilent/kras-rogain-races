@@ -1,7 +1,7 @@
-import { AsyncPipe, NgClass, NgForOf, NgIf } from '@angular/common';
+import { NgClass, NgIf } from '@angular/common';
 import { Component, Inject, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -9,10 +9,6 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
-import { MatFormField } from '@angular/material/form-field';
-import { MatIcon } from '@angular/material/icon';
-import { MatInput, MatLabel } from '@angular/material/input';
-import { MatSort } from '@angular/material/sort';
 import {
   MatCell,
   MatCellDef,
@@ -20,20 +16,19 @@ import {
   MatHeaderCell,
   MatHeaderCellDef,
   MatHeaderRow,
-  MatHeaderRowDef, MatRow,
+  MatHeaderRowDef,
+  MatRow,
   MatRowDef,
   MatTable,
 } from '@angular/material/table';
-import { MatTooltip } from '@angular/material/tooltip';
 import { LocalDateTime } from '@js-joda/core';
-import { RaceAthleteModel } from '../../models/race-athlete.model';
 import { RaceCheckPointModel } from '../../models/race-check-point.model';
+import { RaceMemberModel } from '../../models/race-member.model';
 import { RussianDateTimePipe } from '../../utils/russian-date-time.pipe';
-import { RussianTimePipe } from '../../utils/russian-time.pipe';
 
 export interface RaceAthleteDetailInfoDialogConfig {
   checkPoints: RaceCheckPointModel[],
-  athleteInfo: RaceAthleteModel,
+  athleteInfo: RaceMemberModel,
 }
 
 @Component({
@@ -44,26 +39,16 @@ export interface RaceAthleteDetailInfoDialogConfig {
                MatDialogActions,
                MatDialogContent,
                MatDialogTitle,
-               MatFormField,
-               MatInput,
-               MatLabel,
                ReactiveFormsModule,
-               AsyncPipe,
                MatCell,
                MatCellDef,
                MatColumnDef,
                MatHeaderCell,
                MatHeaderRow,
                MatHeaderRowDef,
-               MatIcon,
-               MatIconButton,
                MatRowDef,
-               MatSort,
                MatTable,
-               MatTooltip,
-               NgForOf,
                NgIf,
-               RussianTimePipe,
                MatHeaderCellDef,
                MatRow,
                NgClass,

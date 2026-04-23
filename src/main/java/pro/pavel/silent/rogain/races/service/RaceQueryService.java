@@ -2,18 +2,18 @@ package pro.pavel.silent.rogain.races.service;
 
 import static pro.pavel.silent.lib.core.util.FunctionHelper.firstArgSupplier;
 import static pro.pavel.silent.lib.core.util.StringHelper.hasLength;
-import static pro.pavel.silent.rogain.races.domain.enumeration.RaceAthleteType.ATHLETE;
 import static pro.pavel.silent.rogain.races.domain.enumeration.RaceFormatTokenType.EDIT;
 import static pro.pavel.silent.rogain.races.domain.enumeration.RaceFormatTokenType.VIEW;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pro.pavel.silent.lib.core.util.ThreeMap;
-import pro.pavel.silent.rogain.races.data.AthleteRepository;
 import pro.pavel.silent.rogain.races.data.RaceAthleteCheckPointRepository;
 import pro.pavel.silent.rogain.races.data.RaceAthleteGroupRepository;
 import pro.pavel.silent.rogain.races.data.RaceAthleteRepository;
@@ -22,10 +22,12 @@ import pro.pavel.silent.rogain.races.data.RaceFormatCheckPointRepository;
 import pro.pavel.silent.rogain.races.data.RaceFormatRepository;
 import pro.pavel.silent.rogain.races.data.RaceRepository;
 import pro.pavel.silent.rogain.races.domain.enumeration.RaceAthleteState;
+import pro.pavel.silent.rogain.races.domain.enumeration.RaceAthleteType;
 import pro.pavel.silent.rogain.races.domain.enumeration.RaceState;
 import pro.pavel.silent.rogain.races.domain.model.RaceFormatTokenModel;
 import pro.pavel.silent.rogain.races.entity.Athlete;
 import pro.pavel.silent.rogain.races.entity.AthleteGroup;
+import pro.pavel.silent.rogain.races.entity.AthleteTeamMember;
 import pro.pavel.silent.rogain.races.entity.Race;
 import pro.pavel.silent.rogain.races.entity.RaceAthlete;
 import pro.pavel.silent.rogain.races.entity.RaceAthleteCheckPoint;
@@ -45,7 +47,7 @@ public class RaceQueryService {
     private final RaceAthleteRepository raceAthleteRepository;
     private final RaceAthleteGroupRepository raceAthleteGroupRepository;
     private final RaceAthleteCheckPointRepository raceAthleteCheckPointRepository;
-    private final AthleteRepository athleteRepository;
+    private final AthleteQueryService athleteQueryService;
 
     public List<Race> getRaces() {
         return raceRepository.findAll();
@@ -75,20 +77,23 @@ public class RaceQueryService {
             .orElseThrow(() -> new RuntimeException("Not found race athlete by bib number: " + bibNumber));
     }
 
-
-    public Optional<RaceAthlete> findRaceAthlete(RaceFormat raceFormat, Athlete athlete) {
-        return raceAthleteRepository.findFirstByRaceFormatAndAthlete(raceFormat, athlete);
+    public Optional<RaceAthlete> findRaceAthlete(RaceFormat raceFormat, RaceAthleteType athleteType, Long memberId) {
+        return raceAthleteRepository.findFirstByRaceFormatAndTypeAndMemberId(raceFormat, athleteType, memberId);
     }
+
+    //    public Optional<RaceAthlete> findRaceAthlete(RaceFormat raceFormat, Athlete athlete) {
+    //        return raceAthleteRepository.findFirstByRaceFormatAndAthlete(raceFormat, athlete);
+    //    }
 
     public Optional<RaceAthlete> findRaceAthleteByBibNumber(RaceFormat raceFormat, Integer bibNumber) {
         return raceAthleteRepository.findFirstByRaceFormatAndBibNumber(raceFormat, bibNumber);
     }
 
-    public RaceAthlete getRaceAthlete(RaceFormat raceFormat, Athlete athlete) {
-        return raceAthleteRepository.findFirstByRaceFormatAndAthlete(raceFormat, athlete)
-                                    .orElseThrow(() -> new RuntimeException(
-                                        "Not found race athlete with id: " + athlete.getId()));
-    }
+    //    public RaceAthlete getRaceAthlete(RaceFormat raceFormat, Athlete athlete) {
+    //        return raceAthleteRepository.findFirstByRaceFormatAndAthlete(raceFormat, athlete)
+    //                                    .orElseThrow(() -> new RuntimeException(
+    //                                        "Not found race athlete with id: " + athlete.getId()));
+    //    }
 
 
     public RaceAthlete getRaceAthlete(Long id) {
@@ -171,7 +176,7 @@ public class RaceQueryService {
     public List<RaceAthlete> getRaceAthletes(RaceFormat raceFormat) {
         return raceAthleteRepository.findAllByRaceFormatAndTypeOrderByLastCheckPointOrderNumberDescLastCheckPointTimeAscBibNumberAsc(
                                         raceFormat,
-                                        ATHLETE
+                                        raceFormat.getType().getAthleteType()
                                     ).stream()
                                     .sorted(Comparator.comparing(order -> order.getState().getOrder()))
                                     .toList();
@@ -333,6 +338,23 @@ public class RaceQueryService {
         RaceFormat raceFormat = getRaceFormatById(raceFormatId);
         RaceAthlete raceAthlete = getRaceAthleteByBibNumber(raceFormat, bibNumber);
         return raceAthlete.getState();
+    }
+
+    public List<Athlete> getAthletes(RaceAthlete raceAthlete) {
+        if (Objects.isNull(raceAthlete)) {
+            return Collections.emptyList();
+        }
+
+        return switch (raceAthlete.getType()) {
+            case ATHLETE -> Collections.singletonList(
+                athleteQueryService.getById(raceAthlete.getMemberId()));
+            case ATHLETE_TEAM -> athleteQueryService.getTeamMembers(raceAthlete.getMemberId())
+                                                    .stream()
+                                                    .map(AthleteTeamMember::getAthlete)
+                                                    .toList();
+            case CONTROL, LEADER ->
+                throw new RuntimeException("Unsupported race athlete type '%s'".formatted(raceAthlete.getType()));
+        };
     }
 
 }

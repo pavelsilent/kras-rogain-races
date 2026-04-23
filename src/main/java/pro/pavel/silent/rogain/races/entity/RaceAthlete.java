@@ -39,10 +39,9 @@ public class RaceAthlete {
     @Schema(description = "Формат соревнования")
     private RaceFormat raceFormat;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "athlete_id", nullable = false)
-    @Schema(description = "Спортсмен")
-    private Athlete athlete;
+    @Column(name = "athlete_id", nullable = false)
+    @Schema(description = "Спортсмен / команда спортсменов")
+    private Long memberId;
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "type", nullable = false, length = 255)

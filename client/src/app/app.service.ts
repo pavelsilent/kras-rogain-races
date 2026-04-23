@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { AppSettingsControllerService } from './api/index';
 
 @Injectable({
@@ -9,7 +9,7 @@ import { AppSettingsControllerService } from './api/index';
 export class AppService {
 
   constructor(private settingService: AppSettingsControllerService) {
-    this.canSetup$ = settingService.getSettings().pipe(map(setting => setting.setupEnabled!));
+    this.canSetup$ = settingService.getSettings().pipe(tap(x=>console.log(x)),map(setting => setting.setupEnabled!));
     this.canEdit$ = settingService.getSettings().pipe(map(setting => setting.editEnabled!));
   }
 

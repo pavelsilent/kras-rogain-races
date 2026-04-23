@@ -23,7 +23,6 @@ import pro.pavel.silent.rogain.races.domain.enumeration.RaceAthleteState;
 import pro.pavel.silent.rogain.races.domain.enumeration.RaceAthleteType;
 import pro.pavel.silent.rogain.races.domain.enumeration.RaceFormatType;
 import pro.pavel.silent.rogain.races.domain.enumeration.RaceState;
-import pro.pavel.silent.rogain.races.entity.Athlete;
 import pro.pavel.silent.rogain.races.entity.AthleteGroup;
 import pro.pavel.silent.rogain.races.entity.Race;
 import pro.pavel.silent.rogain.races.entity.RaceAthlete;
@@ -34,9 +33,9 @@ import pro.pavel.silent.rogain.races.entity.RaceFormatAthleteGroup;
 import pro.pavel.silent.rogain.races.entity.RaceFormatCheckPoint;
 import pro.pavel.silent.rogain.races.rest.dto.AthleteGroupDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceAthleteCheckPointDTO;
-import pro.pavel.silent.rogain.races.rest.dto.RaceAthleteSetupDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatCheckPointSetupDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceFormatDTO;
+import pro.pavel.silent.rogain.races.rest.dto.RaceMemberSetupDTO;
 import pro.pavel.silent.rogain.races.rest.dto.RaceSetupDTO;
 import pro.pavel.silent.rogain.races.rest.dto.StateDTO;
 
@@ -203,32 +202,37 @@ public class RaceService {
     }
 
     @Transactional
-    public RaceAthlete addRaceAthlete(Long raceId, Long raceFormatId, RaceAthleteSetupDTO raceAthleteDTO) {
+    public RaceAthlete addRaceAthlete(Long raceId, Long raceFormatId, RaceMemberSetupDTO dto) {
         RaceFormat raceFormat = raceQueryService.getRaceFormatById(raceFormatId);
         Optional<RaceAthlete> raceAthleteBibNumber = raceQueryService.findRaceAthleteByBibNumber(
             raceFormat,
-            raceAthleteDTO.getBibNumber()
+            dto.getBibNumber()
         );
         if (raceAthleteBibNumber.isPresent()) {
-            throw new RuntimeException("Race athlete with bib number '%s' already exists.".formatted(raceAthleteDTO.getBibNumber()));
+            throw new RuntimeException("Race athlete with bib number '%s' already exists.".formatted(dto.getBibNumber()));
         }
 
-        Athlete athlete = athleteQueryService.getById(raceAthleteDTO.getAthleteId());
-        Optional<RaceAthlete> existedRaceAthlete = raceQueryService.findRaceAthlete(raceFormat, athlete);
+        RaceAthleteType raceAthleteType = RaceAthleteType.valueOf(dto.getMemberType());
+        Optional<RaceAthlete> existedRaceAthlete = raceQueryService.findRaceAthlete(
+            raceFormat,
+            raceAthleteType,
+            dto.getId()
+        );
         if (existedRaceAthlete.isPresent()) {
-            throw new RuntimeException("Race athlete with id '%s' already exists.".formatted(athlete.getId()));
+            throw new RuntimeException("Race athlete with type '%s' and id '%s' already exists.".formatted(
+                raceAthleteType.name(), dto.getMemberId()));
         }
 
         RaceAthlete newRaceAthlete = new RaceAthlete();
-        newRaceAthlete.setAthlete(athlete);
+        newRaceAthlete.setMemberId(dto.getMemberId());
+        newRaceAthlete.setType(raceAthleteType);
         newRaceAthlete.setRaceFormat(raceFormat);
-        newRaceAthlete.setBibNumber(raceAthleteDTO.getBibNumber());
+        newRaceAthlete.setBibNumber(dto.getBibNumber());
         newRaceAthlete.setState(RaceAthleteState.REGISTERED);
-        newRaceAthlete.setType(RaceAthleteType.ATHLETE);
         newRaceAthlete.setLastCheckPointOrderNumber(0);
         raceAthleteRepository.save(newRaceAthlete);
 
-        AthleteGroup athleteGroup = athleteQueryService.getAthleteGroupById(raceAthleteDTO.getAthleteGroupId());
+        AthleteGroup athleteGroup = athleteQueryService.getAthleteGroupById(dto.getAthleteGroupId());
         RaceAthleteGroup raceAthleteGroup = new RaceAthleteGroup();
         raceAthleteGroup.setAthleteGroup(athleteGroup);
         raceAthleteGroup.setRaceAthlete(newRaceAthlete);
@@ -238,7 +242,7 @@ public class RaceService {
     }
 
     @Transactional
-    public RaceAthlete editRaceAthlete(Long raceId, Long raceFormatId, RaceAthleteSetupDTO dto) {
+    public RaceAthlete editRaceAthlete(Long raceId, Long raceFormatId, RaceMemberSetupDTO dto) {
         RaceFormat raceFormat = raceQueryService.getRaceFormatById(raceFormatId);
         Optional<RaceAthlete> raceAthleteBibNumber =
             raceQueryService.findRaceAthleteByBibNumber(raceFormat, dto.getBibNumber())
@@ -246,17 +250,20 @@ public class RaceService {
         if (raceAthleteBibNumber.isPresent()) {
             throw new RuntimeException("Race athlete with bib number '%s' already exists.".formatted(dto.getBibNumber()));
         }
-        Athlete athlete = athleteQueryService.getById(dto.getAthleteId());
-        Optional<RaceAthlete> raceAthleteAthlete =
-            raceQueryService.findRaceAthlete(raceFormat, athlete)
+
+        RaceAthleteType raceAthleteType = RaceAthleteType.valueOf(dto.getMemberType());
+        Optional<RaceAthlete> raceAthleteOpt =
+            raceQueryService.findRaceAthlete(raceFormat, raceAthleteType, dto.getMemberId())
                             .filter(raceAthlete -> !raceAthlete.getId().equals(dto.getId()));
 
-        if (raceAthleteAthlete.isPresent()) {
-            throw new RuntimeException("Race athlete with id '%s' already exists.".formatted(athlete.getId()));
+        if (raceAthleteOpt.isPresent()) {
+            throw new RuntimeException("Race athlete with type '%s' and id '%s' already exists.".formatted(
+                raceAthleteType, dto.getMemberId()));
         }
 
         RaceAthlete raceAthlete = raceQueryService.getRaceAthlete(dto.getId());
-        raceAthlete.setAthlete(athlete);
+        raceAthlete.setType(raceAthleteType);
+        raceAthlete.setMemberId(dto.getMemberId());
         raceAthlete.setBibNumber(dto.getBibNumber());
         raceAthleteRepository.save(raceAthlete);
 
@@ -423,15 +430,17 @@ public class RaceService {
 
         raceQueryService
             .findLastPassedCheckPoint(raceAthlete)
-            .ifPresentOrElse(lastCheckPoint -> {
-                raceAthlete.setLastCheckPointOrderNumber(lastCheckPoint.getRaceFormatCheckPoint().getOrderNumber());
-                raceAthlete.setLastCheckPointTime(lastCheckPoint.getTime());
-                raceAthleteRepository.save(raceAthlete);
-            }, () -> {
-                raceAthlete.setLastCheckPointOrderNumber(0);
-                raceAthlete.setLastCheckPointTime(null);
-                raceAthleteRepository.save(raceAthlete);
-            });
+            .ifPresentOrElse(
+                lastCheckPoint -> {
+                    raceAthlete.setLastCheckPointOrderNumber(lastCheckPoint.getRaceFormatCheckPoint().getOrderNumber());
+                    raceAthlete.setLastCheckPointTime(lastCheckPoint.getTime());
+                    raceAthleteRepository.save(raceAthlete);
+                }, () -> {
+                    raceAthlete.setLastCheckPointOrderNumber(0);
+                    raceAthlete.setLastCheckPointTime(null);
+                    raceAthleteRepository.save(raceAthlete);
+                }
+            );
 
         List<RaceAthleteCheckPoint> allPassedCheckPoints = raceAthleteCheckPointRepository
             .findAllByRaceAthlete(raceAthlete)

@@ -7,8 +7,8 @@ import { AthleteGroupModel } from '../../models/athlete-group.model';
 import { AthleteState } from '../../models/enums/athlete-state.enum';
 import { RaceAthleteCheckPointSetupModel } from '../../models/race-athlete-check-point-setup.model';
 import { RaceAthleteCheckPointModel } from '../../models/race-athlete-check-point.model';
-import { RaceAthleteSetupModel } from '../../models/race-athlete-setup.model';
-import { RaceAthleteModel } from '../../models/race-athlete.model';
+import { RaceMemberSetupModel } from '../../models/race-member-setup.model';
+import { RaceMemberModel } from '../../models/race-member.model';
 import { RaceCheckPointSetupModel } from '../../models/race-check-point-setup.model';
 import { RaceCheckPointModel } from '../../models/race-check-point.model';
 import { RaceFormatResultLinkModel } from '../../models/race-format-result-link.model';
@@ -56,9 +56,9 @@ export class RaceService {
     );
   }
 
-  getRaceFormatsAthletes(id: number, formatId: number): Observable<RaceAthleteModel[]> {
+  getRaceFormatsAthletes(id: number, formatId: number): Observable<RaceMemberModel[]> {
     return this.backend.getRaceFormatAthletes(id, formatId).pipe(
-      map(items => items.map(item => RaceAthleteModel.fromDTO(item))),
+      map(items => items.map(item => RaceMemberModel.fromDTO(item))),
     );
   }
 
@@ -99,11 +99,11 @@ export class RaceService {
     return lastValueFrom(this.backend.addRaceFormatAthleteGroups(id, formatId, data.map(value => value.toDTO())));
   }
 
-  addRaceAthlete(id: number, formatId: number, data: RaceAthleteSetupModel) {
+  addRaceAthlete(id: number, formatId: number, data: RaceMemberSetupModel) {
     return lastValueFrom(this.backend.addRaceFormatAthlete(id, formatId, data.toDTO()));
   }
 
-  editRaceAthlete(id: number, formatId: number, data: RaceAthleteSetupModel) {
+  editRaceAthlete(id: number, formatId: number, data: RaceMemberSetupModel) {
     return lastValueFrom(this.backend.editRaceFormatAthlete(id, formatId, data.toDTO()));
   }
 
@@ -136,6 +136,8 @@ export class RaceService {
     athleteBibNumber: number,
     checkPointId: number,
   ): Promise<RaceAthleteCheckPointSetupModel> {
+    console.log(checkPointId);
+
     return lastValueFrom(this.backend.getRaceAthleteCheckPoint(id, formatId, athleteBibNumber, checkPointId))
       .then(value => RaceAthleteCheckPointSetupModel.fromDTO(value));
   }
@@ -182,7 +184,7 @@ export class RaceService {
       .then(value => RaceFormatResultModel.fromDTO(value));
   }
 
-  deleteRaceAthlete(id: number, formatId: number, data: RaceAthleteModel) {
+  deleteRaceAthlete(id: number, formatId: number, data: RaceMemberModel) {
     return lastValueFrom(this.backend.deleteRaceFormatAthlete(id, formatId, data.bibNumber));
   }
 

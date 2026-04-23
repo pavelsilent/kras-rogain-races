@@ -20,7 +20,7 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
-import { MatFormField, MatFormFieldModule, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
+import { MatFormField, MatFormFieldModule, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInput, MatInputModule } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
@@ -71,7 +71,6 @@ export interface AddRaceAthleteCheckPointDialogConfig {
                MatIconModule,
                MatFormFieldModule,
                MatInputModule,
-               MatPrefix,
                MatSuffix,
                NgIf,
                AsyncPipe,

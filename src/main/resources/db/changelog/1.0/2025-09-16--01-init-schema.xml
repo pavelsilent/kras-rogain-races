@@ -432,4 +432,50 @@
     </addColumn>
   </changeSet>
 
+  <changeSet author="p.brychev" id="2025-09-16--01-init-schema.026">
+    <createTable schemaName="public" tableName="athlete_team">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" primaryKeyName="athlete_team_pkey"/>
+      </column>
+      <column name="name" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="sex" type="VARCHAR(255)" defaultValue="MALE">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createTable schemaName="public" tableName="athlete_team_member">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" primaryKeyName="athlete_team_member_pkey"/>
+      </column>
+      <column name="athlete_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="team_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <addForeignKeyConstraint
+      baseTableSchemaName="public"
+      baseTableName="athlete_team_member"
+      baseColumnNames="athlete_id"
+      referencedTableSchemaName="public"
+      referencedTableName="athlete"
+      referencedColumnNames="id"
+      constraintName="fk_athlete_team_member_athlete"
+      deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"/>
+
+    <addForeignKeyConstraint
+      baseTableSchemaName="public"
+      baseTableName="athlete_team_member"
+      baseColumnNames="team_id"
+      referencedTableSchemaName="public"
+      referencedTableName="athlete_team"
+      referencedColumnNames="id"
+      constraintName="fk_athlete_team_member_athlete_team"
+      deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"/>
+  </changeSet>
+
 </databaseChangeLog>
