@@ -581,6 +581,7 @@ public class RaceService {
             return;
         }
 
+        raceAthleteMemberCheckPointRepository.deleteAllByRaceAthleteCheckPointRaceFormatCheckPointRaceFormat(raceFormat);
         raceAthleteCheckPointRepository.deleteAllByRaceFormatCheckPointRaceFormat(raceFormat);
 
         List<RaceAthlete> raceAthletes = raceAthleteRepository.findAllByRaceFormatAndTypeOrderByTypeAsc(
