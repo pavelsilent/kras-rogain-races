@@ -9,7 +9,7 @@
     <div class="table-wrapper">
       <table mat-table [dataSource]="data.checkPoints" class="data-table" multiTemplateDataRows="true">
         <ng-container matColumnDef="checkPoint">
-          <th mat-header-cell *matHeaderCellDef>КТ</th>
+          <th mat-header-cell *matHeaderCellDef class="header-cell">КТ</th>
           <td mat-cell *matCellDef="let row">
             <div class="cell-wrapper">
               <div class="cell">
@@ -28,7 +28,7 @@
         </ng-container>
 
         <ng-container matColumnDef="distance">
-          <th mat-header-cell *matHeaderCellDef>КМ</th>
+          <th mat-header-cell *matHeaderCellDef class="header-cell">КМ</th>
           <td mat-cell *matCellDef="let row">
             <div class="cell-wrapper">
               <div class="cell">
@@ -47,7 +47,7 @@
         </ng-container>
 
         <ng-container matColumnDef="raceTime">
-          <th mat-header-cell *matHeaderCellDef style="width: 113px;">Чистое время Время между КТ</th>
+          <th mat-header-cell *matHeaderCellDef class="header-cell" style="width: 113px;">Чистое время Время между КТ</th>
           <td mat-cell *matCellDef="let row">
 
             <div class="cell-wrapper">
@@ -74,7 +74,7 @@
         </ng-container>
 
         <ng-container matColumnDef="checkPointCheckTime">
-          <th mat-header-cell *matHeaderCellDef>Контрольное время</th>
+          <th mat-header-cell *matHeaderCellDef class="header-cell">Контрольное время</th>
           <td mat-cell *matCellDef="let row" class="control-time">
             <span>{{ getCheckPointCheckTime(row.id) }}</span>
           </td>
@@ -87,7 +87,7 @@
         </ng-container>
 
         <ng-container matColumnDef="checkPointLeaderTime">
-          <th mat-header-cell *matHeaderCellDef style="width: 113px;">Прогнозирумое время лидера Время между КТ
+          <th mat-header-cell *matHeaderCellDef class="header-cell" style="width: 113px;">Прогнозирумое время лидера Время между КТ
           </th>
           <td mat-cell *matCellDef="let row">
             <div class="cell-wrapper">
@@ -111,12 +111,12 @@
 
         <ng-container matColumnDef="memberLabel">
           <td mat-cell *matCellDef="let row">
-            <div class="bold">Участники</div>
+            <div style="font-size: 0.8em">Участники</div>
           </td>
         </ng-container>
         <ng-container matColumnDef="members">
           <td mat-cell *matCellDef="let row" [attr.colspan]="4">
-            <div class="detail-content">
+            <div class="detail-content" style="font-size: 0.8em">
               {{ getCheckPointMembers(row.id) }}
             </div>
           </td>

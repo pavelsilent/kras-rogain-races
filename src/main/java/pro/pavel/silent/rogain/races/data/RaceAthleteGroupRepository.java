@@ -6,8 +6,10 @@ import pro.pavel.silent.lib.core.service.EntityRepository;
 import pro.pavel.silent.rogain.races.entity.AthleteGroup;
 import pro.pavel.silent.rogain.races.entity.RaceAthlete;
 import pro.pavel.silent.rogain.races.entity.RaceAthleteGroup;
+import pro.pavel.silent.rogain.races.entity.RaceFormat;
 
-public interface RaceAthleteGroupRepository extends EntityRepository<RaceAthleteGroup, Long> {
+public interface RaceAthleteGroupRepository
+    extends EntityRepository<RaceAthleteGroup, Long> {
 
     List<RaceAthleteGroup> findAllByRaceAthlete(RaceAthlete raceAthlete);
 
@@ -18,6 +20,6 @@ public interface RaceAthleteGroupRepository extends EntityRepository<RaceAthlete
 
     void deleteAllByRaceAthlete(RaceAthlete raceAthlete);
 
-    void deleteAllByAthleteGroup(AthleteGroup athleteGroup);
+    void deleteAllByRaceAthleteRaceFormatAndAthleteGroup(RaceFormat raceFormat, AthleteGroup athleteGroup);
 
 }

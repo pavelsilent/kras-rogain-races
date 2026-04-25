@@ -372,6 +372,7 @@ export class RaceFormatResultComponent
                   raceFormatId: raceFormatId,
                   state: state,
                   stateDateTime: raceFormat.startDateTime,
+                  customStateDateTime: state === RaceState.FINISHED ? raceFormat.finishDateTime : null,
                 },
                 width: '400px',
                 disableClose: true,

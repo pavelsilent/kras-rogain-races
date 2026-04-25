@@ -63,6 +63,7 @@ tr.main-row:has(+ tr.last-row.not-hidden) {
   position: sticky;
   top: 0;
   background: #ffe599;
+  height: 38px;
 }
 
 .disqualified {
@@ -106,4 +107,9 @@ tr.main-row:has(+ tr.last-row.not-hidden) {
 }
 
 .not-hidden {
+}
+
+.header-cell {
+  line-height: 1;
+  height: 30px!important;
 }

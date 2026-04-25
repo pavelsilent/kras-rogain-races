@@ -246,6 +246,7 @@ export class RaceFormatResultCompactComponent {
                   raceFormatId: raceFormatId,
                   state: state,
                   stateDateTime: raceFormat.startDateTime,
+                  customStateDateTime: state === RaceState.FINISHED ? raceFormat.finishDateTime : null,
                 },
                 width: '400px',
                 panelClass: 'small-dialog',

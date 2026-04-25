@@ -182,7 +182,10 @@ public class RaceService {
         RaceFormat raceFormat,
         List<AthleteGroup> athleteGroups
     ) {
-        athleteGroups.forEach(raceAthleteGroupRepository::deleteAllByAthleteGroup);
+        athleteGroups.forEach(athleteGroup -> raceAthleteGroupRepository.deleteAllByRaceAthleteRaceFormatAndAthleteGroup(
+            raceFormat,
+            athleteGroup
+        ));
         athleteGroups.forEach(athleteGroup -> raceFormatAthleteGroupRepository.deleteAllByRaceFormatAndAthleteGroup(
             raceFormat,
             athleteGroup
@@ -586,7 +589,7 @@ public class RaceService {
 
         List<RaceAthlete> raceAthletes = raceAthleteRepository.findAllByRaceFormatAndTypeOrderByTypeAsc(
             raceFormat,
-            RaceAthleteType.ATHLETE
+            raceFormat.getType().getAthleteType()
         );
 
         raceAthletes.forEach(
@@ -610,7 +613,7 @@ public class RaceService {
 
         List<RaceAthlete> raceAthletes = raceAthleteRepository.findAllByRaceFormatAndTypeOrderByTypeAsc(
             raceFormat,
-            RaceAthleteType.ATHLETE
+            raceFormat.getType().getAthleteType()
         );
 
         raceAthletes.stream()

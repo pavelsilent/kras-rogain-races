@@ -301,7 +301,10 @@
       <th *matHeaderCellDef mat-header-cell></th>
       <td *matCellDef="let row" mat-cell class="time-detail-column">
         <ng-container>
-          <div class="left member-time">Чистое время участника</div>
+          <div class="left member-time">
+            <span class="underline">Чистое время участника</span>
+            <br>
+            <span>Местное время</span></div>
         </ng-container>
       </td>
     </ng-container>
@@ -310,10 +313,16 @@
     <ng-container *ngFor="let cp of checkPoints" [matColumnDef]="'athleteCheckPoint' + cp.id">
       <th *matHeaderCellDef mat-header-cell></th>
       <td *matCellDef="let row" mat-cell class="checkpoint-column center"
+          [matTooltip]=" getCheckPointTime(row, cp.id) | toRusDateTime "
           [ngClass]="{'check-time-expired': getCheckPointTimeExpired(row, cp.id)}">
-        <span [matTooltip]=" getCheckPointTime(row, cp.id) | toRusDateTime ">{{
+        <span>{{
             getCheckPointRaceTime(row, cp.id)
           }} </span>
+        <br>
+        <span>{{
+            getCheckPointTime(row, cp.id) | toCosmicTime
+          }} </span>
+
       </td>
     </ng-container>
 

@@ -18,13 +18,19 @@ import { LocalDateTime, ZonedDateTime, ZoneOffset } from '@js-joda/core';
 import { RaceService } from '../../components/race/race.service';
 import { RaceState } from '../../models/enums/race-state.enum';
 import { RU_DATE_FORMATS } from '../../utils/mat-date-formats';
-import { localDateToMoment, parseLocalDateTimeFromMoment, parseLocalTimeToRussianTime } from '../../utils/utils';
+import {
+  exists,
+  localDateToMoment,
+  parseLocalDateTimeFromMoment,
+  parseLocalTimeToRussianTime,
+} from '../../utils/utils';
 
 export interface SetRaceStateDialogConfig {
   raceId: number;
   raceFormatId: number;
   state: RaceState;
   stateDateTime: LocalDateTime,
+  customStateDateTime: LocalDateTime,
 }
 
 @Component({
@@ -63,12 +69,27 @@ export class SetRaceStateDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: SetRaceStateDialogConfig,
     private service: RaceService,
   ) {
-    const now = ZonedDateTime.now(ZoneOffset.ofHours(7));
+
     this.form = this.fb.group({
                                 state: [data.state.name, Validators.required],
-                                stateDate: [localDateToMoment(data.stateDateTime.toLocalDate()), Validators.required],
-                                stateTime: [parseLocalTimeToRussianTime(now.toLocalTime()), Validators.required],
+                                stateDate: [this.resolveStateDate(), Validators.required],
+                                stateTime: [this.resolveStateTime(), Validators.required],
                               });
+  }
+
+  resolveStateDate() {
+    if (!exists(this.data?.customStateDateTime)) {
+      return localDateToMoment(this.data.stateDateTime.toLocalDate());
+    }
+    return localDateToMoment(this.data.customStateDateTime.toLocalDate());
+  }
+
+  resolveStateTime() {
+    if (!exists(this.data?.customStateDateTime)) {
+      const now = ZonedDateTime.now(ZoneOffset.ofHours(7));
+      return parseLocalTimeToRussianTime(now.toLocalTime());
+    }
+    return parseLocalTimeToRussianTime(this.data.customStateDateTime.toLocalTime());
   }
 
   onSave(): void {
